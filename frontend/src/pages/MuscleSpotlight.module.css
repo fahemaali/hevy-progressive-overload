@@ -1,6 +1,12 @@
-/* Slides up when a muscle is chosen; each row follows a beat after the last. Only the
-   movement is animated, never visibility, so content shows even if animation doesn't run. */
+/* One panel: the muscle's headline on top, its exercises as sections inside. Slides
+   up when a muscle is chosen; each row follows a beat after the last. Only movement is
+   animated, never visibility, so content shows even if animation doesn't run. */
 .spotlight {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
   animation: rise 360ms ease-out;
 }
 
@@ -15,19 +21,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  transition: box-shadow 150ms ease;
+  padding: 18px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 150ms ease;
 }
 
 .header:hover {
-  box-shadow:
-    0 0 0 1px var(--border),
-    0 10px 28px rgb(60 45 20 / 0.1);
+  background: var(--surface-2);
 }
 
 .heading {
@@ -69,22 +69,19 @@
 }
 
 .rows {
-  display: grid;
-  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .row {
-  padding: 14px 0 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+  padding: 16px 0 14px;
   animation: rise 360ms ease-out backwards;
   animation-delay: calc(var(--i) * 50ms);
+}
+
+.row + .row {
+  border-top: 1px solid var(--border);
 }
 
 .rowHeader {

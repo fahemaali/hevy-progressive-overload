@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router'
+import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useNavigate } from 'react-router'
 import { useReloadAfterRefresh } from '../api/useReloadAfterRefresh'
 import { BackIcon, BodyIcon, DumbbellIcon, ListIcon } from './icons'
 import { Logo } from './Logo'
@@ -65,6 +65,8 @@ export function Layout() {
         <main className={styles.main}>
           <Outlet />
         </main>
+        {/* New pages open at the top; going back returns to where you were. */}
+        <ScrollRestoration />
       </div>
     </div>
   )

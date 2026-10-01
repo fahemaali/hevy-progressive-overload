@@ -58,6 +58,15 @@ describe('body map page', () => {
     expect(within(bench).getAllByRole('article', { hidden: true })).toHaveLength(3)
   })
 
+  it('opens the muscle page at the top, not where the home page was scrolled to', async () => {
+    const { router } = setup('/?muscle=chest')
+    const spotlight = await screen.findByRole('region', { name: 'Chest exercises' })
+    vi.mocked(window.scrollTo).mockClear()
+    await userEvent.click(within(spotlight).getByRole('link', { name: /Week by week/ }))
+    expect(router.state.location.pathname).toBe('/muscles/chest')
+    await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith(0, 0))
+  })
+
   it('opens straight onto a muscle from a shared link', async () => {
     setup('/?muscle=chest')
     expect(await screen.findByRole('region', { name: 'Chest exercises' })).toBeInTheDocument()
