@@ -22,31 +22,40 @@ describe('muscle page', () => {
     ).toBeInTheDocument()
   })
 
+  it('shows the muscle-wide change under its name', async () => {
+    setup()
+    const change = await screen.findByText(/in the week of 21 Sept/)
+    expect(change).toHaveTextContent('+14.4% in the week of 21 Sept')
+  })
+
   it('dates every week, opens on the latest judged week, and lets you pick another', async () => {
     setup()
     const weeks = await screen.findByRole('radiogroup', { name: 'Week' })
     expect(within(weeks).getAllByRole('radio')).toHaveLength(3)
     expect(within(weeks).getByRole('radio', { checked: true })).toHaveAccessibleName(
-      'Week of 21 Sept: Progressing',
+      'Week of 21 Sept: Progressing, +14.4%',
     )
     expect(
       within(weeks).getByRole('radio', { name: /28 Sept: Not enough data yet/ }),
     ).toHaveTextContent('28 Sept')
 
     await userEvent.click(within(weeks).getByRole('radio', { name: /7 Sept/ }))
-    expect(screen.getByRole('heading', { name: /Week of 7 Sept/ })).toHaveTextContent('Declining')
+    expect(within(weeks).getByRole('radio', { checked: true })).toHaveAccessibleName(
+      'Week of 7 Sept: Declining, −4.5%',
+    )
+    expect(screen.getByRole('list', { name: /week of 7 Sept/ })).toHaveTextContent('Lat Pulldown')
   })
 
-  it('dates each session in a week, and labels new, light and indirect ones', async () => {
+  it('dates each session in a week, and names its rep range and role', async () => {
     setup()
-    const detail = (await screen.findByRole('heading', { name: /Week of 21 Sept/ })).parentElement!
-    const items = within(detail)
+    const list = await screen.findByRole('list', { name: /week of 21 Sept/ })
+    const items = within(list)
       .getAllByRole('listitem')
       .map((li) => li.textContent)
     expect(items).toEqual([
-      expect.stringMatching(/Seated Cable Row.*25 Sept · strength · indirect/),
-      expect.stringMatching(/Bicep Curl \(Cable\).*26 Sept · strength$/),
-      expect.stringMatching(/^New.*Bicep Curl \(Cable\).*26 Sept · light/),
+      expect.stringMatching(/Seated Cable Row.*25 Sept · hypertrophy · indirect/),
+      expect.stringMatching(/Bicep Curl \(Cable\).*26 Sept · hypertrophy$/),
+      expect.stringMatching(/^New.*Bicep Curl \(Cable\).*26 Sept · endurance/),
     ])
   })
 

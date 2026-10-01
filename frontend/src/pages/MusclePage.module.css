@@ -17,6 +17,16 @@
   font-size: 0.6em;
 }
 
+.change {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+}
+
+.change strong {
+  font-size: 1.125rem;
+  color: var(--text);
+}
+
 .subtitle {
   margin: 4px 0 0;
   color: var(--text-muted);
@@ -30,9 +40,8 @@
 /* Week by week */
 
 .strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  display: grid; /* columns match the line chart above */
+  margin-top: 10px;
 }
 
 .week {
@@ -40,7 +49,8 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  padding: 4px;
+  min-width: 0;
+  padding: 4px 0;
   border: none;
   border-radius: 12px;
   background: transparent;
@@ -48,23 +58,23 @@
 }
 
 .week[data-selected] {
-  background: var(--surface-2);
+  background: var(--accent-soft);
 }
 
 .square {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: min(34px, 80%);
+  aspect-ratio: 1;
   border-radius: 9px;
   background: var(--neutral);
   color: var(--text-muted);
   font-size: 0.75rem;
 }
 
-.week[data-selected] .square {
-  outline: 2px solid var(--text);
-  outline-offset: 2px;
+.week[data-selected] .weekDate,
+.week[data-selected] .weekDate strong {
+  color: var(--accent-ink);
 }
 
 .weekDate {
@@ -81,23 +91,12 @@
   color: var(--text);
 }
 
-.weekDetail {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-}
-
-.weekTitle {
-  margin: 0 0 10px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-
 .weekList {
   display: grid;
   gap: 10px;
-  margin: 0;
-  padding: 0;
+  margin: 14px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--border);
   list-style: none;
   font-size: 0.9375rem;
 }

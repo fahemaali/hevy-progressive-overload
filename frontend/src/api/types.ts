@@ -60,6 +60,7 @@ export interface WorkingSet {
 export interface MuscleWeek {
   week_start: string
   trend: Trend
+  change_pct: number | null
   exercises: {
     id: string
     title: string
@@ -88,6 +89,8 @@ export interface Muscle {
   label: string
   state: MuscleState
   stale: boolean
+  change_pct: number | null
+  change_week: string | null
   weeks: MuscleWeek[]
   exercises: StrengthEntry[]
 }
@@ -115,6 +118,8 @@ export interface Plan {
   rep_target: [number, number] | null
   today: Target
   then: Target
+  today_score: number
+  then_score: number
   reps_to_go: number | null
   ahead_of_plan: boolean
 }

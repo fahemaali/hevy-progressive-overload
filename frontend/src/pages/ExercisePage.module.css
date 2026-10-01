@@ -1,55 +1,45 @@
 .header {
-  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 16px;
 }
 
 .title {
-  margin: 0 0 8px;
-  font-size: 1.75rem;
+  margin: 0;
+  font-size: 1.625rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
-.muscle {
-  display: inline-block;
-  padding: 4px 12px;
+/* Hypertrophy / Endurance: small, on the right, the selected one in solid teal. */
+.toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 3px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.muscle:hover {
-  background: var(--surface-2);
-}
-
-/* Strength / Light segmented control */
-
-.toggle {
-  display: inline-flex;
-  gap: 4px;
-  margin-bottom: var(--gap);
-  padding: 4px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface-2);
+  box-shadow: var(--shadow);
 }
 
 .toggleOption {
-  padding: 7px 18px;
+  padding: 6px 12px;
   border: none;
   border-radius: 999px;
   background: transparent;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
 }
 
 .toggleOption[aria-selected='true'] {
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow);
+  background: var(--accent-ink); /* the deeper teal: white text on it passes WCAG AA */
+  color: var(--accent-text);
 }
 
 /* Headline */
@@ -95,9 +85,16 @@
   font-weight: 600;
 }
 
-.best {
-  background: var(--accent);
-  color: var(--accent-text);
+.chipNote {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.bestLine {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
 /* Next session */
@@ -159,32 +156,43 @@
   color: var(--text-muted);
 }
 
-/* Readout under the chart */
+/* Chart legend and readout */
 
-.readout {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin: 14px 0 0;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-.readout dt {
+.legend {
+  display: flex;
+  gap: 18px;
+  margin: -4px 0 12px;
+  padding: 0;
+  list-style: none;
   font-size: 0.75rem;
-  font-weight: 600;
   color: var(--text-muted);
 }
 
-.readout dd {
-  margin: 2px 0 0;
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.keyActual,
+.keyTarget {
+  width: 20px;
+  border-top: 2px solid var(--chart-actual);
+}
+
+.keyTarget {
+  border-top: 2px dashed var(--chart-target);
+}
+
+.readout {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
   font-size: 0.9375rem;
-  font-weight: 600;
+  line-height: 1.6;
 }
 
 .vs {
-  display: block;
-  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--progressing);
 }

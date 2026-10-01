@@ -20,7 +20,7 @@ from backend.domain.progress import (
     StrengthEntry,
 )
 from backend.domain.sessions import SessionSummary
-from backend.domain.targets import Target
+from backend.domain.targets import Target, target_score
 from backend.domain.verdicts import SessionResult, Trend
 
 # Every Hevy muscle group that has a place on the body map.
@@ -160,6 +160,7 @@ class WeekExerciseJSON(TypedDict):
 class WeekJSON(TypedDict):
     week_start: str
     trend: Trend
+    change_pct: float | None  # the muscle's overall change that week
     exercises: list[WeekExerciseJSON]
 
 
@@ -181,6 +182,8 @@ class MuscleJSON(TypedDict):
     label: str
     state: MuscleState
     stale: bool
+    change_pct: float | None  # the latest judged week's overall change
+    change_week: str | None  # which week that was
     weeks: list[WeekJSON]  # oldest first, most recent WEEKS_SHOWN
     exercises: list[StrengthJSON]  # primary first, then most recently trained
 
@@ -189,6 +192,7 @@ def week_json(week: MuscleWeek) -> WeekJSON:
     return {
         "week_start": week.week_start.isoformat(),
         "trend": week.trend,
+        "change_pct": week.change_pct,
         "exercises": [
             {
                 "id": c.exercise.template.id,
@@ -220,11 +224,14 @@ def strength_json(entry: StrengthEntry) -> StrengthJSON:
 
 
 def muscle_json(group: str, summary: MuscleGroupSummary | None, today: date) -> MuscleJSON:
+    current = summary.current if summary else None
     return {
         "group": group,
         "label": muscle_label(group),
         "state": muscle_state(summary),
         "stale": bool(summary and summary.trained_directly and summary.is_stale(today)),
+        "change_pct": current.change_pct if current else None,
+        "change_week": current.week_start.isoformat() if current else None,
         "weeks": [week_json(w) for w in summary.weeks[-WEEKS_SHOWN:]] if summary else [],
         "exercises": [strength_json(e) for e in summary.strength] if summary else [],
     }
@@ -249,6 +256,8 @@ class PlanJSON(TypedDict):
     rep_target: list[int] | None  # [bottom, top] the plan aims for, e.g. [8, 12]
     today: TargetJSON
     then: TargetJSON
+    today_score: float  # the targets in score units, to extend the chart's target line
+    then_score: float
     reps_to_go: int | None
     ahead_of_plan: bool
 
@@ -301,19 +310,21 @@ def session_json(result: SessionResult) -> SessionJSON:
     }
 
 
-def plan_json(plan: Plan) -> PlanJSON:
+def plan_json(plan: Plan, mode: TrackingMode) -> PlanJSON:
     bounds = PLAN_REPS.get(plan.rep_range) if plan.rep_range else None
     return {
         "step": plan.step,
         "rep_target": list(bounds) if bounds else None,
         "today": target_json(plan.today),
         "then": target_json(plan.then),
+        "today_score": round(target_score(mode, plan.today), 2),
+        "then_score": round(target_score(mode, plan.then), 2),
         "reps_to_go": plan.reps_to_go,
         "ahead_of_plan": plan.ahead_of_plan,
     }
 
 
-def range_json(rp: RangeProgress, titles: dict[str, str]) -> RangeJSON:
+def range_json(rp: RangeProgress, mode: TrackingMode, titles: dict[str, str]) -> RangeJSON:
     latest = rp.results[-1]
     capacity: CapacityJSON | None = None
     if rp.capacity:
@@ -333,7 +344,7 @@ def range_json(rp: RangeProgress, titles: dict[str, str]) -> RangeJSON:
         "is_best": latest.is_best,
         "off_best_pct": latest.off_best_pct,
         "sessions": [session_json(r) for r in rp.results],
-        "plan": plan_json(rp.plan),
+        "plan": plan_json(rp.plan, mode),
         "capacity": capacity,
     }
 
@@ -349,7 +360,7 @@ def exercise_json(progress: ExerciseProgress, titles: dict[str, str]) -> Exercis
         "primary_muscle": template.primary_muscle_group,
         "secondary_muscles": list(template.secondary_muscle_groups),
         "default_range": default.rep_range if default else None,
-        "ranges": [range_json(rp, titles) for rp in progress.ranges],
+        "ranges": [range_json(rp, progress.mode, titles) for rp in progress.ranges],
     }
 
 

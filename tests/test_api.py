@@ -74,6 +74,9 @@ def test_muscle(client: FlaskClient) -> None:
     chest = get(client, "/api/muscles/chest")
     assert (chest["label"], chest["state"]) == ("Chest", "progressing")
     assert chest["weeks"][-1]["trend"] == "up"
+    assert chest["change_pct"] == chest["weeks"][-1]["change_pct"]
+    assert chest["change_pct"] is not None and chest["change_pct"] > 2
+    assert chest["change_week"] == "2026-07-20"
     week_dates = [e["date"] for e in chest["weeks"][-1]["exercises"]]
     assert week_dates == sorted(week_dates)  # each exercise carries its session date
     assert week_dates[0] == "2026-07-20"
@@ -115,6 +118,7 @@ def test_exercise(client: FlaskClient) -> None:
     assert last["vs_target"] == -1
     assert strength["plan"]["step"] == "building"
     assert strength["plan"]["rep_target"] == [8, 12]
+    assert strength["plan"]["today_score"] == pytest.approx(52.5 * (1 + 8 / 30), abs=0.01)
     assert strength["plan"]["today"]["weight_kg"] == 52.5
 
 

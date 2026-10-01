@@ -10,6 +10,8 @@ function plan(overrides: Partial<Plan>): Plan {
     rep_target: [8, 12],
     today: target,
     then: target,
+    today_score: 66,
+    then_score: 67.5,
     reps_to_go: 3,
     ahead_of_plan: false,
     ...overrides,

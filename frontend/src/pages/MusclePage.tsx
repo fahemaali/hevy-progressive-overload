@@ -6,7 +6,9 @@ import { STATE_STYLES, STATUS_STATES } from '../bodymap/states'
 import { Card } from '../components/Card'
 import { ErrorMessage, Loading } from '../components/Feedback'
 import { TrendMark } from '../components/TrendMark'
-import { formatBestSet, kg, shortDate } from '../format'
+import { ColumnLineChart } from '../charts/ColumnLineChart'
+import { formatBestSet, kg, pct, shortDate } from '../format'
+import { RANGE_NAMES } from '../ranges'
 import { TREND_INFO } from '../trends'
 import styles from './MusclePage.module.css'
 
@@ -42,6 +44,11 @@ function MuscleView({ muscle }: { muscle: Muscle }) {
           {muscle.label}
           <span className="visually-hidden">: {style.label}</span>
         </h1>
+        {muscle.change_pct !== null && muscle.change_week && (
+          <p className={styles.change}>
+            <strong>{pct(muscle.change_pct)}</strong> in the week of {shortDate(muscle.change_week)}
+          </p>
+        )}
         {!hasStatus && <p className={styles.subtitle}>{style.label}</p>}
         {muscle.stale && <p className={styles.subtitle}>Not trained in 3+ weeks</p>}
       </header>
@@ -66,26 +73,51 @@ function MuscleView({ muscle }: { muscle: Muscle }) {
 
 const JUDGED: Trend[] = ['up', 'flat', 'down']
 
-/** A strip of recent weeks, coloured by status; pick one to see its sessions. */
+/** Weekly % change as a line, over a strip of week squares; pick one to see its sessions. */
 function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
   const lastJudged = weeks.findLastIndex((w) => JUDGED.includes(w.trend))
   const [selected, setSelected] = useState(lastJudged >= 0 ? lastJudged : weeks.length - 1)
   const week = weeks[selected]
+  const columns = `repeat(${weeks.length}, minmax(0, 1fr))`
+  const hasLine = weeks.some((w) => w.change_pct !== null)
 
   return (
     <Card title="Week by week">
-      <div className={styles.strip} role="radiogroup" aria-label="Week">
+      {hasLine && (
+        <ColumnLineChart
+          label="Change each week"
+          columns={weeks.map((w) => ({ key: w.week_start, ariaLabel: shortDate(w.week_start) }))}
+          lines={[{ values: weeks.map((w) => w.change_pct), variant: 'trend' }]}
+          dots={weeks.flatMap((w, i) =>
+            w.change_pct === null
+              ? []
+              : [{ column: i, value: w.change_pct, color: TREND_INFO[w.trend].color }],
+          )}
+          zeroLine
+          height={88}
+          selected={selected}
+          callout={week.change_pct !== null ? pct(week.change_pct) : undefined}
+        />
+      )}
+
+      <div
+        className={styles.strip}
+        style={{ gridTemplateColumns: columns }}
+        role="radiogroup"
+        aria-label="Week"
+      >
         {weeks.map((w, i) => {
           const info = TREND_INFO[w.trend]
           const judged = JUDGED.includes(w.trend)
           const [day, month] = shortDate(w.week_start).split(' ')
+          const change = w.change_pct !== null ? `, ${pct(w.change_pct)}` : ''
           return (
             <button
               key={w.week_start}
               type="button"
               role="radio"
               aria-checked={i === selected}
-              aria-label={`Week of ${shortDate(w.week_start)}: ${info.label}`}
+              aria-label={`Week of ${shortDate(w.week_start)}: ${info.label}${change}`}
               className={styles.week}
               data-selected={i === selected || undefined}
               onClick={() => setSelected(i)}
@@ -105,30 +137,28 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
         })}
       </div>
 
-      <div className={styles.weekDetail} aria-live="polite">
-        <h3 className={styles.weekTitle}>
-          Week of {shortDate(week.week_start)} · <TrendMark trend={week.trend} showLabel />
-        </h3>
-        <ul className={styles.weekList}>
-          {week.exercises.map((e, i) => (
-            <li key={`${e.id}-${e.date}-${i}`}>
-              {e.trend === 'new' ? (
-                <span className={styles.newTag}>New</span>
-              ) : (
-                <TrendMark trend={e.trend} />
-              )}
-              <Link to={`/exercises/${e.id}`} className={styles.weekExercise}>
-                {e.title}
-              </Link>
-              <span className={styles.weekMeta}>
-                {shortDate(e.date)}
-                {e.rep_range && ` · ${e.rep_range}`}
-                {e.role === 'secondary' && ' · indirect'}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul
+        className={styles.weekList}
+        aria-label={`Sessions in the week of ${shortDate(week.week_start)}`}
+      >
+        {week.exercises.map((e, i) => (
+          <li key={`${e.id}-${e.date}-${i}`}>
+            {e.trend === 'new' ? (
+              <span className={styles.newTag}>New</span>
+            ) : (
+              <TrendMark trend={e.trend} />
+            )}
+            <Link to={`/exercises/${e.id}`} className={styles.weekExercise}>
+              {e.title}
+            </Link>
+            <span className={styles.weekMeta}>
+              {shortDate(e.date)}
+              {e.rep_range && ` · ${RANGE_NAMES[e.rep_range].toLowerCase()}`}
+              {e.role === 'secondary' && ' · indirect'}
+            </span>
+          </li>
+        ))}
+      </ul>
     </Card>
   )
 }

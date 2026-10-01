@@ -93,10 +93,13 @@ export const bicepsMuscle: Muscle = {
   label: 'Biceps',
   state: 'progressing',
   stale: false,
+  change_pct: 14.4,
+  change_week: '2026-09-21',
   weeks: [
     {
       week_start: '2026-09-07',
       trend: 'down',
+      change_pct: -4.5,
       exercises: [
         {
           id: 'PULL',
@@ -111,6 +114,7 @@ export const bicepsMuscle: Muscle = {
     {
       week_start: '2026-09-21',
       trend: 'up',
+      change_pct: 14.4,
       exercises: [
         // Oldest first, as the API sends them.
         {
@@ -139,7 +143,7 @@ export const bicepsMuscle: Muscle = {
         },
       ],
     },
-    { week_start: '2026-09-28', trend: 'insufficient', exercises: [] },
+    { week_start: '2026-09-28', trend: 'insufficient', change_pct: null, exercises: [] },
   ],
   exercises: [
     {
@@ -219,6 +223,8 @@ export const rowExercise: Exercise = {
         rep_target: [8, 12],
         today: target(29.5, 8),
         then: target(29.5, 9),
+        today_score: 37.37,
+        then_score: 38.35,
         reps_to_go: 5,
         ahead_of_plan: true,
       },
@@ -252,6 +258,8 @@ export const rowExercise: Exercise = {
         rep_target: [15, 20],
         today: target(9, 20),
         then: target(14, 15),
+        today_score: 15,
+        then_score: 21,
         reps_to_go: null,
         ahead_of_plan: false,
       },

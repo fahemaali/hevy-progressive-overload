@@ -47,10 +47,14 @@ Tag warm-ups in Hevy by tapping the set number and choosing **W**.)
 Each exercise is tracked as two separate progressions, because a heavy session and a light,
 high-rep one can't be compared fairly (see e1RM below):
 
-| Range | Sets counted | Plan aims for |
-| --- | --- | --- |
-| **Strength** (the default view) | up to 12 reps | 8–12 reps |
-| **Light** | 13+ reps | 15–20 reps |
+| Range | Shown as | Sets counted | Plan aims for |
+| --- | --- | --- | --- |
+| **Strength** (the default view) | **Hypertrophy** | up to 12 reps | 8–12 reps |
+| **Light** | **Endurance** | 13+ reps | 15–20 reps |
+
+The screen uses the established training terms (NSCA): hypertrophy for roughly 6–12 reps and
+muscular endurance for 12+, which match the plan's targets. (The code calls them strength and
+light.)
 
 A session with both heavy and light sets counts once in each range.
 
@@ -138,6 +142,12 @@ of an exercise that trains it:
 - **▲ Progressing** if more than half of the counted weight is ▲; **▼ Declining** if more than
   half is ▼; otherwise **● Not progressing**.
 - New-baseline sessions don't count.
+
+A muscle's **% change** for a week is the average of its judged exercises' changes against
+their recent level (secondary count half; for assisted exercises less assistance counts as
+positive), each capped at **±25%** so one big early jump can't dominate (e.g. back extensions
+going from 5 kg to 10 kg would otherwise read +110%). Shown under the muscle's name for its
+latest judged week, and as a line over the week-by-week strip.
 
 A muscle's **current status** is its most recent week that could be judged. Each muscle also
 has a **strength list**: every exercise that trains it (primary first, then most recent), with
