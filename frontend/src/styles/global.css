@@ -3,7 +3,7 @@
  * look can be changed in one place.
  *
  * One brand theme: aqua cards on a slightly lighter aqua page, navy text, a teal
- * accent and mint highlights. Status colours differ in lightness as well as hue,
+ * accent and light-aqua highlights. Status colours differ in lightness as well as hue,
  * so they stay distinguishable with red-green colour blindness; they're always
  * paired with ▲ ● ▼ symbols or labels too.
  */
@@ -28,7 +28,7 @@
   --accent: #0d8f84; /* fills: logo, outlines */
   --accent-ink: #086a62; /* teal text: darker, so it's readable on aqua (WCAG AA) */
   --accent-text: #ffffff;
-  --accent-soft: #def5e5; /* mint: the selected tab and highlights */
+  --accent-soft: #e8f9ff; /* light aqua: the selected tab and highlights */
 
   --progressing: #16a34a;
   --not-progressing: #df8f00;
