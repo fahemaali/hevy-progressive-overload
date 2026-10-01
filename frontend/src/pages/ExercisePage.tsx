@@ -170,10 +170,12 @@ function ProgressCard({ exercise, range }: { exercise: Exercise; range: RangePro
         ]}
         dots={dots}
         invert={exercise.lower_is_better}
-        yAxis={{ format: (v) => `${kg(v)}${axisUnit(exercise.mode)}` }}
+        yAxis={{
+          title: axisName(exercise.mode),
+          format: (v) => `${kg(v)}${axisUnit(exercise.mode)}`,
+        }}
         height={180}
       />
-      <p className={styles.axisNote}>{axisName(exercise.mode)}</p>
     </Card>
   )
 }

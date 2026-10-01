@@ -25,12 +25,15 @@ interface Props {
   height?: number
   invert?: boolean // lower is better: the scale flips so "up" always means progress
   zeroLine?: boolean // for changes: a baseline at 0, and a range balanced around it
-  yAxis?: { format: (value: number) => string } // value labels and gridlines on the left
+  // Value labels and gridlines on the left, with a title at the top of the axis.
+  yAxis?: { title: string; format: (value: number) => string }
   highlight?: number // a column whose dot is drawn larger
   callout?: string // a short label above the highlighted column's top dot
 }
 
 const TICK_COUNT = 4
+// The y-axis always spans at least this fraction of the values (20%).
+const MIN_SPAN = 0.2
 
 /**
  * Equal-width columns with lines through them. Lines and gridlines are drawn in a
@@ -60,88 +63,95 @@ export function ColumnLineChart({
   const hasLabels = columns.some((c) => c.label)
 
   return (
-    <figure className={styles.chart} data-y-axis={yAxis ? true : undefined} aria-label={label}>
+    <figure className={styles.figure} aria-label={label}>
       {yAxis && (
-        <div className={styles.yAxis} style={{ height }} aria-hidden="true">
-          {ticks.map((t) => (
-            <span key={t} className={styles.tick} style={{ top: `${y(t)}%` }}>
-              {yAxis.format(t)}
-            </span>
-          ))}
-        </div>
+        <figcaption className={styles.yTitle} aria-hidden="true">
+          {yAxis.title}
+        </figcaption>
       )}
-
-      <div className={styles.body}>
-        <div className={styles.plot} style={{ height }}>
-          <svg
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            className={styles.svg}
-            aria-hidden="true"
-          >
+      <div className={styles.chart}>
+        {yAxis && (
+          <div className={styles.yAxis} style={{ height }} aria-hidden="true">
             {ticks.map((t) => (
-              <line key={t} x1="0" x2="100" y1={y(t)} y2={y(t)} className={styles.grid} />
-            ))}
-            {zeroLine && <line x1="0" x2="100" y1={y(0)} y2={y(0)} className={styles.grid} />}
-            {yAxis && (
-              <>
-                <line x1="0" x2="0" y1="0" y2="100" className={styles.axis} />
-                <line x1="0" x2="100" y1="100" y2="100" className={styles.axis} />
-              </>
-            )}
-            {lines.flatMap((line, li) =>
-              segments(line.values).map((seg, si) => (
-                <polyline
-                  key={`${li}-${si}`}
-                  points={seg.map((i) => `${x(i)},${y(line.values[i]!)}`).join(' ')}
-                  className={styles[line.variant]}
-                />
-              )),
-            )}
-          </svg>
-          {dots.map((d, i) => (
-            <span
-              key={i}
-              className={styles.dot}
-              data-hollow={d.hollow || undefined}
-              data-highlight={d.column === highlight || undefined}
-              style={
-                {
-                  left: `${x(d.column)}%`,
-                  top: `${y(d.value)}%`,
-                  '--dot': d.color,
-                } as React.CSSProperties
-              }
-            />
-          ))}
-          {callout && top && (
-            <span
-              className={styles.callout}
-              style={{ left: `${x(top.column)}%`, top: `${y(top.value)}%` }}
-            >
-              {callout}
-            </span>
-          )}
-        </div>
-
-        {hasLabels && (
-          <div
-            className={styles.labels}
-            style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
-            aria-hidden="true"
-          >
-            {columns.map((c) => (
-              <span key={c.key} className={styles.label}>
-                {c.label && (
-                  <>
-                    <strong>{c.label[0]}</strong>
-                    {c.label[1]}
-                  </>
-                )}
+              <span key={t} className={styles.tick} style={{ top: `${y(t)}%` }}>
+                {yAxis.format(t)}
               </span>
             ))}
           </div>
         )}
+
+        <div className={styles.body}>
+          <div className={styles.plot} style={{ height }}>
+            <svg
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              className={styles.svg}
+              aria-hidden="true"
+            >
+              {ticks.map((t) => (
+                <line key={t} x1="0" x2="100" y1={y(t)} y2={y(t)} className={styles.grid} />
+              ))}
+              {zeroLine && <line x1="0" x2="100" y1={y(0)} y2={y(0)} className={styles.grid} />}
+              {yAxis && (
+                <>
+                  <line x1="0" x2="0" y1="0" y2="100" className={styles.axis} />
+                  <line x1="0" x2="100" y1="100" y2="100" className={styles.axis} />
+                </>
+              )}
+              {lines.flatMap((line, li) =>
+                segments(line.values).map((seg, si) => (
+                  <polyline
+                    key={`${li}-${si}`}
+                    points={seg.map((i) => `${x(i)},${y(line.values[i]!)}`).join(' ')}
+                    className={styles[line.variant]}
+                  />
+                )),
+              )}
+            </svg>
+            {dots.map((d, i) => (
+              <span
+                key={i}
+                className={styles.dot}
+                data-hollow={d.hollow || undefined}
+                data-highlight={d.column === highlight || undefined}
+                style={
+                  {
+                    left: `${x(d.column)}%`,
+                    top: `${y(d.value)}%`,
+                    '--dot': d.color,
+                  } as React.CSSProperties
+                }
+              />
+            ))}
+            {callout && top && (
+              <span
+                className={styles.callout}
+                style={{ left: `${x(top.column)}%`, top: `${y(top.value)}%` }}
+              >
+                {callout}
+              </span>
+            )}
+          </div>
+
+          {hasLabels && (
+            <div
+              className={styles.labels}
+              style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
+              aria-hidden="true"
+            >
+              {columns.map((c) => (
+                <span key={c.key} className={styles.label}>
+                  {c.label && (
+                    <>
+                      <strong>{c.label[0]}</strong>
+                      {c.label[1]}
+                    </>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </figure>
   )
@@ -162,7 +172,13 @@ function scale(
     min = -reach * 1.15
     max = reach * 1.15
   } else if (opts.withTicks) {
-    const step = niceStep((max - min || Math.abs(max) || 1) / (TICK_COUNT - 1))
+    // Never zoom in so far that a tiny difference looks like a big jump: show a
+    // span of at least MIN_SPAN of the values, plus some room above and below.
+    const middle = (min + max) / 2
+    const span = Math.max(max - min, Math.abs(middle) * MIN_SPAN, 1)
+    min = Math.min(min, middle - span / 2) - span * 0.1
+    max = Math.max(max, middle + span / 2) + span * 0.1
+    const step = niceStep((max - min) / (TICK_COUNT - 1))
     min = Math.floor(min / step) * step
     max = Math.ceil(max / step) * step
     if (min === max) max = min + step

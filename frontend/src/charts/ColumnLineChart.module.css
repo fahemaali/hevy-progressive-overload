@@ -1,6 +1,17 @@
+.figure {
+  margin: 0;
+}
+
+/* The y-axis title sits at the top of the axis, above its values. */
+.yTitle {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 .chart {
   display: flex;
-  margin: 0;
 }
 
 .yAxis {
