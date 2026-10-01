@@ -4,16 +4,33 @@ import { formatSet, formatTarget, plural, shortDate } from '../format'
 import { planNote } from './planNote'
 import styles from './SessionDeck.module.css'
 
-const TITLES = ['Last session', 'This session', 'Next session']
-const THIS_SESSION = 1
+// With more cards than this, a "3 / 12" counter replaces the dots.
+const MAX_DOTS = 8
 
 /**
- * Last · This · Next session as a deck of cards: this session in front and centre,
- * the other two peeking out behind it. Swipe, or use the arrows or dots.
+ * Your sessions as a deck of cards: every past session (oldest first), then this
+ * session and the next. Opens on this session, in front and centre, with its
+ * neighbours peeking out. Swipe, or use the arrows or dots.
  */
-export function SessionDeck({ last, plan, mode }: { last: Session; plan: Plan; mode: Mode }) {
+export function SessionDeck({
+  sessions,
+  plan,
+  mode,
+}: {
+  sessions: Session[]
+  plan: Plan
+  mode: Mode
+}) {
   const trackRef = useRef<HTMLDivElement>(null)
-  const [active, setActive] = useState(THIS_SESSION)
+  const thisSession = sessions.length
+  const titles = [
+    ...sessions.map((s, i) =>
+      i === sessions.length - 1 ? 'Last session' : `Session on ${shortDate(s.date)}`,
+    ),
+    'This session',
+    'Next session',
+  ]
+  const [active, setActive] = useState(thisSession)
 
   const scrollTo = (index: number, smooth = true) => {
     const track = trackRef.current
@@ -29,7 +46,7 @@ export function SessionDeck({ last, plan, mode }: { last: Session; plan: Plan; m
   }
 
   // Start with this session centred.
-  useLayoutEffect(() => scrollTo(THIS_SESSION, false), [])
+  useLayoutEffect(() => scrollTo(thisSession, false), [thisSession])
 
   // When swiping, the card nearest the middle becomes the active one.
   const onScroll = () => {
@@ -50,20 +67,22 @@ export function SessionDeck({ last, plan, mode }: { last: Session; plan: Plan; m
   return (
     <section className={styles.deck} aria-roledescription="carousel" aria-label="Sessions">
       <div className={styles.track} ref={trackRef} onScroll={onScroll}>
-        {TITLES.map((title, i) => (
+        {titles.map((title, i) => (
           <article
             key={title}
             className={styles.card}
             data-active={i === active || undefined}
-            data-this={i === THIS_SESSION || undefined}
+            data-this={i === thisSession || undefined}
             aria-roledescription="slide"
-            aria-label={`${title}, ${i + 1} of 3`}
+            aria-label={`${title}, ${i + 1} of ${titles.length}`}
             aria-hidden={i !== active}
             onClick={() => i !== active && go(i)}
           >
-            {i === 0 && <LastCard session={last} mode={mode} />}
-            {i === 1 && <ThisCard plan={plan} mode={mode} />}
-            {i === 2 && <NextCard plan={plan} mode={mode} />}
+            {i < thisSession && (
+              <PastCard session={sessions[i]} mode={mode} isLast={i === thisSession - 1} />
+            )}
+            {i === thisSession && <ThisCard plan={plan} mode={mode} />}
+            {i === thisSession + 1 && <NextCard plan={plan} mode={mode} />}
           </article>
         ))}
       </div>
@@ -78,24 +97,30 @@ export function SessionDeck({ last, plan, mode }: { last: Session; plan: Plan; m
         >
           ‹
         </button>
-        <div className={styles.dots} role="tablist" aria-label="Choose a session">
-          {TITLES.map((title, i) => (
-            <button
-              key={title}
-              type="button"
-              role="tab"
-              aria-selected={i === active}
-              aria-label={title}
-              className={styles.dot}
-              onClick={() => go(i)}
-            />
-          ))}
-        </div>
+        {titles.length <= MAX_DOTS ? (
+          <div className={styles.dots} role="tablist" aria-label="Choose a session">
+            {titles.map((title, i) => (
+              <button
+                key={title}
+                type="button"
+                role="tab"
+                aria-selected={i === active}
+                aria-label={title}
+                className={styles.dot}
+                onClick={() => go(i)}
+              />
+            ))}
+          </div>
+        ) : (
+          <span className={styles.counter} aria-live="polite">
+            {active + 1} / {titles.length}
+          </span>
+        )}
         <button
           type="button"
           className={styles.arrow}
           aria-label="Next session"
-          disabled={active === TITLES.length - 1}
+          disabled={active === titles.length - 1}
           onClick={() => go(active + 1)}
         >
           ›
@@ -105,12 +130,18 @@ export function SessionDeck({ last, plan, mode }: { last: Session; plan: Plan; m
   )
 }
 
-function LastCard({ session, mode }: { session: Session; mode: Mode }) {
+function PastCard({ session, mode, isLast }: { session: Session; mode: Mode; isLast: boolean }) {
   const result = session.vs_target === 1 ? 'beaten' : session.vs_target === 0 ? 'hit' : 'missed'
   return (
     <>
       <p className={styles.kicker}>
-        Last session <span>· {shortDate(session.date)}</span>
+        {isLast ? (
+          <>
+            Last session <span>· {shortDate(session.date)}</span>
+          </>
+        ) : (
+          shortDate(session.date)
+        )}
       </p>
       <p className={styles.big}>{formatSet(session.did, mode)}</p>
       <p className={styles.detail}>

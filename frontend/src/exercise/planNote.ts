@@ -11,6 +11,8 @@ export function planNote(plan: Plan, mode: Mode): string {
       return `Hit ${top} · repeat to confirm`
     case 'add_weight':
       return mode === 'assisted' ? 'Confirmed · less assistance' : 'Confirmed · add weight'
+    case 'catch_up':
+      return 'Back on track with the plan'
     case 'stalled':
       return 'Stalled 3 sessions · step back and rebuild'
     case 'building':

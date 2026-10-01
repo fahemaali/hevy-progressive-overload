@@ -49,13 +49,14 @@ describe('exercise page', () => {
     expect(labels.map((l) => l.textContent)).toEqual(['15', '25', 'This', 'Next'])
   })
 
-  it('shows last, this and next session as a deck, starting on this session', async () => {
+  it('shows every recent session as a card, then this and next, opening on this one', async () => {
     setup()
     await screen.findByRole('region', { name: 'Sessions' })
     expect(slides().map((s) => s.getAttribute('aria-label'))).toEqual([
-      'Last session, 1 of 3',
-      'This session, 2 of 3',
-      'Next session, 3 of 3',
+      'Session on 15 Sept, 1 of 4',
+      'Last session, 2 of 4',
+      'This session, 3 of 4',
+      'Next session, 4 of 4',
     ])
     expect(activeSlide()).toHaveTextContent('29.5 kg × 8')
     expect(activeSlide()).toHaveTextContent('2 sets · 5 reps to go before adding weight')
@@ -65,14 +66,41 @@ describe('exercise page', () => {
   it('moves through the deck with the arrows and dots', async () => {
     setup()
     await userEvent.click(await screen.findByRole('button', { name: 'Previous session' }))
-    expect(activeSlide()).toHaveAccessibleName('Last session, 1 of 3')
+    expect(activeSlide()).toHaveAccessibleName('Last session, 2 of 4')
     expect(activeSlide()).toHaveTextContent('29.5 kg × 7, 7')
     expect(activeSlide()).toHaveTextContent('Target was 22.5 kg × 11 · ✓ beaten')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Previous session' }))
+    expect(activeSlide()).toHaveTextContent('15 Sept22.5 kg × 10, 10')
     expect(screen.getByRole('button', { name: 'Previous session' })).toBeDisabled()
 
     await userEvent.click(screen.getByRole('tab', { name: 'Next session' }))
     expect(activeSlide()).toHaveTextContent('29.5 kg × 9')
     expect(activeSlide()).toHaveTextContent("If you hit this session's target")
+  })
+
+  it('shows the last 3 months of sessions, in the cards and the graph alike', async () => {
+    const [strength, light] = rowExercise.ranges
+    const old = { ...strength.sessions[0], date: '2026-05-01' } // well over 12 weeks earlier
+    setup({
+      ...rowExercise,
+      ranges: [{ ...strength, sessions: [old, ...strength.sessions] }, light],
+    })
+    await screen.findByRole('region', { name: 'Sessions' })
+    expect(slides()).toHaveLength(4) // 15 Sept, 25 Sept, this, next
+    const progress = screen.getByRole('region', { name: 'Progress' })
+    expect(within(progress).queryByText('May')).toBeNull()
+  })
+
+  it('swaps the dots for a counter when there are many sessions', async () => {
+    const [strength, light] = rowExercise.ranges
+    const many = Array.from({ length: 8 }, (_, i) => ({
+      ...strength.sessions[1],
+      date: `2026-09-${String(i + 10).padStart(2, '0')}`,
+    }))
+    setup({ ...rowExercise, ranges: [{ ...strength, sessions: many }, light] })
+    expect(await screen.findByText('9 / 10')).toBeInTheDocument()
+    expect(screen.queryByRole('tablist', { name: 'Choose a session' })).toBeNull()
   })
 
   it('says when the last session was the first one', async () => {
@@ -102,16 +130,6 @@ describe('exercise page', () => {
     expect(activeSlide()).toHaveTextContent('9 kg × 20')
     expect(activeSlide()).toHaveTextContent('Hit 20 · repeat to confirm')
     expect(screen.queryByRole('region', { name: 'Tip!' })).toBeNull()
-  })
-
-  it('has a table of every session, newest first', async () => {
-    setup()
-    await userEvent.click(await screen.findByText('All sessions (2)'))
-    const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1)
-    expect(rows.map((r) => within(r).getAllByRole('cell')[0].textContent)).toEqual([
-      '25 Sept',
-      '15 Sept',
-    ])
   })
 
   it('has no range toggle when there is only one range', async () => {

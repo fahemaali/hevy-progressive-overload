@@ -26,6 +26,7 @@ describe('planNote', () => {
     [plan({ step: 'add_weight' }), 'load', 'Confirmed · add weight'],
     [plan({ step: 'add_weight' }), 'assisted', 'Confirmed · less assistance'],
     [plan({ step: 'stalled' }), 'load', 'Stalled 3 sessions · step back and rebuild'],
+    [plan({ step: 'catch_up' }), 'load', 'Back on track with the plan'],
     [plan({ rep_target: null, reps_to_go: null }), 'reps', 'One more rep than last time'],
     [plan({ rep_target: null, reps_to_go: null }), 'duration', '5 seconds longer than last time'],
   ] as const)('%#: %s', (p, mode, expected) => {

@@ -3,8 +3,9 @@ The plan: double progression with 2-for-2 confirmation (see REQUIREMENTS.md).
 
 Same weight, one more rep each session, up to the top of the rep range. Reach the
 top on all working sets twice in a row, then add weight and drop to the bottom
-of the range. Three sessions at one weight without beating the session before:
-step back about 10% and rebuild.
+of the range. Fall short of a target: the plan holds it rather than lowering itself.
+Three sessions at one weight without beating the session before: step back about
+10% and rebuild (the one planned drop).
 """
 
 from dataclasses import dataclass, replace
@@ -34,6 +35,7 @@ class PlanStep(StrEnum):
     CONFIRM = "confirm"  # hit the top of the range once: repeat it
     ADD_WEIGHT = "add_weight"  # hit the top twice in a row: move up
     STALLED = "stalled"  # stuck at one weight: step back and rebuild
+    CATCH_UP = "catch_up"  # fell short of the last target: hold it, don't lower the plan
 
 
 @dataclass(frozen=True)
@@ -72,7 +74,35 @@ def plan_next(template: ExerciseTemplate, results: list[SessionResult]) -> Plan 
 def next_target(
     template: ExerciseTemplate, mode: TrackingMode, results: list[SessionResult]
 ) -> tuple[PlanStep, Target]:
-    """What to aim for after the given results (one rep range, oldest first, not empty)."""
+    """What to aim for after the given results (one rep range, oldest first, not empty).
+
+    The plan never lowers itself because a session fell short: if the target worked
+    out from the last session is easier than the one that session was set, the plan
+    holds that target instead. The only planned drop is a deliberate stall step-back.
+    """
+    step, target = _from_last_session(template, mode, results)
+    previous = results[-1].target
+    if previous is not None and step is not PlanStep.STALLED and _easier(mode, target, previous):
+        return PlanStep.CATCH_UP, replace(previous, sets=target.sets)
+    return step, target
+
+
+def _easier(mode: TrackingMode, a: Target, b: Target) -> bool:
+    """Is target `a` easier than target `b`? (Lighter, or the same weight for fewer reps.)"""
+    if mode is TrackingMode.REPS:
+        return (a.reps or 0) < (b.reps or 0)
+    if mode is TrackingMode.DURATION:
+        return (a.duration_seconds or 0) < (b.duration_seconds or 0)
+    a_weight, b_weight = a.weight_kg or 0, b.weight_kg or 0
+    if mode is TrackingMode.ASSISTED:  # more assistance is easier
+        a_weight, b_weight = -a_weight, -b_weight
+    return (a_weight, a.reps or 0) < (b_weight, b.reps or 0)
+
+
+def _from_last_session(
+    template: ExerciseTemplate, mode: TrackingMode, results: list[SessionResult]
+) -> tuple[PlanStep, Target]:
+    """Double progression from the last session alone."""
     last = results[-1].session
 
     if mode is TrackingMode.REPS:

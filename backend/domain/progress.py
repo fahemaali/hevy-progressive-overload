@@ -107,7 +107,7 @@ def _with_capacity(progress: dict[str, ExerciseProgress]) -> dict[str, ExerciseP
                     rp.rep_range,
                     rp.results,
                     rp.plan,
-                    capacity_hint(p.template, list(rp.results), weighted),
+                    capacity_hint(p.template, list(rp.results), weighted, rp.plan.today.weight_kg),
                 )
                 for rp in p.ranges
             )

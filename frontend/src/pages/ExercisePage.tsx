@@ -7,7 +7,7 @@ import { ErrorMessage, Loading } from '../components/Feedback'
 import { TrendMark } from '../components/TrendMark'
 import { ColumnLineChart } from '../charts/ColumnLineChart'
 import { SessionDeck } from '../exercise/SessionDeck'
-import { formatSet, formatTarget, kg, pct, shortDate } from '../format'
+import { kg, pct, shortDate } from '../format'
 import { RANGE_NAMES, RANGE_REPS } from '../ranges'
 import { TREND_INFO } from '../trends'
 import styles from './ExercisePage.module.css'
@@ -64,28 +64,36 @@ function ExerciseView({ exercise }: { exercise: Exercise }) {
   )
 }
 
+// The cards and the graph show this much history (about one training block).
+const HISTORY_DAYS = 84
+
 function RangeView({ exercise, range }: { exercise: Exercise; range: RangeProgress }) {
   const mode = exercise.mode
-  const last = range.sessions[range.sessions.length - 1]
+  const sessions = recentSessions(range.sessions)
 
   return (
     <>
-      <ProgressCard exercise={exercise} range={range} />
-      <SessionDeck last={last} plan={range.plan} mode={mode} />
+      <ProgressCard exercise={exercise} range={range} sessions={sessions} />
+      <SessionDeck sessions={sessions} plan={range.plan} mode={mode} />
 
       {range.capacity && (
         <Card title="Tip!">
           <p className={styles.tip}>
             Try <strong>{kg(range.capacity.weight_kg)} kg</strong>. Your other{' '}
-            {muscleName(exercise.primary_muscle)} exercises are up {kg(range.capacity.change_pct)}%{' '}
+            {muscleName(exercise.primary_muscle)} exercises are up {kg(range.capacity.change_pct)}%
             ({range.capacity.evidence.map((e) => e.title).join(', ')}).
           </p>
         </Card>
       )}
-
-      <SessionTable sessions={range.sessions} mode={mode} />
     </>
   )
+}
+
+/** Sessions from the last HISTORY_DAYS before the latest one (always at least the latest). */
+function recentSessions(sessions: Session[]): Session[] {
+  const latest = Date.parse(sessions[sessions.length - 1].date)
+  const from = latest - HISTORY_DAYS * 24 * 60 * 60 * 1000
+  return sessions.filter((s) => Date.parse(s.date) >= from)
 }
 
 /**
@@ -93,9 +101,17 @@ function RangeView({ exercise, range }: { exercise: Exercise; range: RangeProgre
  * (dashed), continuing into this session and the next. For a first session the plan
  * is simply what you did, so the plan line runs unbroken from the start.
  */
-function ProgressCard({ exercise, range }: { exercise: Exercise; range: RangeProgress }) {
+function ProgressCard({
+  exercise,
+  range,
+  sessions,
+}: {
+  exercise: Exercise
+  range: RangeProgress
+  sessions: Session[]
+}) {
   const mode = exercise.mode
-  const past = range.sessions
+  const past = sessions
   const planned = [
     { name: 'This', value: targetValue(range.plan.today, mode) },
     { name: 'Next', value: targetValue(range.plan.then, mode) },
@@ -170,49 +186,6 @@ function targetValue(target: Target, mode: Mode): number {
   if (mode === 'reps') return target.reps ?? 0
   if (mode === 'duration') return target.duration_seconds ?? 0
   return target.weight_kg ?? 0
-}
-
-function VsTarget({ value }: { value: Session['vs_target'] }) {
-  if (value === null) return null
-  const text = value === 1 ? 'beaten' : value === 0 ? 'hit' : 'missed'
-  return (
-    <span className={styles.vs} data-missed={value === -1 || undefined}>
-      {value >= 0 ? '✓' : '✗'} {text}
-    </span>
-  )
-}
-
-/** Every session as a table: the chart's readable-without-a-chart twin. */
-function SessionTable({ sessions, mode }: { sessions: Session[]; mode: Mode }) {
-  return (
-    <details className={styles.details}>
-      <summary>All sessions ({sessions.length})</summary>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">You lifted</th>
-            <th scope="col">Target</th>
-            <th scope="col">Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[...sessions].reverse().map((s, i) => (
-            <tr key={`${s.date}-${i}`}>
-              <td>{shortDate(s.date)}</td>
-              <td>{formatSet(s.did, mode)}</td>
-              <td>
-                {s.target ? formatTarget(s.target, mode) : '–'} <VsTarget value={s.vs_target} />
-              </td>
-              <td>
-                {s.trend === 'new' ? 'First session' : <TrendMark trend={s.trend} showLabel />}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </details>
-  )
 }
 
 /** What the chart's y-axis measures, per exercise type. */

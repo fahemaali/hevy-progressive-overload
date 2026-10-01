@@ -83,7 +83,10 @@ For each exercise and rep range, the next target comes from the latest sessions:
    doesn't push the weight up too early. *"Hit 12 · repeat to confirm"*
 3. **Add weight:** reached the top on all working sets **two sessions in a row** → add one
    increment and drop to the bottom of the range. *"Confirmed · add weight"*
-4. **Stalled:** 3 sessions in a row at the same weight, none better than the session before it
+4. **Falling short:** if a session misses its target (lighter, or fewer reps), the plan holds
+   that target rather than lowering itself. *"Back on track: 45 kg × 5"*. The plan only ever
+   goes up or stays level, apart from a deliberate stall step-back.
+5. **Stalled:** 3 sessions in a row at the same weight, none better than the session before it
    (no higher score, no extra total reps) → step back about 10%, in whole increments (at least
    one), and build up again.
    *"Stalled 3 sessions · step back"*

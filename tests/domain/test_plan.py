@@ -1,5 +1,7 @@
 """Double progression with 2-for-2 confirmation, and the stall rule."""
 
+from itertools import pairwise
+
 import pytest
 
 from backend.domain.models import ExerciseTemplate, LoggedSet
@@ -160,3 +162,53 @@ def test_reps_only_and_duration() -> None:
 def test_untracked_types_have_no_plan(type_: str) -> None:
     progress = analyse_exercise(template(type_=type_), weekly((hold(600),)))
     assert progress.ranges == ()
+
+
+# --- Never lowered by a bad day -------------------------------------------------------
+
+
+def test_falling_short_holds_the_target_instead_of_lowering_it() -> None:
+    # 45 kg × 4, so the plan asked for 45 × 5; then a lighter session at 35 kg.
+    plan = plan_after(sets(45, 4), sets(35, 8, 12), t=template(equipment="barbell"))
+    assert plan.step is PlanStep.CATCH_UP
+    assert plan.today == target(45, 5, n_sets=2)  # back on track, not down to 35
+    assert plan.then == target(45, 6, n_sets=2)
+
+
+def test_fewer_reps_at_the_same_weight_also_holds_the_target() -> None:
+    plan = plan_after(sets(50, 9, 9, 9), sets(50, 8, 8, 8))  # target was 50 × 10
+    assert plan.step is PlanStep.CATCH_UP
+    assert plan.today == target(50, 10)
+
+
+def test_beating_the_plan_still_moves_it_up() -> None:
+    plan = plan_after(sets(50, 8, 8, 8), sets(55, 8, 8, 8))  # target was 50 × 9
+    assert plan.step is PlanStep.BUILDING
+    assert plan.today == target(55, 9)
+
+
+def test_assisted_more_assistance_holds_the_target() -> None:
+    assisted = template(type_="bodyweight_assisted", equipment="machine")
+    plan = plan_after(sets(25, 8), sets(30, 8), t=assisted)  # target was 25 × 9
+    assert plan.step is PlanStep.CATCH_UP
+    assert plan.today == target(25, 9, n_sets=1)
+
+
+@pytest.mark.parametrize(
+    "weights",
+    [
+        [45, 35, 35, 40, 50],
+        [60, 55, 50, 45, 40],
+        [20, 25, 15, 30, 10, 35],
+    ],
+)
+def test_targets_never_go_down_except_a_stall_step_back(weights: list[float]) -> None:
+    progress = analyse_exercise(BARBELL, weekly(*[sets(w, 8, 8) for w in weights]))
+    rp = progress.default_range
+    assert rp is not None
+    targets = [r.target for r in rp.results if r.target] + [rp.plan.today, rp.plan.then]
+    for earlier, later in pairwise(targets):
+        assert (later.weight_kg or 0, later.reps or 0) >= (
+            earlier.weight_kg or 0,
+            earlier.reps or 0,
+        )

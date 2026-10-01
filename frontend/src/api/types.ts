@@ -48,7 +48,7 @@ export interface Status {
 export type Role = 'primary' | 'secondary'
 export type Mode = 'load' | 'reps' | 'assisted' | 'duration' | 'untracked'
 export type RepRange = 'strength' | 'light'
-export type PlanStep = 'building' | 'confirm' | 'add_weight' | 'stalled'
+export type PlanStep = 'building' | 'confirm' | 'add_weight' | 'stalled' | 'catch_up'
 
 /** What was lifted: the working weight and the reps of every set at it. */
 export interface WorkingSet {

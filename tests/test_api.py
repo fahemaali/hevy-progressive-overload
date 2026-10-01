@@ -116,9 +116,10 @@ def test_exercise(client: FlaskClient) -> None:
     assert first["target"] is None  # a first session sets the baseline
     assert last["target"] == {"weight_kg": 55, "reps": 10, "duration_seconds": None, "sets": 3}
     assert last["vs_target"] == -1
-    assert strength["plan"]["step"] == "building"
+    # 52.5 × 7 missed the 55 × 10 target, so the plan holds it rather than dropping.
+    assert strength["plan"]["step"] == "catch_up"
     assert strength["plan"]["rep_target"] == [8, 12]
-    assert strength["plan"]["today"]["weight_kg"] == 52.5
+    assert strength["plan"]["today"]["weight_kg"] == 55
 
 
 def test_exercise_with_both_rep_ranges(client: FlaskClient) -> None:

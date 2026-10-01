@@ -97,3 +97,18 @@ def test_big_evidence_is_capped_at_ten_percent() -> None:
     assert hint is not None
     assert hint.change_pct == 25.0  # each piece of evidence counts at most +25%…
     assert hint.weight_kg == 110  # …and the suggestion is capped at +10%
+
+
+def test_builds_on_the_planned_weight_so_it_never_suggests_less_than_the_plan() -> None:
+    # Row: 50 kg, then a lighter 40 kg day; the plan holds 50 kg. Pulldown +20% since.
+    workouts = [
+        session(0, "PULL", lift(50, 8)),
+        session(1, "ROW", lift(50, 8)),
+        session(2, "ROW", lift(40, 8)),
+        session(14, "PULL", lift(60, 8)),
+    ]
+    progress = analyse_all([ROW, PULLDOWN], workouts)["ROW"].default_range
+    assert progress is not None
+    assert progress.plan.today.weight_kg == 50
+    assert progress.capacity is not None
+    assert progress.capacity.weight_kg == 55  # +10% cap on 50 kg, not on the 40 kg day

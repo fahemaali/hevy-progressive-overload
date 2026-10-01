@@ -3,7 +3,7 @@ Capacity: evidence from other exercises that you could lift more on this one.
 
 Weights are never compared across exercises. Instead: how much have your other
 exercises for the same muscle improved, each against itself, since you last
-did this one? Apply that improvement to this exercise's working weight.
+did this one? Apply that improvement to the weight planned for this session.
 """
 
 from collections.abc import Iterable
@@ -44,9 +44,12 @@ def capacity_hint(
     template: ExerciseTemplate,
     results: list[SessionResult],
     others: Iterable[tuple[ExerciseTemplate, list[SessionResult]]],
+    planned_kg: float | None = None,
 ) -> CapacityHint | None:
     """`results`: this weighted exercise in one rep range, oldest first.
-    `others`: other weighted exercises with all their results, oldest first."""
+    `others`: other weighted exercises with all their results, oldest first.
+    `planned_kg`: this session's planned weight; the hint builds on it, so it only
+    ever suggests going beyond the plan."""
     if not results:
         return None
     last = results[-1].session
@@ -78,7 +81,7 @@ def capacity_hint(
         return None
 
     step = weight_increment(template.equipment)
-    current = last.working_weight_kg
+    current = max(last.working_weight_kg, planned_kg or 0)
     if current * average / 100 < step:
         return None  # the evidence doesn't add up to even one increment
     # Capped, but always at least one increment: the smallest jump that's possible.
