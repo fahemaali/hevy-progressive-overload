@@ -1,0 +1,40 @@
+[project]
+name = "hevy-progressive-overload"
+version = "0.1.0"
+description = "Shows, per muscle group, whether you are progressively overloading, using your Hevy workout data."
+requires-python = ">=3.12"
+# Runtime and dev dependencies are pinned in requirements.txt / requirements-dev.txt.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["venv"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",  # pycodestyle
+    "F",       # pyflakes
+    "I",       # import order
+    "B",       # bugbear
+    "UP",      # pyupgrade
+    "SIM",     # simplify
+    "RUF",     # ruff-specific
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Entry points load .env before importing the app, so imports can't all be at the top.
+"run.py" = ["E402"]
+"check_connection.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["backend", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
