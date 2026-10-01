@@ -9,7 +9,7 @@ ids are ever included.
 from datetime import date
 from typing import Literal, TypedDict
 
-from backend.domain.metrics import TrackingMode
+from backend.domain.metrics import PLAN_REPS, TrackingMode
 from backend.domain.plan import Plan
 from backend.domain.progress import (
     ExerciseProgress,
@@ -240,6 +240,7 @@ class SessionJSON(TypedDict):
 
 class PlanJSON(TypedDict):
     step: str
+    rep_target: list[int] | None  # [bottom, top] the plan aims for, e.g. [8, 12]
     today: TargetJSON
     then: TargetJSON
     reps_to_go: int | None
@@ -295,8 +296,10 @@ def session_json(result: SessionResult) -> SessionJSON:
 
 
 def plan_json(plan: Plan) -> PlanJSON:
+    bounds = PLAN_REPS.get(plan.rep_range) if plan.rep_range else None
     return {
         "step": plan.step,
+        "rep_target": list(bounds) if bounds else None,
         "today": target_json(plan.today),
         "then": target_json(plan.then),
         "reps_to_go": plan.reps_to_go,

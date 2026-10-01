@@ -110,6 +110,7 @@ def test_exercise(client: FlaskClient) -> None:
     assert last["target"] == {"weight_kg": 55, "reps": 10, "duration_seconds": None, "sets": 3}
     assert last["vs_target"] == -1
     assert strength["plan"]["step"] == "building"
+    assert strength["plan"]["rep_target"] == [8, 12]
     assert strength["plan"]["today"]["weight_kg"] == 52.5
 
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { BodyMap, SearchResults, Status } from './types'
+import type { BodyMap, Exercise, Muscle, SearchResults, Status } from './types'
 
 export class ApiError extends Error {
   readonly status: number
@@ -22,6 +22,20 @@ export async function getJson<T>(path: string): Promise<T> {
 
 export function useBodyMap() {
   return useQuery({ queryKey: ['body-map'], queryFn: () => getJson<BodyMap>('/api/body-map') })
+}
+
+export function useMuscle(group: string) {
+  return useQuery({
+    queryKey: ['muscle', group],
+    queryFn: () => getJson<Muscle>(`/api/muscles/${encodeURIComponent(group)}`),
+  })
+}
+
+export function useExercise(id: string) {
+  return useQuery({
+    queryKey: ['exercise', id],
+    queryFn: () => getJson<Exercise>(`/api/exercises/${encodeURIComponent(id)}`),
+  })
 }
 
 export function useSearch(query: string, enabled: boolean) {

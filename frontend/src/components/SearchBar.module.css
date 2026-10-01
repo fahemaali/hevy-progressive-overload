@@ -7,9 +7,10 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 50%;
   background: var(--surface);
+  box-shadow: var(--shadow);
   color: var(--text);
   cursor: pointer;
 }
@@ -27,8 +28,8 @@
   padding: 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg);
-  box-shadow: 0 16px 40px rgb(16 34 54 / 0.18);
+  background: var(--surface);
+  box-shadow: 0 16px 40px rgb(60 45 20 / 0.14);
 }
 
 .input {
@@ -36,7 +37,7 @@
   padding: 11px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--surface);
+  background: var(--bg);
   color: var(--text);
   font: inherit;
   font-size: 1rem; /* 16px stops iOS zooming in on focus */
@@ -84,7 +85,7 @@
 
 .result:hover,
 .result:focus-visible {
-  background: var(--surface);
+  background: var(--surface-2);
 }
 
 .meta {

@@ -90,6 +90,7 @@
     border-top: none;
     border-right: 1px solid var(--border);
     background: var(--surface);
+    box-shadow: var(--shadow);
   }
 
   .sidebarLogo {

@@ -1,4 +1,6 @@
 .box {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   margin-top: var(--gap);
   padding: 24px;
   border-radius: var(--radius);
