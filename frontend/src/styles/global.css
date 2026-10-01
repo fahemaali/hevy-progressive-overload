@@ -1,0 +1,107 @@
+/*
+ * Design tokens: every colour, size and radius the app uses is named here, so the
+ * look can be changed in one place. Light and dark follow the phone's setting.
+ *
+ * Status colours are chosen to differ in lightness as well as hue, so they stay
+ * distinguishable with red-green colour blindness; they're always paired with
+ * ▲ ● ▼ symbols or labels too.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --gap: 16px;
+  --max-width: 720px;
+
+  /* Light theme */
+  --bg: #f2f2f4;
+  --surface: #ffffff;
+  --surface-2: #ececef;
+  --border: #e1e1e6;
+  --text: #17171a;
+  --text-muted: #6b6b75;
+  --accent: #0d9488;
+  --accent-text: #ffffff;
+  --accent-soft: #ccfbf1;
+
+  --progressing: #15a34a;
+  --not-progressing: #e09400;
+  --declining: #d42a2a;
+
+  /* Untrained muscles share the figure's colour, as in Hevy. Indirect-only muscles
+     stand apart from it: darker in light mode, lighter in dark mode. */
+  --map-figure: #d3d3da;
+  --map-never: var(--map-figure);
+  --map-indirect: #8e8e99;
+  --map-no-status: #a3b3c9;
+  --map-outline: var(--surface);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0b0d;
+    --surface: #18181b;
+    --surface-2: #232328;
+    --border: #2c2c32;
+    --text: #f3f3f5;
+    --text-muted: #9d9daa;
+    --accent: #2dd4bf;
+    --accent-text: #032b28;
+    --accent-soft: #0f3a36;
+
+    --progressing: #4ade80;
+    --not-progressing: #fbbf24;
+    --declining: #f05252;
+
+    --map-figure: #36363d;
+    --map-never: var(--map-figure);
+    --map-indirect: #63636e;
+    --map-no-status: #5b6d88;
+    --map-outline: var(--surface);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

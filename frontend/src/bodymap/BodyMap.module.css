@@ -1,0 +1,58 @@
+.figures {
+  display: grid;
+  /* minmax(0, …) lets the figures shrink to fit narrow phones */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.defs {
+  position: absolute;
+}
+
+.figure {
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.svg {
+  width: 100%;
+  max-height: 62vh;
+  overflow: visible;
+}
+
+.svg path {
+  stroke: var(--map-outline);
+  stroke-width: 0.25;
+  stroke-linejoin: round;
+}
+
+.figurePart {
+  fill: var(--map-figure);
+}
+
+.muscle {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 120ms ease;
+}
+
+.muscle[data-hovered] path,
+.muscle:focus-visible path {
+  stroke: var(--accent);
+  stroke-width: 0.5;
+}
+
+.muscle:active {
+  opacity: 0.75;
+}
+
+.caption {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

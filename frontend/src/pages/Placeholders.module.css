@@ -1,0 +1,21 @@
+.box {
+  margin-top: var(--gap);
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.box h1 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}
+
+.box p {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+}
+
+.link {
+  color: var(--accent);
+  font-weight: 600;
+}

@@ -1,7 +1,7 @@
-# Hevy Progressive Overload
+# Next Set
 
-A personal training dashboard built on top of my [Hevy](https://www.hevyapp.com/) workout
-data. It answers one question, muscle group by muscle group: **am I actually progressively
+A progressive overload coach for [Hevy](https://www.hevyapp.com/) users, built on my own Hevy
+workout data. It answers one question, muscle group by muscle group: **am I actually progressively
 overloading?** — and tells me what to do this week to keep it going.
 
 > Built with generative AI (Claude Code) as a showcase project.
@@ -37,7 +37,10 @@ cp .env.example .env
 python check_connection.py
 python -m backend.sync
 
-# 5. Run the app
+# 5. Build the frontend (needs Node 22+)
+cd frontend && npm install && npm run build && cd ..
+
+# 6. Run the app
 python run.py
 ```
 
@@ -52,6 +55,17 @@ pytest            # tests (run on synthetic data in tests/fixtures, no API key n
 ruff check .      # lint
 ruff format .     # format
 mypy              # type check
+```
+
+Frontend (React + TypeScript, in `frontend/`):
+
+```bash
+cd frontend
+npm run dev         # live-reloading dev server at http://localhost:5173 (run python run.py too)
+npm test            # tests (Vitest + Testing Library)
+npm run lint        # lint (oxlint)
+npm run typecheck   # type check
+npm run format      # format (Prettier)
 ```
 
 CI runs all of these on every push and pull request.
@@ -77,3 +91,8 @@ Read-only JSON endpoints the frontend uses (shapes defined in
 | `GET /api/exercises/<id>` | Per rep range: est. 1RM, actual vs target history, the plan (today, then), capacity |
 | `GET /api/search?q=` | Matching exercises and muscles; empty query = most recent exercises |
 | `GET /api/status` | Data freshness and refresh state |
+
+## Credits
+
+Body map outlines from [body-muscles](https://github.com/vulovix/body-muscles) (Apache 2.0);
+see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
