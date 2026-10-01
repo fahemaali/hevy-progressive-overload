@@ -29,3 +29,18 @@ describe('ColumnLineChart y-axis', () => {
     expect(Math.max(...ticks) - Math.min(...ticks)).toBeGreaterThanOrEqual(6)
   })
 })
+
+describe('ColumnLineChart gaps', () => {
+  it('bridges columns with no value with a dashed stretch', () => {
+    const { container } = render(
+      <ColumnLineChart
+        label="test"
+        columns={[0, 1, 2, 3].map((i) => ({ key: String(i) }))}
+        lines={[{ values: [1, 2, null, 4], variant: 'trend', bridgeGaps: true }]}
+        dots={[]}
+      />,
+    )
+    expect(container.querySelectorAll('polyline')).toHaveLength(1) // weeks 1-2, solid
+    expect(container.querySelectorAll('line[class*="bridge"]')).toHaveLength(1) // 2 → 4, dashed
+  })
+})

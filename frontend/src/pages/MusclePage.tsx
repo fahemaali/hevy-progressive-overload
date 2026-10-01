@@ -89,7 +89,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
         <ColumnLineChart
           label="Change each week"
           columns={weeks.map((w) => ({ key: w.week_start }))}
-          lines={[{ values: weeks.map((w) => w.change_pct), variant: 'trend' }]}
+          lines={[{ values: weeks.map((w) => w.change_pct), variant: 'trend', bridgeGaps: true }]}
           dots={weeks.flatMap((w, i) =>
             w.change_pct === null
               ? []

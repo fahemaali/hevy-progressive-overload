@@ -9,6 +9,7 @@ export interface Line {
   values: (number | null)[] // one per column; null leaves a gap
   variant: 'actual' | 'target' | 'trend'
   fromOrigin?: boolean // start from the corner where the axes meet
+  bridgeGaps?: boolean // join across columns with no value, as a dashed stretch
 }
 
 export interface Dot {
@@ -104,6 +105,20 @@ export function ColumnLineChart({
                     className={styles[line.variant]}
                   />
                 )),
+              )}
+              {lines.flatMap((line, li) =>
+                line.bridgeGaps
+                  ? gaps(line.values).map(([from, to]) => (
+                      <line
+                        key={`${li}-gap-${from}`}
+                        x1={x(from)}
+                        y1={y(line.values[from]!)}
+                        x2={x(to)}
+                        y2={y(line.values[to]!)}
+                        className={styles.bridge}
+                      />
+                    ))
+                  : [],
               )}
             </svg>
             {dots.map((d, i) => (
@@ -215,4 +230,10 @@ function segments(values: (number | null)[]): number[][] {
   if (run.length) runs.push(run)
   // A line needs two points; a lone first point can still be joined to the origin.
   return runs.filter((r) => r.length > 1 || r[0] === 0)
+}
+
+/** Pairs of columns with values that have only empty columns between them. */
+function gaps(values: (number | null)[]): [number, number][] {
+  const filled = values.flatMap((v, i) => (v === null ? [] : [i]))
+  return filled.slice(1).flatMap((to, k) => (to - filled[k] > 1 ? [[filled[k], to]] : []))
 }

@@ -72,6 +72,14 @@
   stroke-width: 2;
 }
 
+/* Across weeks with nothing to judge: the line carries on, dashed. */
+.bridge {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+}
+
 .dot {
   position: absolute;
   width: 10px;
