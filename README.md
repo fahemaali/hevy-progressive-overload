@@ -64,3 +64,16 @@ CI runs all of these on every push and pull request.
 2. Only what the app needs is stored: notes, descriptions and training times are dropped before
    anything is saved. The file is git-ignored and safe to delete; the next sync rebuilds it.
 3. The app reads from that copy, so visitors never trigger calls to Hevy.
+
+### API
+
+Read-only JSON endpoints the frontend uses (shapes defined in
+[backend/api/responses.py](backend/api/responses.py), which is also the privacy allowlist):
+
+| Endpoint | Returns |
+| --- | --- |
+| `GET /api/body-map` | Every body muscle's state: progressing, not progressing, declining, no status, indirect only, never trained; plus a stale flag |
+| `GET /api/muscles/<group>` | Its recent weeks and every exercise that trains it, with latest and best sets |
+| `GET /api/exercises/<id>` | Per rep range: est. 1RM, actual vs target history, the plan (today, then), capacity |
+| `GET /api/search?q=` | Matching exercises and muscles; empty query = most recent exercises |
+| `GET /api/status` | Data freshness and refresh state |
