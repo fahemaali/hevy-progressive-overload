@@ -6,7 +6,7 @@
 workouts and answers two questions: *is each muscle actually getting stronger?* and *what
 exactly should I lift next?*
 
-**Live:** _link coming with the first deploy_
+**Live:** https://next-set-w9mq.onrender.com (free hosting: the first visit after a quiet spell can take ~30 s to wake up)
 
 > Built end to end with Claude Code (AI pair programming) as a portfolio project: product
 > decisions, design reviews and every line of code, iterated in conversation.
