@@ -29,15 +29,6 @@ export const BodyIcon = (p: IconProps) => (
   </Icon>
 )
 
-export const SummaryIcon = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M8 6h12M8 12h12M8 18h12" />
-    <circle cx="4" cy="6" r="1" />
-    <circle cx="4" cy="12" r="1" />
-    <circle cx="4" cy="18" r="1" />
-  </Icon>
-)
-
 export const SearchIcon = (p: IconProps) => (
   <Icon {...p}>
     <circle cx="11" cy="11" r="6.5" />

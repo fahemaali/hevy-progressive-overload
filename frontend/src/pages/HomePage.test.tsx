@@ -53,43 +53,6 @@ describe('body map page', () => {
   })
 })
 
-describe('navigation', () => {
-  it('links to every section and marks the current one', async () => {
-    const { router } = setup()
-    const nav = screen.getByRole('navigation', { name: 'Main' })
-    expect(
-      within(nav)
-        .getAllByRole('link')
-        .map((a) => a.textContent),
-    ).toEqual(['Body map', 'Summary'])
-    expect(within(nav).getByRole('link', { name: 'Body map' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-    await userEvent.click(within(nav).getByRole('link', { name: 'Summary' }))
-    expect(router.state.location.pathname).toBe('/summary')
-    expect(within(nav).getByRole('link', { name: 'Summary' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-  })
-})
-
-describe('summary page', () => {
-  it('lists muscles by status, as an alternative to colour', async () => {
-    setup('/summary')
-    const list = await screen.findByRole('region', { name: 'Muscles by status' })
-    expect(within(list).getByRole('heading', { name: /^Progressing/ })).toHaveTextContent('2')
-    expect(within(list).getByRole('link', { name: 'Hamstrings' })).toHaveAttribute(
-      'href',
-      '/muscles/hamstrings',
-    )
-    expect(within(list).getByRole('link', { name: /Biceps/ })).toHaveTextContent('3 wk+')
-    expect(within(list).getByRole('link', { name: 'Forearms' })).toBeInTheDocument() // indirect
-    expect(within(list).queryByRole('link', { name: 'Neck' })).toBeNull() // never trained
-  })
-})
-
 describe('search', () => {
   async function openSearch() {
     await userEvent.click(screen.getByRole('button', { name: 'Search exercises and muscles' }))

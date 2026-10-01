@@ -2,7 +2,6 @@ import { QueryClient } from '@tanstack/react-query'
 import type { RouteObject } from 'react-router'
 import { Layout } from './components/Layout'
 import { HomePage } from './pages/HomePage'
-import { SummaryPage } from './pages/SummaryPage'
 import { ComingSoon, NotFound } from './pages/Placeholders'
 
 export const routes: RouteObject[] = [
@@ -10,7 +9,6 @@ export const routes: RouteObject[] = [
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
-      { path: '/summary', element: <SummaryPage /> },
       { path: '/muscles/:group', element: <ComingSoon what="Muscle" /> },
       { path: '/exercises/:id', element: <ComingSoon what="Exercise" /> },
       { path: '*', element: <NotFound /> },

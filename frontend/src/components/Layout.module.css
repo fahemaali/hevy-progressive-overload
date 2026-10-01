@@ -21,9 +21,19 @@
   display: none;
 }
 
+/* A tab bar with a single tab is pointless: hide it on phones until there are more. */
+.sidebar[data-single] {
+  display: none;
+}
+
+.sidebar[data-single] + .content {
+  padding-bottom: 0;
+}
+
 .nav {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   height: var(--tabbar-height);
 }
 
@@ -68,7 +78,8 @@
 
 /* Wide screens: the same navigation becomes a sidebar on the left. */
 @media (min-width: 900px) {
-  .sidebar {
+  .sidebar,
+  .sidebar[data-single] {
     top: 0;
     right: auto;
     width: var(--sidebar-width);
