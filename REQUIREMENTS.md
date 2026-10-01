@@ -2,15 +2,18 @@
 
 ## Goal
 
-Show, per muscle group, whether I am progressively overloading, and suggest how to keep doing
-so in my next session. Data comes from my own Hevy account via the Hevy public API.
+Make sure I keep progressively overloading, exercise by exercise and muscle by muscle, and tell
+me exactly what to lift next. Data comes from my own Hevy account via the Hevy public API.
 
-The app is used in two ways:
+The app is used in two moments:
 
-- **Today** (phone, at the gym): pick a routine, see a target for each exercise.
-- **Review** (phone or laptop): progress by muscle group and by exercise.
+- **At the gym, mid-workout (phone):** search for the exercise I'm about to do and see today's
+  target, the one after, and whether my other exercises show I could lift more.
+- **Reviewing progress (phone or laptop):** a body map coloured by each muscle's status; tap a
+  muscle to see its exercises, then an exercise to see its history.
 
 It is deployed publicly and shows my real training data, so privacy rules apply (see below).
+Text is kept to a minimum: symbols, numbers and colour first, at most one short line of words.
 
 ## Data from Hevy
 
@@ -19,15 +22,17 @@ It is deployed publicly and shows my real training data, so privacy rules apply 
 | `GET /v1/workouts` | Logged sessions: exercises → sets with `type`, `weight_kg`, `reps`, `duration_seconds` |
 | `GET /v1/workouts/events?since=` | Incremental sync: workouts `updated` or `deleted` since the last sync |
 | `GET /v1/exercise_templates` | `type`, `equipment`, `primary_muscle_group`, `secondary_muscle_groups` |
-| `GET /v1/routines` | Planned sessions; workouts carry `routine_id`, so the next routine can be suggested |
+| `GET /v1/routines` | Planned sessions (for later features) |
 
-The API does **not** return Hevy's estimated 1RM, so the app calculates it.
+- The API does **not** return Hevy's estimated 1RM, so the app calculates it.
+- Hevy only shares a workout once it's finished, so mid-session the app plans from previous
+  sessions, not the sets logged so far today.
 
 ## Privacy
 
 - The app only calls the endpoints above. Hevy also exposes `/user/info` and
   `/body_measurements`; the client refuses to call them (enforced in code and tested).
-- Free-text workout descriptions and exercise notes are dropped when data is stored.
+- Free-text workout descriptions and exercise notes are dropped when data is read in.
 - Dates are shown as calendar dates only, never times of day.
 - The API key stays on the server. Visitors can't make the app call Hevy; refreshes are
   scheduled server-side.
@@ -38,54 +43,127 @@ The API does **not** return Hevy's estimated 1RM, so the app calculates it.
 All sets except those tagged **warm-up** in Hevy. (Untagged sets are treated as working sets.
 Tag warm-ups in Hevy by tapping the set number and choosing **W**.)
 
-### Estimated 1-rep max
-Epley formula, per set: `e1RM = weight × (1 + reps / 30)`.
+### Rep ranges: Strength and Light
+Each exercise is tracked as two separate progressions, because a heavy session and a light,
+high-rep one can't be compared fairly (see e1RM below):
 
-### Rep ranges: compare like with like
-Epley is accurate at low reps but increasingly generous at high reps (60 kg × 5 → 70 kg, while
-40 kg × 20 → 67 kg). Comparing a heavy session with a light, high-rep one would show false
-progress or decline, so each exercise is tracked in two ranges:
+| Range | Sets counted | Plan aims for |
+| --- | --- | --- |
+| **Strength** (the default view) | up to 12 reps | 8–12 reps |
+| **Light** | 13+ reps | 15–20 reps |
 
-- **Strength:** 1–12 reps
-- **High-rep:** 13+ reps (e1RM shown, labelled as a rough estimate)
+A session with both heavy and light sets counts once in each range.
 
-A session is only compared with earlier sessions in the same range.
+### Estimated 1-rep max (e1RM)
+Epley formula, per set: `e1RM = weight × (1 + reps / 30)`. It combines weight and reps into one
+number, so extra reps count as progress, not just extra weight. It's accurate at low reps but
+increasingly generous at high reps (60 kg × 5 → 70 kg, while 40 kg × 20 → 67 kg), which is why
+the two ranges are kept apart. Shown as the exercise's headline "Est. 1RM" number.
 
 ### Exercise types (from the template `type`)
 
-| Type | Progress measured by |
+| Type | Progress measured by | Plan |
+| --- | --- | --- |
+| `weight_reps`, `bodyweight_weighted` | e1RM | Double progression, adding weight |
+| `bodyweight_assisted` | Assistance weight, where **less is better** | Double progression, removing assistance |
+| `reps_only` | Best set's reps | One more rep |
+| `duration` | Longest hold | 5 seconds longer |
+| distance, floors, steps types | Not tracked | – |
+
+### The plan: double progression with 2-for-2
+For each exercise and rep range, the next target comes from the latest sessions:
+
+1. **Building:** same weight, one more rep than the lowest set last time, up to the top of the
+   range. *"3 reps to go"*
+2. **Confirm:** reached the top of the range on all working sets once → repeat it, so one good day
+   doesn't push the weight up too early. *"Hit 12 · repeat to confirm"*
+3. **Add weight:** reached the top on all working sets **two sessions in a row** → add one
+   increment and drop to the bottom of the range. *"Confirmed · add weight"*
+4. **Stalled:** 3 sessions in a row at the same weight, none better than the session before it
+   (no higher score, no extra total reps) → step back about 10%, in whole increments (at least
+   one), and build up again.
+   *"Stalled 3 sessions · step back"*
+
+"Working weight" is the heaviest weight used in the range that session (the least assistance,
+for assisted exercises); "all working sets" means every set at that weight.
+
+The app shows **Today** and **Then** (what comes next if today's target is hit). The plan always
+recalculates from what was actually logged, so doing more than planned simply moves it on
+(*"Ahead of plan"*). A first session has no plan yet (*"First session · sets your baseline"*).
+
+Weight increments by template `equipment`: barbell 2.5 kg, dumbbell 2 kg, machine 5 kg, others
+2.5 kg.
+
+### Judging a session
+Every session is compared with earlier sessions **of the same exercise, in the same rep range**.
+Different exercises are never compared by weight: 9 kg on a cable curl and 10 kg on a barbell
+preacher curl aren't the same effort.
+
+- **Recent level:** the median of up to the last 3 earlier sessions. Judging starts from the
+  second session, using whatever history exists.
+- **Best:** the best earlier session in that rep range, however long ago.
+- **Target:** what the plan asked for, worked out from the sessions before it, so past
+  sessions have targets too.
+
+The change against the recent level is rounded to one decimal place, as shown on screen, then:
+
+| Result | Rule | Colour |
+| --- | --- | --- |
+| ▲ Progressing | more than +2% | green |
+| ● Not progressing | within ±2% (standing still is a warning sign) | amber |
+| ▼ Declining | less than −2% | red |
+| New baseline | first session in this rep range | grey |
+
+Each result also records whether it was a new best (or how far off the best), and whether it
+hit the target. These are numbers and flags; the screen turns them into symbols.
+
+### Capacity: evidence from other exercises
+For a weighted exercise, look at the other weighted exercises for the same muscle (primary
+muscle counts fully, secondary half) and how much they've improved **since this exercise was
+last done**, each compared with itself in the same rep range. If they've improved on average,
+apply that improvement to this exercise's working weight, **capped at +10%** (trainer
+guidelines put a single load increase at 2–10%; new exercises often show big early gains that
+come from technique, not strength), rounded down to whole increments but at least one. Only
+suggested if the evidence is worth at least one increment: *"Other upper-back exercises +10% → try
+32.5 kg"*. Never shown without evidence from at least one other exercise.
+
+### Muscle groups, week by week
+Each week (Monday to Sunday), a muscle's status combines the results of every session that week
+of an exercise that trains it:
+
+- A muscle only gets a status in a week where it was **trained directly** (at least one exercise
+  where it's the primary muscle). Muscles only ever trained indirectly (e.g. calves) aren't
+  tracked.
+- Primary exercises count fully; secondary count half.
+- **▲ Progressing** if more than half of the counted weight is ▲; **▼ Declining** if more than
+  half is ▼; otherwise **● Not progressing**.
+- New-baseline sessions don't count.
+
+A muscle's **current status** is its most recent week that could be judged. Each muscle also
+has a **strength list**: every exercise that trains it (primary first, then most recent), with
+its latest working set and its best.
+
+### Body map
+
+| Look | Means |
 | --- | --- |
-| `weight_reps`, `bodyweight_weighted` | e1RM per rep range; volume (weight × reps) |
-| `reps_only` | Best reps in a set; total reps |
-| `bodyweight_assisted` | Assistance weight, where **less is better** |
-| `duration` | Longest hold |
-| distance, floors, steps types | Not tracked; listed as such |
+| Green / amber / red | Progressing / not progressing / declining (current status) |
+| Striped colour | Last trained directly more than 3 weeks ago |
+| Dark grey | Only trained indirectly: not tracked |
+| Light grey | Never trained |
 
-### Verdict per exercise
-For the rep range of the latest session, compare the latest session with the median of the
-previous 3 sessions in that range within the last 8 weeks:
+Hevy groups with no place on a body (full body, cardio, other) aren't on the map; their
+exercises are still found through search.
 
-- **▲ Progressing:** more than +2%
-- **● Holding:** within ±2%
-- **▼ Declining:** less than −2%
-- **Not enough data yet:** fewer than 3 earlier sessions in that range
+### Exercise screen
 
-Each verdict includes a plain-English reason, e.g. "Strength e1RM up 4.1% vs your recent median".
-
-### Muscle-group status
-Based on exercises where the group is the **primary** muscle and that were trained in the last
-4 weeks, shown as "3 of 4 progressing" plus an overall status. Exercises where the group is
-secondary are listed separately and don't affect the status.
-
-### Suggestions for the next session
-Two options, shown equally, each with the resulting e1RM change, staying within the rep range
-of the last session:
-
-- **Add weight:** the next increment, at the highest rep count that still beats the last e1RM.
-- **Add reps:** the same weight for one more rep.
-
-Default increments by template `equipment`: barbell 2.5 kg, dumbbell 2 kg, machine 5 kg,
-others 2.5 kg.
+- Strength / Light toggle (Strength by default; Light if there are no strength sessions).
+- Headline: Est. 1RM, trend (▲ +6%) and best.
+- Chart with two lines in the same units: **actual** (solid) and **target** (dashed). Solid at
+  or above dashed means following the plan; solid rising means getting stronger. Points are
+  coloured by result; tapping one shows the actual and target sets. No e1RM numbers on the chart.
+- Today / Then targets with one short line explaining the plan step.
+- Capacity hint, when there's evidence.
 
 ### Units
 Stored and shown in kg. lb is a later extra.

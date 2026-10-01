@@ -20,6 +20,8 @@ select = [
     "SIM",     # simplify
     "RUF",     # ruff-specific
 ]
+# Symbols used deliberately in comments and user-facing text.
+allowed-confusables = ["×", "–", "−", "●"]
 
 [tool.ruff.lint.per-file-ignores]
 # Entry points load .env before importing the app, so imports can't all be at the top.
