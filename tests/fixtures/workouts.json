@@ -1,0 +1,2058 @@
+[
+  {
+    "id": "W-PULL-8",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-07-22T18:00:00+00:00",
+    "end_time": "2026-07-22T19:00:00+00:00",
+    "updated_at": "2026-07-22T19:00:00+00:00",
+    "created_at": "2026-07-22T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 22.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 22.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 22.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-8",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-07-20T18:00:00+00:00",
+    "end_time": "2026-07-20T19:00:00+00:00",
+    "updated_at": "2026-07-20T19:00:00+00:00",
+    "created_at": "2026-07-20T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 7,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 7,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 7,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 16,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 16,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 16,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 16,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 16,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 70,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-7",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-07-15T18:00:00+00:00",
+    "end_time": "2026-07-15T19:00:00+00:00",
+    "updated_at": "2026-07-15T19:00:00+00:00",
+    "created_at": "2026-07-15T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 47.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 47.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 47.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 22.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 22.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 22.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-7",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-07-13T18:00:00+00:00",
+    "end_time": "2026-07-13T19:00:00+00:00",
+    "updated_at": "2026-07-13T19:00:00+00:00",
+    "created_at": "2026-07-13T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 65,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-6",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-07-08T18:00:00+00:00",
+    "end_time": "2026-07-08T19:00:00+00:00",
+    "updated_at": "2026-07-08T19:00:00+00:00",
+    "created_at": "2026-07-08T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-6",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-07-06T18:00:00+00:00",
+    "end_time": "2026-07-06T19:00:00+00:00",
+    "updated_at": "2026-07-06T19:00:00+00:00",
+    "created_at": "2026-07-06T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 60,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-5",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-07-01T18:00:00+00:00",
+    "end_time": "2026-07-01T19:00:00+00:00",
+    "updated_at": "2026-07-01T19:00:00+00:00",
+    "created_at": "2026-07-01T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-5",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-06-29T18:00:00+00:00",
+    "end_time": "2026-06-29T19:00:00+00:00",
+    "updated_at": "2026-06-29T19:00:00+00:00",
+    "created_at": "2026-06-29T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 55,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 42.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 42.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 42.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 14,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 14,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 60,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-4",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-06-24T18:00:00+00:00",
+    "end_time": "2026-06-24T19:00:00+00:00",
+    "updated_at": "2026-06-24T19:00:00+00:00",
+    "created_at": "2026-06-24T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 47.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 47.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 47.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-4",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-06-22T18:00:00+00:00",
+    "end_time": "2026-06-22T19:00:00+00:00",
+    "updated_at": "2026-06-22T19:00:00+00:00",
+    "created_at": "2026-06-22T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 17,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 17,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 17,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 14,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 14,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 55,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-3",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-06-17T18:00:00+00:00",
+    "end_time": "2026-06-17T19:00:00+00:00",
+    "updated_at": "2026-06-17T19:00:00+00:00",
+    "created_at": "2026-06-17T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 27.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-3",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-06-15T18:00:00+00:00",
+    "end_time": "2026-06-15T19:00:00+00:00",
+    "updated_at": "2026-06-15T19:00:00+00:00",
+    "created_at": "2026-06-15T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "PRIVATE NOTE: shoulder felt a bit off",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 52.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 42.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 42.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 42.5,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 13,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 13,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 50,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-2",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-06-10T18:00:00+00:00",
+    "end_time": "2026-06-10T19:00:00+00:00",
+    "updated_at": "2026-06-10T19:00:00+00:00",
+    "created_at": "2026-06-10T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 30,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 30,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 30,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-2",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "",
+    "start_time": "2026-06-08T18:00:00+00:00",
+    "end_time": "2026-06-08T19:00:00+00:00",
+    "updated_at": "2026-06-08T19:00:00+00:00",
+    "created_at": "2026-06-08T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 50,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 50,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 50,
+            "reps": 9,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 25,
+            "reps": 15,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 12,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 12,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 50,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PULL-1",
+    "title": "Pull",
+    "routine_id": "R-PULL",
+    "description": "",
+    "start_time": "2026-06-03T18:00:00+00:00",
+    "end_time": "2026-06-03T19:00:00+00:00",
+    "updated_at": "2026-06-03T19:00:00+00:00",
+    "created_at": "2026-06-03T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Lat Pulldown (Cable)",
+        "notes": "",
+        "exercise_template_id": "T-PULLDOWN",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 45,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Assisted Pull Up",
+        "notes": "",
+        "exercise_template_id": "T-ASSISTPULLUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 30,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 30,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 30,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Treadmill",
+        "notes": "",
+        "exercise_template_id": "T-TREADMILL",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": 2000,
+            "duration_seconds": 720,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "W-PUSH-1",
+    "title": "Push",
+    "routine_id": "R-PUSH",
+    "description": "PRIVATE DESCRIPTION: trained after work",
+    "start_time": "2026-06-01T18:00:00+00:00",
+    "end_time": "2026-06-01T19:00:00+00:00",
+    "updated_at": "2026-06-01T19:00:00+00:00",
+    "created_at": "2026-06-01T19:00:00+00:00",
+    "exercises": [
+      {
+        "index": 0,
+        "title": "Bench Press (Barbell)",
+        "notes": "",
+        "exercise_template_id": "T-BENCH",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "warmup",
+            "weight_kg": 20,
+            "reps": 10,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 50,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 50,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 3,
+            "type": "normal",
+            "weight_kg": 50,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "title": "Chest Press (Machine)",
+        "notes": "",
+        "exercise_template_id": "T-CHESTPRESS",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": 40,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": 40,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 2,
+            "type": "normal",
+            "weight_kg": 40,
+            "reps": 8,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Push Up",
+        "notes": "",
+        "exercise_template_id": "T-PUSHUP",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 12,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          },
+          {
+            "index": 1,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": 12,
+            "distance_meters": null,
+            "duration_seconds": null,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Plank",
+        "notes": "",
+        "exercise_template_id": "T-PLANK",
+        "superset_id": null,
+        "sets": [
+          {
+            "index": 0,
+            "type": "normal",
+            "weight_kg": null,
+            "reps": null,
+            "distance_meters": null,
+            "duration_seconds": 45,
+            "rpe": null,
+            "custom_metric": null
+          }
+        ]
+      }
+    ]
+  }
+]

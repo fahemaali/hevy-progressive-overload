@@ -41,3 +41,16 @@ python run.py
 ```
 
 Then open http://127.0.0.1:5050.
+
+## Development
+
+```bash
+pip install -r requirements-dev.txt
+
+pytest            # tests (run on synthetic data in tests/fixtures, no API key needed)
+ruff check .      # lint
+ruff format .     # format
+mypy              # type check
+```
+
+CI runs all of these on every push and pull request.

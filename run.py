@@ -6,6 +6,7 @@ Port 5050, not Flask's default 5000 — on macOS, 5000 is claimed by the
 system AirPlay Receiver (ControlCenter), which silently blocks the app from
 binding to it.
 """
+
 from dotenv import load_dotenv
 
 load_dotenv()
