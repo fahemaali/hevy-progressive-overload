@@ -46,14 +46,14 @@ describe('muscle page', () => {
     expect(screen.getByRole('list', { name: /week of 7 Sept/ })).toHaveTextContent('Lat Pulldown')
   })
 
-  it('dates each session in a week, and names its rep range and role', async () => {
+  it('dates each session in a week, and names its rep range and secondary role', async () => {
     setup()
     const list = await screen.findByRole('list', { name: /week of 21 Sept/ })
     const items = within(list)
       .getAllByRole('listitem')
       .map((li) => li.textContent)
     expect(items).toEqual([
-      expect.stringMatching(/Seated Cable Row.*25 Sept · Hypertrophy · indirect/),
+      expect.stringMatching(/Seated Cable Row.*25 Sept · Hypertrophy \(Secondary\)/),
       expect.stringMatching(/Bicep Curl \(Cable\).*26 Sept · Hypertrophy$/),
       expect.stringMatching(/^New.*Bicep Curl \(Cable\).*26 Sept · Endurance/),
     ])
@@ -67,7 +67,7 @@ describe('muscle page', () => {
     expect(curl).toHaveTextContent('Best set: 9.1 kg × 10')
     expect(curl).toHaveTextContent('Est. 1RM12.1 kg')
 
-    const indirect = screen.getByRole('region', { name: 'Also works biceps' })
+    const indirect = screen.getByRole('region', { name: 'Works biceps as a secondary muscle' })
     expect(within(indirect).getByRole('link', { name: /Seated Cable Row/ })).toHaveTextContent(
       'Best set: 34 kg × 5',
     )

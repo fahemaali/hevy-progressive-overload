@@ -27,7 +27,7 @@ export function MusclePage() {
 
 function MuscleView({ muscle }: { muscle: Muscle }) {
   const direct = muscle.exercises.filter((e) => e.role === 'primary')
-  const indirect = muscle.exercises.filter((e) => e.role === 'secondary')
+  const secondary = muscle.exercises.filter((e) => e.role === 'secondary')
   const style = STATE_STYLES[muscle.state]
   const hasStatus = STATUS_STATES.includes(muscle.state)
   const name = muscle.label.toLowerCase()
@@ -64,7 +64,9 @@ function MuscleView({ muscle }: { muscle: Muscle }) {
           {direct.length > 0 && (
             <ExerciseList title={`${exerciseAdjective(muscle)} exercises`} entries={direct} />
           )}
-          {indirect.length > 0 && <ExerciseList title={`Also works ${name}`} entries={indirect} />}
+          {secondary.length > 0 && (
+            <ExerciseList title={`Works ${name} as a secondary muscle`} entries={secondary} />
+          )}
         </>
       )}
     </>
@@ -154,7 +156,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
             <span className={styles.weekMeta}>
               {shortDate(e.date)}
               {e.rep_range && ` · ${RANGE_NAMES[e.rep_range]}`}
-              {e.role === 'secondary' && ' · indirect'}
+              {e.role === 'secondary' && ' (Secondary)'}
             </span>
           </li>
         ))}

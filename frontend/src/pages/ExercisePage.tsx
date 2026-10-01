@@ -37,8 +37,8 @@ function ExerciseView({ exercise }: { exercise: Exercise }) {
           <h1 className={styles.title}>{exercise.title}</h1>
           {range.trend !== 'new' && range.change_pct !== null && (
             <p className={styles.change}>
-              <TrendMark trend={range.trend} /> <strong>{pct(range.change_pct)}</strong> ·{' '}
-              {shortDate(latest.date)}
+              <TrendMark trend={range.trend} /> <strong>{pct(range.change_pct)}</strong> · last
+              session, {shortDate(latest.date)}
             </p>
           )}
         </div>
