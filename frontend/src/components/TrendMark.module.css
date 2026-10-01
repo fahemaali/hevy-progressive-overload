@@ -1,0 +1,10 @@
+.mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.symbol {
+  font-size: 0.8em;
+  line-height: 1;
+}

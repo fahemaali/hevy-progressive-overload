@@ -66,6 +66,7 @@ export interface MuscleWeek {
 export interface StrengthEntry {
   id: string
   title: string
+  mode: Mode
   role: Role
   trend: Trend | null
   last_trained: string

@@ -80,6 +80,7 @@ def test_muscle(client: FlaskClient) -> None:
         "Push Up",
     ]
     bench = chest["exercises"][0]
+    assert bench["mode"] == "load"
     assert bench["latest"] == {"weight_kg": 52.5, "reps": [7, 7, 7], "duration_seconds": None}
     assert bench["best"]["reps"] == [9, 9, 9]
     assert bench["est_1rm_kg"] == 64.8

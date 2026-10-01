@@ -164,6 +164,7 @@ class WeekJSON(TypedDict):
 class StrengthJSON(TypedDict):
     id: str
     title: str
+    mode: TrackingMode
     role: Role
     trend: Trend | None  # latest result for this exercise
     last_trained: str
@@ -203,6 +204,7 @@ def strength_json(entry: StrengthEntry) -> StrengthJSON:
     return {
         "id": entry.exercise.template.id,
         "title": entry.exercise.template.title,
+        "mode": entry.exercise.mode,
         "role": entry.role,
         "trend": latest.trend if latest else None,
         "last_trained": entry.latest.date.isoformat(),

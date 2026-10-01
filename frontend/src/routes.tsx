@@ -1,16 +1,18 @@
 import { QueryClient } from '@tanstack/react-query'
 import type { RouteObject } from 'react-router'
 import { Layout } from './components/Layout'
+import { ExercisePage } from './pages/ExercisePage'
 import { HomePage } from './pages/HomePage'
-import { ComingSoon, NotFound } from './pages/Placeholders'
+import { MusclePage } from './pages/MusclePage'
+import { NotFound } from './pages/Placeholders'
 
 export const routes: RouteObject[] = [
   {
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
-      { path: '/muscles/:group', element: <ComingSoon what="Muscle" /> },
-      { path: '/exercises/:id', element: <ComingSoon what="Exercise" /> },
+      { path: '/muscles/:group', element: <MusclePage /> },
+      { path: '/exercises/:id', element: <ExercisePage /> },
       { path: '*', element: <NotFound /> },
     ],
   },

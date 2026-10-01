@@ -1,4 +1,12 @@
-import type { BodyMap, BodyMapMuscle, MuscleState, SearchResults, Status } from '../api/types'
+import type {
+  BodyMap,
+  BodyMapMuscle,
+  Exercise,
+  Muscle,
+  MuscleState,
+  SearchResults,
+  Status,
+} from '../api/types'
 
 const GROUPS = [
   'abdominals',
@@ -72,4 +80,150 @@ export const recent: SearchResults = {
     },
   ],
   muscles: [],
+}
+
+const set = (weight_kg: number | null, ...reps: number[]) => ({
+  weight_kg,
+  reps,
+  duration_seconds: null,
+})
+
+export const bicepsMuscle: Muscle = {
+  group: 'biceps',
+  label: 'Biceps',
+  state: 'progressing',
+  stale: false,
+  weeks: [
+    {
+      week_start: '2026-09-07',
+      trend: 'down',
+      exercises: [{ id: 'PULL', title: 'Lat Pulldown', role: 'secondary', trend: 'down' }],
+    },
+    {
+      week_start: '2026-09-21',
+      trend: 'up',
+      exercises: [
+        { id: 'CURL', title: 'Bicep Curl (Cable)', role: 'primary', trend: 'up' },
+        { id: 'ROW', title: 'Seated Cable Row', role: 'secondary', trend: 'up' },
+      ],
+    },
+    { week_start: '2026-09-28', trend: 'insufficient', exercises: [] },
+  ],
+  exercises: [
+    {
+      id: 'CURL',
+      title: 'Bicep Curl (Cable)',
+      mode: 'load',
+      role: 'primary',
+      trend: 'up',
+      last_trained: '2026-09-26',
+      rep_range: 'strength',
+      latest: set(9.1, 10, 10, 10),
+      best: set(9.1, 10, 10, 10),
+      est_1rm_kg: 12.1,
+    },
+    {
+      id: 'ROW',
+      title: 'Seated Cable Row',
+      mode: 'load',
+      role: 'secondary',
+      trend: 'up',
+      last_trained: '2026-09-25',
+      rep_range: 'strength',
+      latest: set(29.5, 7, 7),
+      best: set(34, 5),
+      est_1rm_kg: 36.4,
+    },
+  ],
+}
+
+const target = (weight_kg: number, reps: number, sets = 2) => ({
+  weight_kg,
+  reps,
+  duration_seconds: null,
+  sets,
+})
+
+export const rowExercise: Exercise = {
+  id: 'ROW',
+  title: 'Seated Cable Row',
+  mode: 'load',
+  lower_is_better: false,
+  primary_muscle: 'upper_back',
+  secondary_muscles: ['biceps', 'lats'],
+  default_range: 'strength',
+  ranges: [
+    {
+      rep_range: 'strength',
+      est_1rm_kg: 36.4,
+      trend: 'up',
+      change_pct: 21.3,
+      is_best: false,
+      off_best_pct: 9.0,
+      sessions: [
+        {
+          date: '2026-09-15',
+          did: set(22.5, 10, 10),
+          score: 30,
+          target: null,
+          target_score: null,
+          vs_target: null,
+          trend: 'new',
+          is_best: false,
+        },
+        {
+          date: '2026-09-25',
+          did: set(29.5, 7, 7),
+          score: 36.4,
+          target: target(22.5, 11),
+          target_score: 30.75,
+          vs_target: 1,
+          trend: 'up',
+          is_best: true,
+        },
+      ],
+      plan: {
+        step: 'building',
+        rep_target: [8, 12],
+        today: target(29.5, 8),
+        then: target(29.5, 9),
+        reps_to_go: 5,
+        ahead_of_plan: true,
+      },
+      capacity: {
+        weight_kg: 34.5,
+        change_pct: 18,
+        evidence: [{ id: 'PULL', title: 'Lat Pulldown', change_pct: 18 }],
+      },
+    },
+    {
+      rep_range: 'light',
+      est_1rm_kg: 16.2,
+      trend: 'down',
+      change_pct: -21.7,
+      is_best: false,
+      off_best_pct: 21.7,
+      sessions: [
+        {
+          date: '2026-09-13',
+          did: set(9, 24, 24),
+          score: 16.2,
+          target: null,
+          target_score: null,
+          vs_target: null,
+          trend: 'new',
+          is_best: false,
+        },
+      ],
+      plan: {
+        step: 'confirm',
+        rep_target: [15, 20],
+        today: target(9, 20),
+        then: target(14, 15),
+        reps_to_go: null,
+        ahead_of_plan: false,
+      },
+      capacity: null,
+    },
+  ],
 }

@@ -1,0 +1,81 @@
+.wrap {
+  margin: 0 -4px;
+}
+
+.legend {
+  display: flex;
+  gap: 18px;
+  margin: 0 4px 6px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+  outline: none;
+}
+
+.chart:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.grid {
+  vector-effect: non-scaling-stroke; /* keeps its width however the chart is scaled */
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+
+.crosshair {
+  vector-effect: non-scaling-stroke; /* keeps its width however the chart is scaled */
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.actualLine {
+  vector-effect: non-scaling-stroke; /* keeps its width however the chart is scaled */
+  fill: none;
+  stroke: var(--chart-actual);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.targetLine {
+  vector-effect: non-scaling-stroke; /* keeps its width however the chart is scaled */
+  fill: none;
+  stroke: var(--chart-target);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dot {
+  vector-effect: non-scaling-stroke; /* keeps its width however the chart is scaled */
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.axisLabel {
+  font-size: 16px;
+  fill: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}

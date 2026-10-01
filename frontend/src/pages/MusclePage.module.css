@@ -1,0 +1,169 @@
+.header {
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.stale {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* Week by week */
+
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.week {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 9px;
+  background: var(--surface-2);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.week[data-selected] {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.stripDates {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.weekDetail {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.weekTitle {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.weekList {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.weekList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weekList a:hover {
+  color: var(--accent-ink);
+}
+
+.tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+/* Exercise list */
+
+.list {
+  margin: -6px -8px;
+  padding: 0;
+  list-style: none;
+}
+
+.list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.row:hover {
+  background: var(--surface-2);
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-weight: 600;
+}
+
+.rowSub {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.rowSide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.oneRm {
+  font-weight: 700;
+}
+
+.oneRm small {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.chevron {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+}
