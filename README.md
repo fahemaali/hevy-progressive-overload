@@ -33,8 +33,9 @@ pip install -r requirements.txt
 cp .env.example .env
 # then open .env and paste your key from https://hevy.com/settings?developer
 
-# 4. Check the connection
+# 4. Check the connection, then copy your data locally
 python check_connection.py
+python -m backend.sync
 
 # 5. Run the app
 python run.py
@@ -54,3 +55,12 @@ mypy              # type check
 ```
 
 CI runs all of these on every push and pull request.
+
+### How data flows
+
+1. `python -m backend.sync` (and the app itself, every 15 minutes while in use) copies your Hevy
+   data into a local SQLite file, `data/hevy.db`. The first sync copies everything; later ones
+   only fetch workouts changed or deleted since the last sync.
+2. Only what the app needs is stored: notes, descriptions and training times are dropped before
+   anything is saved. The file is git-ignored and safe to delete; the next sync rebuilds it.
+3. The app reads from that copy, so visitors never trigger calls to Hevy.
