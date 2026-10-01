@@ -61,28 +61,53 @@ A session is only compared with earlier sessions in the same range.
 | `duration` | Longest hold |
 | distance, floors, steps types | Not tracked; listed as such |
 
-### Verdict per exercise
-For the rep range of the latest session, compare the latest session with the median of the
-previous 3 sessions in that range within the last 8 weeks:
+### Judging a session
+Every session of an exercise is compared with earlier sessions **of the same exercise, in the
+same rep range**. Different exercises are never compared by weight: 9 kg on a cable curl and
+10 kg on a barbell preacher curl aren't the same effort.
 
-- **▲ Progressing:** more than +2%
-- **● Holding:** within ±2%
-- **▼ Declining:** less than −2%
-- **Not enough data yet:** fewer than 3 earlier sessions in that range
+- **Recent level:** the median of up to the last 3 earlier sessions. Judging starts from the
+  second session, using whatever history exists.
+- **Best:** the best earlier session in that rep range, however long ago.
 
-Each verdict includes a plain-English reason, e.g. "Strength e1RM up 4.1% vs your recent median".
+The change against the recent level is rounded to one decimal place, as shown on screen, then:
 
-### Muscle-group status
-Based on exercises where the group is the **primary** muscle and that were trained in the last
-4 weeks, shown as "3 of 4 progressing" plus an overall status. Exercises where the group is
-secondary are listed separately and don't affect the status.
+| Result | Rule | Colour |
+| --- | --- | --- |
+| ▲ Progressing | more than +2% | green |
+| ● Not progressing | within ±2% (standing still is a warning sign) | amber |
+| ▼ Declining | less than −2% | red |
+| New baseline | first session in this rep range; counts from the next one | grey |
+
+Each result has a plain-English reason that also says where it stands against the best, e.g.
+"Strength e1RM up 4.0% vs your recent level · 13.3% off your best" or "… · new best".
+
+### Muscle groups, week by week
+Each week (Monday to Sunday), a muscle's status combines the results of every session that week
+of an exercise that trains it:
+
+- Exercises where it's the **primary** muscle count fully; **secondary** count half.
+- **▲ Progressing** if more than half of the counted weight is ▲.
+- **▼ Declining** if more than half is ▼.
+- **● Not progressing** otherwise (e.g. one ▲ and one ●).
+- New-baseline sessions don't count; a week with only those shows "Not enough data yet".
+
+A muscle's **current status** is its most recent week that could be judged. Alongside it, a
+**strength list** shows each exercise that trains the muscle (primary first, then most recent):
+its latest working set and its best in that rep range.
 
 ### Suggestions for the next session
 Two options, shown equally, each with the resulting e1RM change, staying within the rep range
 of the last session:
 
-- **Add weight:** the next increment, at the highest rep count that still beats the last e1RM.
-- **Add reps:** the same weight for one more rep.
+- **Add weight:** the next increment, at the fewest reps that still beat the last e1RM
+  (e.g. 52.5 kg × 9 → 55 kg × 8), but never more than 2 reps below last time (10 kg × 12 →
+  15 kg × 10, not × 1) and never below the bottom of the rep range.
+- **Add reps:** the same weight for one more rep. Not offered at the top of the Strength range
+  (12 reps), where adding weight is the way forward.
+
+Other exercise types get a single step: one more rep (bodyweight), 5 seconds longer (holds), or
+less assistance / one more rep (assisted).
 
 Default increments by template `equipment`: barbell 2.5 kg, dumbbell 2 kg, machine 5 kg,
 others 2.5 kg.
