@@ -107,7 +107,7 @@ def _with_capacity(progress: dict[str, ExerciseProgress]) -> dict[str, ExerciseP
                     rp.rep_range,
                     rp.results,
                     rp.plan,
-                    capacity_hint(p.template, list(rp.results), weighted),
+                    capacity_hint(p.template, list(rp.results), weighted, rp.plan.today.weight_kg),
                 )
                 for rp in p.ranges
             )
@@ -126,6 +126,8 @@ class Role(StrEnum):
 
 # How much an exercise counts towards a muscle's weekly status.
 ROLE_WEIGHTS = {Role.PRIMARY: 1.0, Role.SECONDARY: 0.5}
+# A single exercise's change counts at most this much (either way) in a muscle's %.
+CHANGE_CAP_PCT = 25.0
 
 
 @dataclass(frozen=True)
@@ -144,6 +146,27 @@ class MuscleWeek:
     @property
     def trained_directly(self) -> bool:
         return any(c.role is Role.PRIMARY for c in self.contributions)
+
+    @property
+    def change_pct(self) -> float | None:
+        """The muscle's overall change this week: the average of its judged exercises'
+        changes against their recent level (indirect ones count half; for assisted
+        exercises less is better, so the sign flips). Each change is capped at
+        ±CHANGE_CAP_PCT so one big early jump can't dominate. None when the week
+        couldn't be judged."""
+        if self.trend not in (Trend.UP, Trend.FLAT, Trend.DOWN):
+            return None
+        total = weight = 0.0
+        for c in self.contributions:
+            change = c.result.change_pct
+            if c.result.trend not in (Trend.UP, Trend.FLAT, Trend.DOWN) or change is None:
+                continue
+            if c.exercise.mode is TrackingMode.ASSISTED:
+                change = -change
+            capped = max(-CHANGE_CAP_PCT, min(CHANGE_CAP_PCT, change))
+            total += capped * ROLE_WEIGHTS[c.role]
+            weight += ROLE_WEIGHTS[c.role]
+        return round(total / weight, 1) if weight else None
 
 
 @dataclass(frozen=True)

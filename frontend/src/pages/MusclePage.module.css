@@ -1,0 +1,219 @@
+.header {
+  margin: 4px 0 20px;
+  text-align: center;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.symbol {
+  font-size: 0.6em;
+}
+
+.change {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+}
+
+.change strong {
+  font-size: 1.125rem;
+  color: var(--text);
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+}
+
+.empty {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* Week by week */
+
+.strip {
+  display: grid; /* columns match the line chart above */
+  margin-top: 10px;
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 4px 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.week[data-selected] {
+  background: var(--accent-soft);
+}
+
+.square {
+  display: grid;
+  place-items: center;
+  width: min(34px, 80%);
+  aspect-ratio: 1;
+  border-radius: 9px;
+  background: var(--neutral);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.square[data-skipped] {
+  background: transparent;
+  border: 1.5px dashed var(--neutral);
+}
+
+.notTrained {
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.week[data-selected] .weekDate,
+.week[data-selected] .weekDate strong {
+  color: var(--accent-ink);
+}
+
+.weekDate {
+  font-size: 0.6875rem;
+  line-height: 1.1;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.weekDate strong {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+
+.weekList {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.weekList li {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.weekExercise:hover {
+  color: var(--accent-ink);
+}
+
+.weekMeta {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.newTag {
+  justify-self: start;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--neutral);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Exercise list */
+
+.list {
+  margin: -6px -8px;
+  padding: 0;
+  list-style: none;
+}
+
+.list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.row:hover {
+  background: var(--surface-2);
+}
+
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-weight: 600;
+}
+
+.rowSub {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.rowSub strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.rowSide {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.oneRm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: 700;
+}
+
+.oneRm small {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.rowTrend {
+  display: flex;
+  justify-content: center;
+  width: 36px;
+}
+
+.chevron {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+}

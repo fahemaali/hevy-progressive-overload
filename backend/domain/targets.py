@@ -27,16 +27,22 @@ def target_score(mode: TrackingMode, target: Target) -> float:
 
 
 def compare_to_target(mode: TrackingMode, session: SessionSummary, target: Target) -> int:
-    """1 if the session beat the target, 0 if it matched it, -1 if it fell short."""
-    if mode is TrackingMode.ASSISTED:
-        # Less assistance beats the target; at the same assistance, compare reps.
-        weight, target_weight = session.working_weight_kg or 0, target.weight_kg or 0
-        if weight != target_weight:
-            return 1 if weight < target_weight else -1
+    """1 if the session beat the target, 0 if it matched it, -1 if it fell short.
+
+    Judged the way the plan works: a heavier working weight beats the target; at the
+    same weight, more reps on every set beats it. A lighter weight falls short, however
+    many reps, so the plan, the cards and the chart (which plots weight) always agree.
+    """
+    if mode in (TrackingMode.LOAD, TrackingMode.ASSISTED):
+        weight, wanted = session.working_weight_kg or 0, target.weight_kg or 0
+        if weight != wanted:
+            heavier = weight > wanted
+            harder = not heavier if mode is TrackingMode.ASSISTED else heavier
+            return 1 if harder else -1
         reps, target_reps = min(session.working_reps, default=0), target.reps or 0
         return (reps > target_reps) - (reps < target_reps)
 
-    # Rounded so float noise can't turn a match into a miss.
+    # Reps or seconds: rounded so float noise can't turn a match into a miss.
     actual = round(session.score, 2)
-    wanted = round(target_score(mode, target), 2)
-    return (actual > wanted) - (actual < wanted)
+    goal = round(target_score(mode, target), 2)
+    return (actual > goal) - (actual < goal)

@@ -1,0 +1,65 @@
+.card {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 18px 12px 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 6px 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  margin: 18px 4px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.stripes {
+  background: repeating-linear-gradient(45deg, var(--progressing) 0 3px, var(--map-figure) 3px 6px);
+}
+
+/* Lands just under the sticky header when scrolled to. */
+.spotlightAnchor {
+  margin-top: var(--gap);
+  scroll-margin-top: 84px;
+}
+
+.hint {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  text-align: center;
+}

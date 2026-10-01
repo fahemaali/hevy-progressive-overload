@@ -6,10 +6,10 @@ one of these types. Dates are calendar dates; no times of day, notes or workout
 ids are ever included.
 """
 
-from datetime import date
+from datetime import date, timedelta
 from typing import Literal, TypedDict
 
-from backend.domain.metrics import TrackingMode
+from backend.domain.metrics import PLAN_REPS, TrackingMode
 from backend.domain.plan import Plan
 from backend.domain.progress import (
     ExerciseProgress,
@@ -153,17 +153,21 @@ class WeekExerciseJSON(TypedDict):
     title: str
     role: Role
     trend: Trend
+    date: str  # a week can hold several sessions of the same exercise
+    rep_range: str | None
 
 
 class WeekJSON(TypedDict):
     week_start: str
     trend: Trend
+    change_pct: float | None  # the muscle's overall change that week
     exercises: list[WeekExerciseJSON]
 
 
 class StrengthJSON(TypedDict):
     id: str
     title: str
+    mode: TrackingMode
     role: Role
     trend: Trend | None  # latest result for this exercise
     last_trained: str
@@ -178,6 +182,8 @@ class MuscleJSON(TypedDict):
     label: str
     state: MuscleState
     stale: bool
+    change_pct: float | None  # the latest judged week's overall change
+    change_week: str | None  # which week that was
     weeks: list[WeekJSON]  # oldest first, most recent WEEKS_SHOWN
     exercises: list[StrengthJSON]  # primary first, then most recently trained
 
@@ -186,16 +192,45 @@ def week_json(week: MuscleWeek) -> WeekJSON:
     return {
         "week_start": week.week_start.isoformat(),
         "trend": week.trend,
+        "change_pct": week.change_pct,
         "exercises": [
             {
                 "id": c.exercise.template.id,
                 "title": c.exercise.template.title,
                 "role": c.role,
                 "trend": c.result.trend,
+                "date": c.result.session.date.isoformat(),
+                "rep_range": c.result.session.rep_range,
             }
-            for c in week.contributions
+            for c in sorted(week.contributions, key=lambda c: c.result.session.date)
         ],
     }
+
+
+def weeks_json(weeks: tuple[MuscleWeek, ...]) -> list[WeekJSON]:
+    """The last WEEKS_SHOWN calendar weeks up to the latest trained one, including weeks
+    the muscle wasn't trained at all (no exercises), so skipped weeks are visible."""
+    if not weeks:
+        return []
+    by_start = {w.week_start: w for w in weeks}
+    last = weeks[-1].week_start
+    first = max(weeks[0].week_start, last - timedelta(weeks=WEEKS_SHOWN - 1))
+    result: list[WeekJSON] = []
+    day = first
+    while day <= last:
+        week = by_start.get(day)
+        result.append(
+            week_json(week)
+            if week
+            else {
+                "week_start": day.isoformat(),
+                "trend": Trend.INSUFFICIENT,
+                "change_pct": None,
+                "exercises": [],
+            }
+        )
+        day += timedelta(weeks=1)
+    return result
 
 
 def strength_json(entry: StrengthEntry) -> StrengthJSON:
@@ -203,6 +238,7 @@ def strength_json(entry: StrengthEntry) -> StrengthJSON:
     return {
         "id": entry.exercise.template.id,
         "title": entry.exercise.template.title,
+        "mode": entry.exercise.mode,
         "role": entry.role,
         "trend": latest.trend if latest else None,
         "last_trained": entry.latest.date.isoformat(),
@@ -214,12 +250,15 @@ def strength_json(entry: StrengthEntry) -> StrengthJSON:
 
 
 def muscle_json(group: str, summary: MuscleGroupSummary | None, today: date) -> MuscleJSON:
+    current = summary.current if summary else None
     return {
         "group": group,
         "label": muscle_label(group),
         "state": muscle_state(summary),
         "stale": bool(summary and summary.trained_directly and summary.is_stale(today)),
-        "weeks": [week_json(w) for w in summary.weeks[-WEEKS_SHOWN:]] if summary else [],
+        "change_pct": current.change_pct if current else None,
+        "change_week": current.week_start.isoformat() if current else None,
+        "weeks": weeks_json(summary.weeks) if summary else [],
         "exercises": [strength_json(e) for e in summary.strength] if summary else [],
     }
 
@@ -230,9 +269,8 @@ def muscle_json(group: str, summary: MuscleGroupSummary | None, today: date) -> 
 class SessionJSON(TypedDict):
     date: str
     did: SetJSON
-    score: float  # e1RM / reps / assistance kg / seconds: charted as "actual"
+    score: float  # e1RM / reps / assistance kg / seconds
     target: TargetJSON | None
-    target_score: float | None  # charted as "target", same units as score
     vs_target: int | None  # -1 missed, 0 hit, 1 beat
     trend: Trend
     is_best: bool
@@ -240,6 +278,7 @@ class SessionJSON(TypedDict):
 
 class PlanJSON(TypedDict):
     step: str
+    rep_target: list[int] | None  # [bottom, top] the plan aims for, e.g. [8, 12]
     today: TargetJSON
     then: TargetJSON
     reps_to_go: int | None
@@ -287,7 +326,6 @@ def session_json(result: SessionResult) -> SessionJSON:
         "did": working_set_json(result.session),
         "score": round(result.session.score, 2),
         "target": target_json(result.target) if result.target else None,
-        "target_score": _round(result.target_score),
         "vs_target": result.vs_target,
         "trend": result.trend,
         "is_best": result.is_best,
@@ -295,8 +333,10 @@ def session_json(result: SessionResult) -> SessionJSON:
 
 
 def plan_json(plan: Plan) -> PlanJSON:
+    bounds = PLAN_REPS.get(plan.rep_range) if plan.rep_range else None
     return {
         "step": plan.step,
+        "rep_target": list(bounds) if bounds else None,
         "today": target_json(plan.today),
         "then": target_json(plan.then),
         "reps_to_go": plan.reps_to_go,
@@ -341,6 +381,43 @@ def exercise_json(progress: ExerciseProgress, titles: dict[str, str]) -> Exercis
         "secondary_muscles": list(template.secondary_muscle_groups),
         "default_range": default.rep_range if default else None,
         "ranges": [range_json(rp, titles) for rp in progress.ranges],
+    }
+
+
+# --- Exercise summaries ------------------------------------------------------------------
+
+
+class ExerciseSummaryJSON(TypedDict):
+    id: str
+    title: str
+    mode: TrackingMode
+    primary_muscle: str
+    rep_range: str | None  # the default range (Hypertrophy if trained in it)
+    trend: Trend
+    change_pct: float | None
+    last: SessionJSON
+    plan: PlanJSON
+
+
+class ExerciseListJSON(TypedDict):
+    exercises: list[ExerciseSummaryJSON]  # by primary muscle, then title
+
+
+def exercise_summary_json(progress: ExerciseProgress) -> ExerciseSummaryJSON | None:
+    rp = progress.default_range
+    if rp is None:
+        return None
+    latest = rp.results[-1]
+    return {
+        "id": progress.template.id,
+        "title": progress.template.title,
+        "mode": progress.mode,
+        "primary_muscle": progress.template.primary_muscle_group,
+        "rep_range": rp.rep_range,
+        "trend": latest.trend,
+        "change_pct": latest.change_pct,
+        "last": session_json(latest),
+        "plan": plan_json(rp.plan),
     }
 
 

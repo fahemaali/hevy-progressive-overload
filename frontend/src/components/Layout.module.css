@@ -1,0 +1,174 @@
+/* Phones first: header on top, tab bar along the bottom. */
+
+.page {
+  min-height: 100dvh;
+}
+
+.sidebar {
+  position: fixed;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.sidebarLogo,
+.sidebarMuscles {
+  display: none;
+}
+
+.nav {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  height: var(--tabbar-height);
+}
+
+.navLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.active {
+  color: var(--accent-ink);
+}
+
+.content {
+  padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  padding: calc(12px + env(safe-area-inset-top)) var(--gap) 12px;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 4px var(--gap) 32px;
+}
+
+/* Wide screens: a sidebar with the body map and every muscle you train. */
+@media (min-width: 900px) {
+  .sidebar {
+    top: 0;
+    right: auto;
+    width: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px 16px;
+    overflow-y: auto;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .sidebarLogo {
+    display: block;
+    padding: 0 8px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: auto;
+  }
+
+  .navLink {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9375rem;
+    color: var(--text);
+  }
+
+  .phoneOnly {
+    display: none;
+  }
+
+  .navLink:hover {
+    background: var(--surface-2);
+  }
+
+  .active {
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+
+  .sidebarMuscles {
+    display: block;
+  }
+
+  .sidebarHeading {
+    margin: 0 0 6px;
+    padding: 0 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .content {
+    margin-left: var(--sidebar-width);
+    padding-bottom: 0;
+  }
+
+  .header {
+    justify-content: flex-end;
+    padding: 20px 32px 12px;
+  }
+
+  /* The sidebar already offers the way back and the logo. */
+  .headerLeft {
+    display: none;
+  }
+
+  .main {
+    padding: 4px 32px 48px;
+  }
+}

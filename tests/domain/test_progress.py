@@ -171,3 +171,27 @@ def test_default_range_prefers_strength() -> None:
     assert light_only.default_range.rep_range is RepRange.LIGHT
     assert both.default_range is not None
     assert both.default_range.rep_range is RepRange.STRENGTH
+
+
+def test_muscle_change_is_weighted_and_capped() -> None:
+    # Primary +10%, secondary +200% (capped to +25%, counted half): (10 + 12.5) / 1.5 = 15
+    primary = exercise([100, 110], "P")
+    huge = exercise([10, 30], "S", primary="lats")
+    [biceps] = [g for g in muscle_group_summaries([primary, huge]) if g.group == "biceps"]
+    assert biceps.current is not None
+    assert biceps.current.change_pct == 15.0
+
+
+def test_muscle_change_is_none_for_weeks_that_cannot_be_judged() -> None:
+    [biceps] = muscle_group_summaries([exercise([100], "P")])
+    assert biceps.weeks[-1].change_pct is None
+
+
+def test_assisted_change_counts_less_assistance_as_positive() -> None:
+    t = template(type_="bodyweight_assisted", primary="lats", id_="A")
+    assisted = analyse_exercise(
+        t, [workout(0, lift(30, 8), template_id="A"), workout(7, lift(27, 8), template_id="A")]
+    )
+    [lats] = muscle_group_summaries([assisted])
+    assert lats.current is not None
+    assert lats.current.change_pct == 10.0

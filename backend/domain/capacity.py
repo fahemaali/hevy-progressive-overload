@@ -3,7 +3,7 @@ Capacity: evidence from other exercises that you could lift more on this one.
 
 Weights are never compared across exercises. Instead: how much have your other
 exercises for the same muscle improved, each against itself, since you last
-did this one? Apply that improvement to this exercise's working weight.
+did this one? Apply that improvement to the weight planned for this session.
 """
 
 from collections.abc import Iterable
@@ -22,12 +22,14 @@ SECONDARY_EVIDENCE_WEIGHT = 0.5
 # guidelines put a single load increase at 2–10%. New exercises often show huge early
 # gains (technique, not strength) that would otherwise suggest unsafe jumps.
 MAX_JUMP_PCT = 10.0
+# Each piece of evidence counts at most this much either way (as for a muscle's %).
+CHANGE_CAP_PCT = 25.0
 
 
 @dataclass(frozen=True)
 class Evidence:
     template_id: str
-    change_pct: float  # improvement since this exercise was last done
+    change_pct: float  # improvement since this exercise was last done, capped ±25%
     weight: float  # how much it counted
 
 
@@ -42,9 +44,12 @@ def capacity_hint(
     template: ExerciseTemplate,
     results: list[SessionResult],
     others: Iterable[tuple[ExerciseTemplate, list[SessionResult]]],
+    planned_kg: float | None = None,
 ) -> CapacityHint | None:
     """`results`: this weighted exercise in one rep range, oldest first.
-    `others`: other weighted exercises with all their results, oldest first."""
+    `others`: other weighted exercises with all their results, oldest first.
+    `planned_kg`: this session's planned weight; the hint builds on it, so it only
+    ever suggests going beyond the plan."""
     if not results:
         return None
     last = results[-1].session
@@ -64,7 +69,9 @@ def capacity_hint(
             continue
         change = _change_since(other_results, last.date, last.rep_range)
         if change is not None:
-            evidence.append(Evidence(other.id, change, counts))
+            # Same rule as a muscle's %: one big early jump can't dominate the average.
+            capped = max(-CHANGE_CAP_PCT, min(CHANGE_CAP_PCT, change))
+            evidence.append(Evidence(other.id, capped, counts))
 
     if not evidence:
         return None
@@ -74,7 +81,7 @@ def capacity_hint(
         return None
 
     step = weight_increment(template.equipment)
-    current = last.working_weight_kg
+    current = max(last.working_weight_kg, planned_kg or 0)
     if current * average / 100 < step:
         return None  # the evidence doesn't add up to even one increment
     # Capped, but always at least one increment: the smallest jump that's possible.

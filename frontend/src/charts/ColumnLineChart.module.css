@@ -1,0 +1,133 @@
+.figure {
+  margin: 0;
+}
+
+.chart {
+  display: flex;
+}
+
+.yAxis {
+  position: relative;
+  flex: 0 0 40px;
+}
+
+.tick {
+  position: absolute;
+  right: 8px;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.plot {
+  position: relative;
+}
+
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.svg polyline,
+.svg line {
+  fill: none;
+  vector-effect: non-scaling-stroke; /* keeps its width however the chart is stretched */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.actual {
+  stroke: var(--chart-actual);
+  stroke-width: 2;
+}
+
+.target {
+  stroke: var(--chart-target);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+
+.trend {
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+/* Across weeks with nothing to judge: the line carries on, dashed. */
+.bridge {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+}
+
+.dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: 0 0 0 2px var(--surface); /* a surface ring keeps dots legible on lines */
+  transform: translate(-50%, -50%);
+}
+
+.dot[data-hollow] {
+  background: var(--surface);
+  border: 2px dashed var(--dot);
+}
+
+.dot[data-highlight] {
+  width: 14px;
+  height: 14px;
+}
+
+.callout {
+  position: absolute;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - 12px));
+}
+
+.labels {
+  display: grid;
+  margin-top: 8px;
+}
+
+.label {
+  min-width: 0;
+  font-size: 0.6875rem;
+  line-height: 1.15;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.label strong {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--text);
+}

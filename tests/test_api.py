@@ -74,12 +74,19 @@ def test_muscle(client: FlaskClient) -> None:
     chest = get(client, "/api/muscles/chest")
     assert (chest["label"], chest["state"]) == ("Chest", "progressing")
     assert chest["weeks"][-1]["trend"] == "up"
+    assert chest["change_pct"] == chest["weeks"][-1]["change_pct"]
+    assert chest["change_pct"] is not None and chest["change_pct"] > 2
+    assert chest["change_week"] == "2026-07-20"
+    week_dates = [e["date"] for e in chest["weeks"][-1]["exercises"]]
+    assert week_dates == sorted(week_dates)  # each exercise carries its session date
+    assert week_dates[0] == "2026-07-20"
     assert [e["title"] for e in chest["exercises"]][:3] == [
         "Bench Press (Barbell)",
         "Chest Press (Machine)",
         "Push Up",
     ]
     bench = chest["exercises"][0]
+    assert bench["mode"] == "load"
     assert bench["latest"] == {"weight_kg": 52.5, "reps": [7, 7, 7], "duration_seconds": None}
     assert bench["best"]["reps"] == [9, 9, 9]
     assert bench["est_1rm_kg"] == 64.8
@@ -109,8 +116,10 @@ def test_exercise(client: FlaskClient) -> None:
     assert first["target"] is None  # a first session sets the baseline
     assert last["target"] == {"weight_kg": 55, "reps": 10, "duration_seconds": None, "sets": 3}
     assert last["vs_target"] == -1
-    assert strength["plan"]["step"] == "building"
-    assert strength["plan"]["today"]["weight_kg"] == 52.5
+    # 52.5 × 7 missed the 55 × 10 target, so the plan holds it rather than dropping.
+    assert strength["plan"]["step"] == "catch_up"
+    assert strength["plan"]["rep_target"] == [8, 12]
+    assert strength["plan"]["today"]["weight_kg"] == 55
 
 
 def test_exercise_with_both_rep_ranges(client: FlaskClient) -> None:
@@ -128,6 +137,34 @@ def test_assisted_exercise_says_lower_is_better(client: FlaskClient) -> None:
 @pytest.mark.parametrize("template_id", ["T-TREADMILL", "NOPE"])
 def test_untracked_or_unknown_exercise_is_404(client: FlaskClient, template_id: str) -> None:
     assert "error" in get(client, f"/api/exercises/{template_id}", status=404)
+
+
+# --- Exercise summaries -----------------------------------------------------------------
+
+
+def test_exercise_summaries(client: FlaskClient) -> None:
+    data = get(client, "/api/exercises")["exercises"]
+    assert [e["primary_muscle"] for e in data] == sorted(e["primary_muscle"] for e in data)
+    assert "T-TREADMILL" not in {e["id"] for e in data}  # untracked
+    bench = next(e for e in data if e["id"] == "T-BENCH")
+    assert bench["rep_range"] == "strength"
+    assert bench["trend"] == "down"
+    assert bench["last"]["did"] == {"weight_kg": 52.5, "reps": [7, 7, 7], "duration_seconds": None}
+    assert bench["plan"]["today"]["weight_kg"] == 55
+
+
+def test_skipped_weeks_appear_as_empty_weeks(
+    hevy: FakeHevy, tmp_path: Path, workouts: list[JSON]
+) -> None:
+    # Drop week 3's push day so chest has a week with no training at all.
+    hevy.workouts = [w for w in workouts if w["id"] != "W-PUSH-3"]
+    client = make_client(hevy, tmp_path)
+    weeks = get(client, "/api/muscles/chest")["weeks"]
+    starts = [w["week_start"] for w in weeks]
+    assert "2026-06-15" in starts  # the skipped week is still in the strip
+    skipped = weeks[starts.index("2026-06-15")]
+    assert (skipped["exercises"], skipped["change_pct"]) == ([], None)
+    assert len(weeks) == 8  # every calendar week from first to last
 
 
 # --- Search ----------------------------------------------------------------------------
@@ -198,7 +235,7 @@ def test_unexpected_errors_never_leak_details(
 
 def every_response(client: FlaskClient) -> list[str]:
     """The text of every response the API can give for the fixture data."""
-    urls = ["/api/body-map", "/api/search", "/api/search?q=a", "/api/status"]
+    urls = ["/api/body-map", "/api/exercises", "/api/search", "/api/search?q=a", "/api/status"]
     urls += [f"/api/muscles/{g}" for g in BODY_MUSCLES]
     template_ids = {e["id"] for e in get(client, "/api/search?q=")["exercises"]}
     urls += [f"/api/exercises/{i}" for i in template_ids]
