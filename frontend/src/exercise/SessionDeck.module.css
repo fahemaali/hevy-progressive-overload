@@ -1,40 +1,45 @@
-/* Three cards side by side, all visible; the one in front is a little wider. */
 .deck {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr 1fr;
-  align-items: center;
-  gap: 8px;
   margin-bottom: var(--gap);
-  transition: grid-template-columns 200ms ease;
 }
 
-.deck:has(> :first-child[data-active]) {
-  grid-template-columns: 1.3fr 1fr 1fr;
+/* A row of cards that snaps each one to the centre; the side cards peek out. */
+.track {
+  position: relative; /* card positions are measured from the deck, not the page */
+  display: flex;
+  gap: 12px;
+  padding: 10px 11%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
 }
 
-.deck:has(> :last-child[data-active]) {
-  grid-template-columns: 1fr 1fr 1.3fr;
+.track::-webkit-scrollbar {
+  display: none;
 }
 
 .card {
+  flex: 0 0 78%;
   min-width: 0;
-  padding: 12px;
+  padding: 18px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--surface-2);
-  opacity: 0.75;
-  cursor: pointer;
+  scroll-snap-align: center;
+  opacity: 0.65;
+  transform: scale(0.92);
   transition:
+    transform 200ms ease,
     opacity 200ms ease,
     background 200ms ease;
+  cursor: pointer;
 }
 
 .card[data-active] {
-  padding: 16px 14px;
-  border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow);
   opacity: 1;
+  transform: none;
   cursor: default;
 }
 
@@ -47,31 +52,31 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .deck,
   .card {
     transition: none;
   }
 }
 
 .kicker {
-  margin: 0;
-  font-size: 0.6875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
-.when {
-  margin: 1px 0 0;
-  font-size: 0.75rem;
-  color: var(--text-muted);
+.kicker span {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
 }
 
 .ahead {
-  display: inline-block;
-  margin: 4px 0 0;
-  padding: 1px 7px;
+  padding: 2px 8px;
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent-ink);
@@ -80,21 +85,15 @@
 }
 
 .big {
-  margin: 6px 0 0;
-  font-size: 0.9375rem;
+  margin: 0;
+  font-size: 1.75rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-}
-
-.card[data-active] .big {
-  font-size: 1.25rem;
+  letter-spacing: -0.02em;
 }
 
 .detail {
   margin: 6px 0 0;
-  font-size: 0.75rem;
-  line-height: 1.35;
+  font-size: 0.9375rem;
   color: var(--text-muted);
 }
 
@@ -107,16 +106,59 @@
   color: var(--declining);
 }
 
-@media (min-width: 600px) {
-  .big {
-    font-size: 1.125rem;
-  }
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 2px;
+}
 
-  .card[data-active] .big {
-    font-size: 1.5rem;
-  }
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
 
-  .detail {
-    font-size: 0.8125rem;
-  }
+.arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.dots {
+  display: flex;
+  gap: 2px;
+}
+
+/* Small to look at, but each dot has a 24px tap area. */
+.dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--neutral);
+  transition: width 200ms ease;
+}
+
+.dot[aria-selected='true']::before {
+  width: 22px;
+  background: var(--accent-ink);
 }

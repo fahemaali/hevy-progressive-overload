@@ -95,5 +95,5 @@ def test_big_evidence_is_capped_at_ten_percent() -> None:
     ]
     hint = capacity([barbell_row, PULLDOWN], workouts)
     assert hint is not None
-    assert hint.change_pct == 60.0  # the evidence is shown in full…
-    assert hint.weight_kg == 110  # …but the suggestion is capped at +10%
+    assert hint.change_pct == 25.0  # each piece of evidence counts at most +25%…
+    assert hint.weight_kg == 110  # …and the suggestion is capped at +10%

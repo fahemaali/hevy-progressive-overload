@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { useExercise } from '../api/client'
-import type { Exercise, Mode, RangeProgress, Session } from '../api/types'
+import type { Exercise, Mode, RangeProgress, Session, Target } from '../api/types'
 import { Card } from '../components/Card'
 import { ErrorMessage, Loading } from '../components/Feedback'
 import { TrendMark } from '../components/TrendMark'
@@ -28,8 +28,6 @@ export function ExercisePage() {
 function ExerciseView({ exercise }: { exercise: Exercise }) {
   const [rangeKey, setRangeKey] = useState(exercise.default_range)
   const range = exercise.ranges.find((r) => r.rep_range === rangeKey) ?? exercise.ranges[0]
-  const latest = range.sessions[range.sessions.length - 1]
-
   return (
     <>
       <header className={styles.header}>
@@ -37,8 +35,7 @@ function ExerciseView({ exercise }: { exercise: Exercise }) {
           <h1 className={styles.title}>{exercise.title}</h1>
           {range.trend !== 'new' && range.change_pct !== null && (
             <p className={styles.change}>
-              <TrendMark trend={range.trend} /> <strong>{pct(range.change_pct)}</strong> · last
-              session, {shortDate(latest.date)}
+              <TrendMark trend={range.trend} /> <strong>{pct(range.change_pct)}</strong>
             </p>
           )}
         </div>
@@ -95,45 +92,44 @@ function RangeView({ exercise, range }: { exercise: Exercise; range: RangeProgre
 }
 
 /**
- * A graph of you (solid) against the plan (dashed), one column per session, with the
- * plan continuing into this session and the next, so even a new exercise has a few
- * columns. The est. 1RM sits in a small card in the corner.
+ * What you actually lifted each session (solid) against what the plan asked for
+ * (dashed), continuing into this session and the next. For a first session the plan
+ * is simply what you did, so the plan line runs unbroken from the start.
  */
 function ProgressCard({ exercise, range }: { exercise: Exercise; range: RangeProgress }) {
+  const mode = exercise.mode
   const past = range.sessions
-  const future = [
-    { name: 'This', score: range.plan.today_score },
-    { name: 'Next', score: range.plan.then_score },
+  const planned = [
+    { name: 'This', value: targetValue(range.plan.today, mode) },
+    { name: 'Next', value: targetValue(range.plan.then, mode) },
   ]
-  const latest = past[past.length - 1]
 
   const columns = [
     ...past.map((s, i) => {
       const [day, month] = shortDate(s.date).split(' ')
       return { key: `${s.date}-${i}`, label: [day, month] as [string, string] }
     }),
-    ...future.map((f) => ({ key: f.name, label: [f.name, 'session'] as [string, string] })),
+    ...planned.map((p) => ({ key: p.name, label: [p.name, 'session'] as [string, string] })),
   ]
-  const actual = [...past.map((s) => s.score), ...future.map(() => null)]
-  const target = [...past.map((s) => s.target_score), ...future.map((f) => f.score)]
-  // Start the plan line from your last session, so it visibly carries on from it.
-  if (target[past.length - 1] === null) target[past.length - 1] = latest.score
+  const actual = [...past.map((s) => liftedValue(s, mode)), ...planned.map(() => null)]
+  const plan = [
+    ...past.map((s) => (s.target ? targetValue(s.target, mode) : liftedValue(s, mode))),
+    ...planned.map((p) => p.value),
+  ]
 
   const dots = [
     // The plan's target for each session: hollow, like the planned ones ahead.
     ...past.flatMap((s, i) =>
-      s.target_score === null
-        ? []
-        : [{ column: i, value: s.target_score, color: 'var(--chart-target)', hollow: true }],
+      s.target ? [{ column: i, value: plan[i]!, color: 'var(--chart-target)', hollow: true }] : [],
     ),
     ...past.map((s, i) => ({
       column: i,
-      value: s.score,
+      value: actual[i]!,
       color: s.trend === 'new' ? 'var(--chart-actual)' : TREND_INFO[s.trend].color,
     })),
-    ...future.map((f, i) => ({
+    ...planned.map((p, i) => ({
       column: past.length + i,
-      value: f.score,
+      value: p.value,
       color: 'var(--chart-target)',
       hollow: true,
     })),
@@ -162,22 +158,33 @@ function ProgressCard({ exercise, range }: { exercise: Exercise; range: RangePro
         </li>
       </ul>
       <ColumnLineChart
-        label={`${axisName(exercise.mode)} by session`}
+        label={`${axisName(mode)} by session`}
         columns={columns}
         lines={[
-          { values: target, variant: 'target' },
+          { values: plan, variant: 'target' },
           { values: actual, variant: 'actual' },
         ]}
         dots={dots}
         invert={exercise.lower_is_better}
-        yAxis={{
-          title: axisName(exercise.mode),
-          format: (v) => `${kg(v)}${axisUnit(exercise.mode)}`,
-        }}
+        yAxis={{ title: axisName(mode), format: (v) => `${kg(v)}${axisUnit(mode)}` }}
         height={180}
       />
     </Card>
   )
+}
+
+/** What the chart plots for a session: the heaviest weight (or reps, or seconds). */
+function liftedValue(session: Session, mode: Mode): number {
+  if (mode === 'reps') return Math.max(...session.did.reps)
+  if (mode === 'duration') return session.did.duration_seconds ?? 0
+  return session.did.weight_kg ?? 0
+}
+
+/** The same measure for a plan's target. */
+function targetValue(target: Target, mode: Mode): number {
+  if (mode === 'reps') return target.reps ?? 0
+  if (mode === 'duration') return target.duration_seconds ?? 0
+  return target.weight_kg ?? 0
 }
 
 function VsTarget({ value }: { value: Session['vs_target'] }) {
@@ -226,7 +233,7 @@ function SessionTable({ sessions, mode }: { sessions: Session[]; mode: Mode }) {
 /** What the chart's y-axis measures, per exercise type. */
 function axisName(mode: Mode): string {
   const names: Partial<Record<Mode, string>> = {
-    load: 'Estimated 1-rep max (kg)',
+    load: 'Heaviest weight lifted (kg)',
     assisted: 'Assistance (kg), less is better',
     reps: 'Best set (reps)',
     duration: 'Longest hold (seconds)',

@@ -107,7 +107,6 @@ export interface Session {
   did: WorkingSet
   score: number
   target: Target | null
-  target_score: number | null
   vs_target: -1 | 0 | 1 | null
   trend: Trend
   is_best: boolean
@@ -118,8 +117,6 @@ export interface Plan {
   rep_target: [number, number] | null
   today: Target
   then: Target
-  today_score: number
-  then_score: number
   reps_to_go: number | null
   ahead_of_plan: boolean
 }

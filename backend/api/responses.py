@@ -20,7 +20,7 @@ from backend.domain.progress import (
     StrengthEntry,
 )
 from backend.domain.sessions import SessionSummary
-from backend.domain.targets import Target, target_score
+from backend.domain.targets import Target
 from backend.domain.verdicts import SessionResult, Trend
 
 # Every Hevy muscle group that has a place on the body map.
@@ -243,9 +243,8 @@ def muscle_json(group: str, summary: MuscleGroupSummary | None, today: date) -> 
 class SessionJSON(TypedDict):
     date: str
     did: SetJSON
-    score: float  # e1RM / reps / assistance kg / seconds: charted as "actual"
+    score: float  # e1RM / reps / assistance kg / seconds
     target: TargetJSON | None
-    target_score: float | None  # charted as "target", same units as score
     vs_target: int | None  # -1 missed, 0 hit, 1 beat
     trend: Trend
     is_best: bool
@@ -256,8 +255,6 @@ class PlanJSON(TypedDict):
     rep_target: list[int] | None  # [bottom, top] the plan aims for, e.g. [8, 12]
     today: TargetJSON
     then: TargetJSON
-    today_score: float  # the targets in score units, to extend the chart's target line
-    then_score: float
     reps_to_go: int | None
     ahead_of_plan: bool
 
@@ -303,28 +300,25 @@ def session_json(result: SessionResult) -> SessionJSON:
         "did": working_set_json(result.session),
         "score": round(result.session.score, 2),
         "target": target_json(result.target) if result.target else None,
-        "target_score": _round(result.target_score),
         "vs_target": result.vs_target,
         "trend": result.trend,
         "is_best": result.is_best,
     }
 
 
-def plan_json(plan: Plan, mode: TrackingMode) -> PlanJSON:
+def plan_json(plan: Plan) -> PlanJSON:
     bounds = PLAN_REPS.get(plan.rep_range) if plan.rep_range else None
     return {
         "step": plan.step,
         "rep_target": list(bounds) if bounds else None,
         "today": target_json(plan.today),
         "then": target_json(plan.then),
-        "today_score": round(target_score(mode, plan.today), 2),
-        "then_score": round(target_score(mode, plan.then), 2),
         "reps_to_go": plan.reps_to_go,
         "ahead_of_plan": plan.ahead_of_plan,
     }
 
 
-def range_json(rp: RangeProgress, mode: TrackingMode, titles: dict[str, str]) -> RangeJSON:
+def range_json(rp: RangeProgress, titles: dict[str, str]) -> RangeJSON:
     latest = rp.results[-1]
     capacity: CapacityJSON | None = None
     if rp.capacity:
@@ -344,7 +338,7 @@ def range_json(rp: RangeProgress, mode: TrackingMode, titles: dict[str, str]) ->
         "is_best": latest.is_best,
         "off_best_pct": latest.off_best_pct,
         "sessions": [session_json(r) for r in rp.results],
-        "plan": plan_json(rp.plan, mode),
+        "plan": plan_json(rp.plan),
         "capacity": capacity,
     }
 
@@ -360,7 +354,7 @@ def exercise_json(progress: ExerciseProgress, titles: dict[str, str]) -> Exercis
         "primary_muscle": template.primary_muscle_group,
         "secondary_muscles": list(template.secondary_muscle_groups),
         "default_range": default.rep_range if default else None,
-        "ranges": [range_json(rp, progress.mode, titles) for rp in progress.ranges],
+        "ranges": [range_json(rp, titles) for rp in progress.ranges],
     }
 
 

@@ -11,32 +11,29 @@ function setup(exercise: unknown = rowExercise) {
   return renderApp('/exercises/ROW')
 }
 
-function cards() {
-  return within(screen.getByRole('region', { name: 'Sessions' })).getAllByRole('article')
+function slides() {
+  return screen.getAllByRole('article', { hidden: true })
 }
 
-function card(name: string) {
-  return within(screen.getByRole('region', { name: 'Sessions' })).getByRole('article', { name })
-}
-
-function frontCard() {
-  return cards().find((c) => c.getAttribute('aria-current') === 'true')!
+function activeSlide() {
+  return slides().find((s) => s.getAttribute('aria-hidden') === 'false')!
 }
 
 describe('exercise page', () => {
-  it('shows the change under the title, like the muscle page', async () => {
+  it('shows the change under the title, without a date', async () => {
     setup()
     const heading = await screen.findByRole('heading', { level: 1, name: 'Seated Cable Row' })
-    expect(heading.nextElementSibling).toHaveTextContent('+21.3% · last session, 25 Sept')
+    expect(heading.nextElementSibling).toHaveTextContent(/^.*\+21\.3%$/) // no date beside it
   })
 
-  it('opens on the progress graph, with est. 1RM in its corner and a kg axis', async () => {
+  it('opens on a graph of the weight lifted, with est. 1RM in its corner', async () => {
     setup()
     const progress = await screen.findByRole('region', { name: 'Progress' })
     expect(within(progress).getByText('Est. 1RM').parentElement).toHaveTextContent('36.4 kg')
     expect(within(progress).getByRole('figure')).toHaveAccessibleName(
-      'Estimated 1-rep max (kg) by session',
+      'Heaviest weight lifted (kg) by session',
     )
+    expect(within(progress).getByText('Heaviest weight lifted (kg)')).toBeInTheDocument()
     expect(within(progress).getAllByText(/^\d+ kg$/).length).toBeGreaterThanOrEqual(3) // axis
     const main = screen.getByRole('main')
     const titles = within(main)
@@ -52,38 +49,37 @@ describe('exercise page', () => {
     expect(labels.map((l) => l.textContent)).toEqual(['15', '25', 'This', 'Next'])
   })
 
-  it('shows last, this and next session side by side, this one in front', async () => {
+  it('shows last, this and next session as a deck, starting on this session', async () => {
     setup()
     await screen.findByRole('region', { name: 'Sessions' })
-    expect(cards().map((c) => c.getAttribute('aria-label'))).toEqual([
-      'Last session',
-      'This session',
-      'Next session',
+    expect(slides().map((s) => s.getAttribute('aria-label'))).toEqual([
+      'Last session, 1 of 3',
+      'This session, 2 of 3',
+      'Next session, 3 of 3',
     ])
-    expect(frontCard()).toHaveAccessibleName('This session')
-    expect(card('This session')).toHaveTextContent('29.5 kg × 8')
-    expect(card('This session')).toHaveTextContent('2 sets · 5 reps to go before adding weight')
-    expect(card('This session')).toHaveTextContent('Ahead of plan')
-    expect(card('Last session')).toHaveTextContent('25 Sept29.5 kg × 7, 7')
-    expect(card('Last session')).toHaveTextContent('Target was 22.5 kg × 11 · ✓ beaten')
-    expect(card('Next session')).toHaveTextContent("29.5 kg × 9If you hit this session's target")
+    expect(activeSlide()).toHaveTextContent('29.5 kg × 8')
+    expect(activeSlide()).toHaveTextContent('2 sets · 5 reps to go before adding weight')
+    expect(activeSlide()).toHaveTextContent('Ahead of plan')
   })
 
-  it('brings a card to the front when tapped or chosen with the keyboard', async () => {
+  it('moves through the deck with the arrows and dots', async () => {
     setup()
-    await userEvent.click(await screen.findByRole('article', { name: 'Last session' }))
-    expect(frontCard()).toHaveAccessibleName('Last session')
-    card('Next session').focus()
-    await userEvent.keyboard('{Enter}')
-    expect(frontCard()).toHaveAccessibleName('Next session')
+    await userEvent.click(await screen.findByRole('button', { name: 'Previous session' }))
+    expect(activeSlide()).toHaveAccessibleName('Last session, 1 of 3')
+    expect(activeSlide()).toHaveTextContent('29.5 kg × 7, 7')
+    expect(activeSlide()).toHaveTextContent('Target was 22.5 kg × 11 · ✓ beaten')
+    expect(screen.getByRole('button', { name: 'Previous session' })).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Next session' }))
+    expect(activeSlide()).toHaveTextContent('29.5 kg × 9')
+    expect(activeSlide()).toHaveTextContent("If you hit this session's target")
   })
 
   it('says when the last session was the first one', async () => {
     const [strength, light] = rowExercise.ranges
     setup({ ...rowExercise, ranges: [{ ...strength, sessions: [strength.sessions[0]] }, light] })
-    expect(await screen.findByRole('article', { name: 'Last session' })).toHaveTextContent(
-      'First session: your starting point',
-    )
+    await userEvent.click(await screen.findByRole('button', { name: 'Previous session' }))
+    expect(activeSlide()).toHaveTextContent('First session: your starting point')
   })
 
   it('shows capacity evidence from other exercises', async () => {
@@ -102,8 +98,8 @@ describe('exercise page', () => {
     const endurance = screen.getByRole('tab', { name: 'Endurance' })
     await userEvent.click(endurance)
     expect(endurance).toHaveAttribute('aria-selected', 'true')
-    expect(card('This session')).toHaveTextContent('9 kg × 20')
-    expect(card('This session')).toHaveTextContent('Hit 20 · repeat to confirm')
+    expect(activeSlide()).toHaveTextContent('9 kg × 20')
+    expect(activeSlide()).toHaveTextContent('Hit 20 · repeat to confirm')
     expect(screen.queryByRole('region', { name: 'Capacity' })).toBeNull()
   })
 

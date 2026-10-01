@@ -22,12 +22,14 @@ SECONDARY_EVIDENCE_WEIGHT = 0.5
 # guidelines put a single load increase at 2–10%. New exercises often show huge early
 # gains (technique, not strength) that would otherwise suggest unsafe jumps.
 MAX_JUMP_PCT = 10.0
+# Each piece of evidence counts at most this much either way (as for a muscle's %).
+CHANGE_CAP_PCT = 25.0
 
 
 @dataclass(frozen=True)
 class Evidence:
     template_id: str
-    change_pct: float  # improvement since this exercise was last done
+    change_pct: float  # improvement since this exercise was last done, capped ±25%
     weight: float  # how much it counted
 
 
@@ -64,7 +66,9 @@ def capacity_hint(
             continue
         change = _change_since(other_results, last.date, last.rep_range)
         if change is not None:
-            evidence.append(Evidence(other.id, change, counts))
+            # Same rule as a muscle's %: one big early jump can't dominate the average.
+            capped = max(-CHANGE_CAP_PCT, min(CHANGE_CAP_PCT, change))
+            evidence.append(Evidence(other.id, capped, counts))
 
     if not evidence:
         return None

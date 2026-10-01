@@ -118,7 +118,6 @@ def test_exercise(client: FlaskClient) -> None:
     assert last["vs_target"] == -1
     assert strength["plan"]["step"] == "building"
     assert strength["plan"]["rep_target"] == [8, 12]
-    assert strength["plan"]["today_score"] == pytest.approx(52.5 * (1 + 8 / 30), abs=0.01)
     assert strength["plan"]["today"]["weight_kg"] == 52.5
 
 
