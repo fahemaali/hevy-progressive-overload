@@ -149,3 +149,16 @@ export interface Exercise {
   default_range: RepRange | null
   ranges: RangeProgress[]
 }
+
+/** One exercise in brief: its latest result, last session and plan. */
+export interface ExerciseSummary {
+  id: string
+  title: string
+  mode: Mode
+  primary_muscle: string
+  rep_range: RepRange | null
+  trend: Trend
+  change_pct: number | null
+  last: Session
+  plan: Plan
+}

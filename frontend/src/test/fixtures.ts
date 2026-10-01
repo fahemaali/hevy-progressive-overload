@@ -2,6 +2,7 @@ import type {
   BodyMap,
   BodyMapMuscle,
   Exercise,
+  ExerciseSummary,
   Muscle,
   MuscleState,
   SearchResults,
@@ -143,7 +144,21 @@ export const bicepsMuscle: Muscle = {
         },
       ],
     },
-    { week_start: '2026-09-28', trend: 'insufficient', change_pct: null, exercises: [] },
+    {
+      week_start: '2026-09-28',
+      trend: 'insufficient',
+      change_pct: null,
+      exercises: [
+        {
+          id: 'HAMMER',
+          title: 'Hammer Curl',
+          role: 'primary',
+          trend: 'new',
+          date: '2026-09-29',
+          rep_range: 'strength',
+        },
+      ],
+    },
   ],
   exercises: [
     {
@@ -260,3 +275,39 @@ export const rowExercise: Exercise = {
     },
   ],
 }
+
+export const exerciseSummaries: ExerciseSummary[] = [
+  {
+    id: 'BENCH',
+    title: 'Bench Press',
+    mode: 'load',
+    primary_muscle: 'chest',
+    rep_range: 'strength',
+    trend: 'up',
+    change_pct: 6.2,
+    last: rowExercise.ranges[0].sessions[1],
+    plan: rowExercise.ranges[0].plan,
+  },
+  {
+    id: 'FLY',
+    title: 'Cable Fly',
+    mode: 'load',
+    primary_muscle: 'chest',
+    rep_range: 'light',
+    trend: 'new',
+    change_pct: null,
+    last: rowExercise.ranges[1].sessions[0],
+    plan: rowExercise.ranges[1].plan,
+  },
+  {
+    id: 'CURL',
+    title: 'Bicep Curl (Cable)',
+    mode: 'load',
+    primary_muscle: 'biceps',
+    rep_range: 'strength',
+    trend: 'up',
+    change_pct: 15.3,
+    last: rowExercise.ranges[0].sessions[1],
+    plan: rowExercise.ranges[0].plan,
+  },
+]

@@ -16,10 +16,14 @@ export function SessionDeck({
   sessions,
   plan,
   mode,
+  compact = false,
+  label = 'Sessions',
 }: {
   sessions: Session[]
   plan: Plan
   mode: Mode
+  compact?: boolean // smaller cards and no controls: for rows of decks
+  label?: string
 }) {
   const trackRef = useRef<HTMLDivElement>(null)
   const thisSession = sessions.length
@@ -65,7 +69,12 @@ export function SessionDeck({
   }
 
   return (
-    <section className={styles.deck} aria-roledescription="carousel" aria-label="Sessions">
+    <section
+      className={styles.deck}
+      data-compact={compact || undefined}
+      aria-roledescription="carousel"
+      aria-label={label}
+    >
       <div className={styles.track} ref={trackRef} onScroll={onScroll}>
         {titles.map((title, i) => (
           <article
@@ -87,45 +96,47 @@ export function SessionDeck({
         ))}
       </div>
 
-      <div className={styles.controls}>
-        <button
-          type="button"
-          className={styles.arrow}
-          aria-label="Previous session"
-          disabled={active === 0}
-          onClick={() => go(active - 1)}
-        >
-          ‹
-        </button>
-        {titles.length <= MAX_DOTS ? (
-          <div className={styles.dots} role="tablist" aria-label="Choose a session">
-            {titles.map((title, i) => (
-              <button
-                key={title}
-                type="button"
-                role="tab"
-                aria-selected={i === active}
-                aria-label={title}
-                className={styles.dot}
-                onClick={() => go(i)}
-              />
-            ))}
-          </div>
-        ) : (
-          <span className={styles.counter} aria-live="polite">
-            {active + 1} / {titles.length}
-          </span>
-        )}
-        <button
-          type="button"
-          className={styles.arrow}
-          aria-label="Next session"
-          disabled={active === titles.length - 1}
-          onClick={() => go(active + 1)}
-        >
-          ›
-        </button>
-      </div>
+      {!compact && (
+        <div className={styles.controls}>
+          <button
+            type="button"
+            className={styles.arrow}
+            aria-label="Previous session"
+            disabled={active === 0}
+            onClick={() => go(active - 1)}
+          >
+            ‹
+          </button>
+          {titles.length <= MAX_DOTS ? (
+            <div className={styles.dots} role="tablist" aria-label="Choose a session">
+              {titles.map((title, i) => (
+                <button
+                  key={title}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === active}
+                  aria-label={title}
+                  className={styles.dot}
+                  onClick={() => go(i)}
+                />
+              ))}
+            </div>
+          ) : (
+            <span className={styles.counter} aria-live="polite">
+              {active + 1} / {titles.length}
+            </span>
+          )}
+          <button
+            type="button"
+            className={styles.arrow}
+            aria-label="Next session"
+            disabled={active === titles.length - 1}
+            onClick={() => go(active + 1)}
+          >
+            ›
+          </button>
+        </div>
+      )}
     </section>
   )
 }

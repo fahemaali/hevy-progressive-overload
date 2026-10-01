@@ -44,6 +44,11 @@
   stroke-width: 1.6;
 }
 
+.muscle[data-selected] .shape {
+  stroke: var(--accent-ink);
+  stroke-width: 0.45;
+}
+
 .muscle[data-hovered] .shape,
 .muscle:focus-visible .shape {
   stroke: var(--accent);

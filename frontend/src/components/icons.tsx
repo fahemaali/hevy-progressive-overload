@@ -56,3 +56,9 @@ export const BackIcon = (p: IconProps) => (
     <path d="M15 5l-7 7 7 7" />
   </Icon>
 )
+
+export const DumbbellIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11" />
+  </Icon>
+)

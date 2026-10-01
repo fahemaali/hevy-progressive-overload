@@ -55,6 +55,18 @@ def muscle(group: str) -> responses.MuscleJSON:
     return responses.muscle_json(group, snapshot().muscles.get(group), service().today())
 
 
+@api.get("/exercises")
+def exercises() -> responses.ExerciseListJSON:
+    """A summary of every tracked exercise: latest result, last session and plan."""
+    summaries = [
+        summary
+        for progress in snapshot().progress.values()
+        if (summary := responses.exercise_summary_json(progress))
+    ]
+    summaries.sort(key=lambda e: (e["primary_muscle"], e["title"]))
+    return {"exercises": summaries}
+
+
 @api.get("/exercises/<template_id>")
 def exercise(template_id: str) -> responses.ExerciseJSON:
     snap = snapshot()

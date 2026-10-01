@@ -106,6 +106,21 @@ def test_sessions_are_checked_against_the_plans_target(
     assert (result.vs_target, result.hit_target, result.ahead_of_target) == (vs_target, hit, ahead)
 
 
+@pytest.mark.parametrize(
+    ("did", "vs_target"),
+    [
+        ((55, 8), 1),  # heavier beats it, even with fewer reps
+        ((50, 9), 1),  # same weight, more reps
+        ((50, 8), 0),
+        ((45, 12), -1),  # lighter falls short, however many reps
+    ],
+)
+def test_targets_are_judged_by_weight_then_reps(did: tuple[float, int], vs_target: int) -> None:
+    # After 50 × 7 the plan asks for 50 × 8.
+    result = latest_for(template(), weekly((lift(50, 7),), (lift(*did),)))
+    assert result.vs_target == vs_target
+
+
 def test_target_score_is_in_the_same_units_as_the_score() -> None:
     result = latest_for(template(), weekly((lift(60, 9),), (lift(60, 10),)))
     assert result.target_score == pytest.approx(result.session.score)  # 60 × 10 both

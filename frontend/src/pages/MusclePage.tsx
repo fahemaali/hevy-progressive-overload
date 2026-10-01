@@ -111,6 +111,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
         {weeks.map((w, i) => {
           const info = TREND_INFO[w.trend]
           const judged = JUDGED.includes(w.trend)
+          const skipped = w.exercises.length === 0
           const [day, month] = shortDate(w.week_start).split(' ')
           const change = w.change_pct !== null ? `, ${pct(w.change_pct)}` : ''
           return (
@@ -119,17 +120,18 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
               type="button"
               role="radio"
               aria-checked={i === selected}
-              aria-label={`Week of ${shortDate(w.week_start)}: ${info.label}${change}`}
+              aria-label={`Week of ${shortDate(w.week_start)}: ${skipped ? 'Not trained' : info.label}${change}`}
               className={styles.week}
               data-selected={i === selected || undefined}
               onClick={() => setSelected(i)}
             >
               <span
                 className={styles.square}
+                data-skipped={skipped || undefined}
                 style={judged ? { background: info.color, color: '#fff' } : undefined}
                 aria-hidden="true"
               >
-                {judged ? info.symbol : '–'}
+                {judged ? info.symbol : skipped ? '' : '–'}
               </span>
               <span className={styles.weekDate} aria-hidden="true">
                 <strong>{day}</strong> {month}
@@ -139,6 +141,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
         })}
       </div>
 
+      {week.exercises.length === 0 && <p className={styles.notTrained}>Not trained this week</p>}
       <ul
         className={styles.weekList}
         aria-label={`Sessions in the week of ${shortDate(week.week_start)}`}

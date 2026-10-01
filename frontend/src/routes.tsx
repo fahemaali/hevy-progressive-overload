@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query'
 import type { RouteObject } from 'react-router'
 import { Layout } from './components/Layout'
 import { ExercisePage } from './pages/ExercisePage'
+import { ExercisesPage } from './pages/ExercisesPage'
 import { HomePage } from './pages/HomePage'
 import { MusclePage } from './pages/MusclePage'
 import { MusclesPage } from './pages/MusclesPage'
@@ -14,6 +15,7 @@ export const routes: RouteObject[] = [
       { path: '/', element: <HomePage /> },
       { path: '/muscles', element: <MusclesPage /> },
       { path: '/muscles/:group', element: <MusclePage /> },
+      { path: '/exercises', element: <ExercisesPage /> },
       { path: '/exercises/:id', element: <ExercisePage /> },
       { path: '*', element: <NotFound /> },
     ],

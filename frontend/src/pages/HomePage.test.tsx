@@ -2,12 +2,20 @@ import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mockApi, renderApp } from '../test/render'
-import { bodyMap, recent, status } from '../test/fixtures'
+import { bicepsMuscle, bodyMap, exerciseSummaries, recent, status } from '../test/fixtures'
 
 afterEach(() => vi.unstubAllGlobals())
 
+const chestMuscle = { ...bicepsMuscle, group: 'chest', label: 'Chest', change_pct: 13.6 }
+
 function setup(path = '/') {
-  mockApi({ '/api/body-map': bodyMap, '/api/status': status, '/api/search': recent })
+  mockApi({
+    '/api/body-map': bodyMap,
+    '/api/status': status,
+    '/api/search': recent,
+    '/api/exercises': { exercises: exerciseSummaries },
+    '/api/muscles/chest': chestMuscle,
+  })
   return renderApp(path)
 }
 
@@ -21,19 +29,46 @@ describe('body map page', () => {
     ).not.toHaveLength(0)
   })
 
-  it('opens a muscle when it is tapped', async () => {
+  it('asks you to tap a muscle before one is chosen', async () => {
+    setup()
+    expect(await screen.findByText('Tap a muscle to see its exercises')).toBeInTheDocument()
+  })
+
+  it('shows a tapped muscle and its exercises under the map, remembered in the address', async () => {
     const { router } = setup()
     const [chest] = await screen.findAllByRole('button', { name: /^Chest/ })
     await userEvent.click(chest)
-    expect(router.state.location.pathname).toBe('/muscles/chest')
+    expect(router.state.location.pathname).toBe('/')
+    expect(router.state.location.search).toBe('?muscle=chest')
+    expect(chest).toHaveAttribute('aria-pressed', 'true')
+
+    const spotlight = await screen.findByRole('region', { name: 'Chest exercises' })
+    const header = within(spotlight).getByRole('link', { name: /Chest/ })
+    expect(header).toHaveAttribute('href', '/muscles/chest')
+    expect(await within(spotlight).findByText('+13.6%')).toBeInTheDocument()
+
+    // Only exercises that mainly work chest, each with its own Last · This · Next cards.
+    expect(within(spotlight).getByRole('link', { name: /Bench Press/ })).toHaveAttribute(
+      'href',
+      '/exercises/BENCH',
+    )
+    expect(within(spotlight).getByRole('link', { name: /Cable Fly/ })).toBeInTheDocument()
+    expect(within(spotlight).queryByText(/Bicep Curl/)).toBeNull()
+    const bench = within(spotlight).getByRole('region', { name: 'Bench Press sessions' })
+    expect(within(bench).getAllByRole('article', { hidden: true })).toHaveLength(3)
   })
 
-  it('opens a muscle with the keyboard', async () => {
+  it('opens straight onto a muscle from a shared link', async () => {
+    setup('/?muscle=chest')
+    expect(await screen.findByRole('region', { name: 'Chest exercises' })).toBeInTheDocument()
+  })
+
+  it('selects a muscle with the keyboard', async () => {
     const { router } = setup()
     const [chest] = await screen.findAllByRole('button', { name: /^Chest/ })
     chest.focus()
     await userEvent.keyboard('{Enter}')
-    expect(router.state.location.pathname).toBe('/muscles/chest')
+    expect(router.state.location.search).toBe('?muscle=chest')
   })
 
   it('has a four-item legend', async () => {

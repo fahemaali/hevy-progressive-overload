@@ -7,6 +7,7 @@ import styles from './BodyMap.module.css'
 interface Props {
   muscles: BodyMapMuscle[]
   onSelect: (group: string) => void
+  selected?: string | null // highlighted as the current choice
 }
 
 // Drawn in this order, so slim muscles come last: where their enlarged tap areas
@@ -32,7 +33,7 @@ const DRAW_ORDER = [
 ]
 
 /** Front and back figures, each muscle group coloured by its state. */
-export function BodyMap({ muscles, onSelect }: Props) {
+export function BodyMap({ muscles, onSelect, selected }: Props) {
   const byGroup = new Map(muscles.map((m) => [m.group, m]))
   const [hovered, setHovered] = useState<string | null>(null)
 
@@ -71,6 +72,8 @@ export function BodyMap({ muscles, onSelect }: Props) {
                   aria-label={label}
                   className={styles.muscle}
                   data-hovered={hovered === group || undefined}
+                  data-selected={selected === group || undefined}
+                  aria-pressed={selected === group}
                   onClick={() => onSelect(group)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {

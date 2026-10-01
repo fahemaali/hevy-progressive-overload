@@ -128,7 +128,9 @@ preacher curl aren't the same effort.
   second session, using whatever history exists.
 - **Best:** the best earlier session in that rep range, however long ago.
 - **Target:** what the plan asked for, worked out from the sessions before it, so past
-  sessions have targets too.
+  sessions have targets too. A session beats its target with a heavier working weight, or
+  the same weight with more reps on every set; a lighter weight falls short however many reps
+  (the same terms as the plan and the graph).
 
 The change against the recent level is rounded to one decimal place, as shown on screen, then:
 

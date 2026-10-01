@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { MuscleWeek } from '../api/types'
 import { mockApi, renderApp } from '../test/render'
 import { bicepsMuscle, bodyMap, status } from '../test/fixtures'
 
@@ -44,6 +45,22 @@ describe('muscle page', () => {
       'Week of 7 Sept: Declining, −4.5%',
     )
     expect(screen.getByRole('list', { name: /week of 7 Sept/ })).toHaveTextContent('Lat Pulldown')
+  })
+
+  it('shows weeks with no training at all as skipped', async () => {
+    const skipped: MuscleWeek = {
+      week_start: '2026-09-14',
+      trend: 'insufficient',
+      change_pct: null,
+      exercises: [],
+    }
+    const weeks = [...bicepsMuscle.weeks]
+    weeks.splice(1, 0, skipped)
+    setup({ ...bicepsMuscle, weeks })
+    const strip = await screen.findByRole('radiogroup', { name: 'Week' })
+    const week = within(strip).getByRole('radio', { name: 'Week of 14 Sept: Not trained' })
+    await userEvent.click(week)
+    expect(screen.getByText('Not trained this week')).toBeInTheDocument()
   })
 
   it('dates each session in a week, and names its rep range and secondary role', async () => {

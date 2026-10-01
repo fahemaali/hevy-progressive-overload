@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router'
 import { useReloadAfterRefresh } from '../api/useReloadAfterRefresh'
-import { BackIcon, BodyIcon, ListIcon } from './icons'
+import { BackIcon, BodyIcon, DumbbellIcon, ListIcon } from './icons'
 import { Logo } from './Logo'
 import { MuscleNav } from './MuscleNav'
 import { SearchBar } from './SearchBar'
@@ -10,6 +10,7 @@ const TABS = [
   { to: '/', label: 'Body map', Icon: BodyIcon, phoneOnly: false },
   // On wide screens the sidebar lists the muscles directly instead.
   { to: '/muscles', label: 'Muscles', Icon: ListIcon, phoneOnly: true },
+  { to: '/exercises', label: 'Exercises', Icon: DumbbellIcon, phoneOnly: false },
 ]
 
 /**

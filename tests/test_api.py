@@ -139,6 +139,34 @@ def test_untracked_or_unknown_exercise_is_404(client: FlaskClient, template_id: 
     assert "error" in get(client, f"/api/exercises/{template_id}", status=404)
 
 
+# --- Exercise summaries -----------------------------------------------------------------
+
+
+def test_exercise_summaries(client: FlaskClient) -> None:
+    data = get(client, "/api/exercises")["exercises"]
+    assert [e["primary_muscle"] for e in data] == sorted(e["primary_muscle"] for e in data)
+    assert "T-TREADMILL" not in {e["id"] for e in data}  # untracked
+    bench = next(e for e in data if e["id"] == "T-BENCH")
+    assert bench["rep_range"] == "strength"
+    assert bench["trend"] == "down"
+    assert bench["last"]["did"] == {"weight_kg": 52.5, "reps": [7, 7, 7], "duration_seconds": None}
+    assert bench["plan"]["today"]["weight_kg"] == 55
+
+
+def test_skipped_weeks_appear_as_empty_weeks(
+    hevy: FakeHevy, tmp_path: Path, workouts: list[JSON]
+) -> None:
+    # Drop week 3's push day so chest has a week with no training at all.
+    hevy.workouts = [w for w in workouts if w["id"] != "W-PUSH-3"]
+    client = make_client(hevy, tmp_path)
+    weeks = get(client, "/api/muscles/chest")["weeks"]
+    starts = [w["week_start"] for w in weeks]
+    assert "2026-06-15" in starts  # the skipped week is still in the strip
+    skipped = weeks[starts.index("2026-06-15")]
+    assert (skipped["exercises"], skipped["change_pct"]) == ([], None)
+    assert len(weeks) == 8  # every calendar week from first to last
+
+
 # --- Search ----------------------------------------------------------------------------
 
 
@@ -207,7 +235,7 @@ def test_unexpected_errors_never_leak_details(
 
 def every_response(client: FlaskClient) -> list[str]:
     """The text of every response the API can give for the fixture data."""
-    urls = ["/api/body-map", "/api/search", "/api/search?q=a", "/api/status"]
+    urls = ["/api/body-map", "/api/exercises", "/api/search", "/api/search?q=a", "/api/status"]
     urls += [f"/api/muscles/{g}" for g in BODY_MUSCLES]
     template_ids = {e["id"] for e in get(client, "/api/search?q=")["exercises"]}
     urls += [f"/api/exercises/{i}" for i in template_ids]

@@ -59,8 +59,9 @@
 
 .kicker {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
   margin: 0 0 6px;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -76,6 +77,7 @@
 }
 
 .ahead {
+  white-space: nowrap;
   padding: 2px 8px;
   border-radius: 999px;
   background: var(--accent-soft);
@@ -170,4 +172,38 @@
 .dot[aria-selected='true']::before {
   width: 22px;
   background: var(--accent-ink);
+}
+
+/* Compact: rows of decks on the home page. Three cards fit side by side on wide
+   screens; on phones they scroll, snapping to the centre. */
+.deck[data-compact] {
+  margin-bottom: 0;
+}
+
+.deck[data-compact] .track {
+  gap: 10px;
+  padding: 6px max(0px, calc(50% - 105px));
+}
+
+.deck[data-compact] .card {
+  flex: 0 0 210px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  transform: scale(0.94);
+}
+
+.deck[data-compact] .card[data-active] {
+  transform: none;
+}
+
+.deck[data-compact] .kicker {
+  font-size: 0.6875rem;
+}
+
+.deck[data-compact] .big {
+  font-size: 1.25rem;
+}
+
+.deck[data-compact] .detail {
+  font-size: 0.8125rem;
 }

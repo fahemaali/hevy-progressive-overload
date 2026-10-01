@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import type { BodyMap, Exercise, Muscle, SearchResults, Status } from './types'
+import type { BodyMap, Exercise, ExerciseSummary, Muscle, SearchResults, Status } from './types'
 
 export class ApiError extends Error {
   readonly status: number
@@ -28,6 +28,14 @@ export function useMuscle(group: string) {
   return useQuery({
     queryKey: ['muscle', group],
     queryFn: () => getJson<Muscle>(`/api/muscles/${encodeURIComponent(group)}`),
+  })
+}
+
+export function useExercises() {
+  return useQuery({
+    queryKey: ['exercises'],
+    queryFn: async () =>
+      (await getJson<{ exercises: ExerciseSummary[] }>('/api/exercises')).exercises,
   })
 }
 
