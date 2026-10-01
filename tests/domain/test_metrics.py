@@ -29,8 +29,8 @@ def test_epley(weight: float, reps: int, expected: float) -> None:
     [
         (1, RepRange.STRENGTH),
         (12, RepRange.STRENGTH),
-        (13, RepRange.HIGH_REP),
-        (30, RepRange.HIGH_REP),
+        (13, RepRange.LIGHT),
+        (30, RepRange.LIGHT),
     ],
 )
 def test_rep_range_boundary_is_12(reps: int, expected: RepRange) -> None:

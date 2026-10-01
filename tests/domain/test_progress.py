@@ -1,16 +1,16 @@
 """End-to-end over the synthetic fixtures, plus the muscle-group rules."""
 
 from collections.abc import Sequence
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 import pytest
 
+from backend.domain.metrics import RepRange
 from backend.domain.parsing import parse_template, parse_workout
 from backend.domain.progress import (
     ExerciseProgress,
     MuscleGroupSummary,
-    Role,
     analyse_all,
     analyse_exercise,
     muscle_group_summaries,
@@ -69,13 +69,13 @@ def test_fixture_muscle_weeks(groups: dict[str, MuscleGroupSummary]) -> None:
     assert groups["lats"].current is not None
     assert groups["lats"].current.trend is Trend.FLAT
 
-    # Triceps are only trained as a secondary muscle, but still get a weekly status.
+    # Triceps are only ever trained indirectly: listed, but not tracked.
     triceps = groups["triceps"]
-    assert triceps.current is not None
-    assert {c.role for c in triceps.current.contributions} == {Role.SECONDARY}
-    assert triceps.current.trend is Trend.UP
+    assert not triceps.trained_directly
+    assert triceps.current is None
+    assert len(triceps.strength) == 3  # bench, chest press, push-ups
 
-    assert "cardio" not in groups  # treadmill isn't tracked
+    assert "cardio" not in groups  # no place on a body map
 
 
 def test_fixture_strength_list(groups: dict[str, MuscleGroupSummary]) -> None:
@@ -121,7 +121,8 @@ def exercise(weights: Sequence[float], id_: str, primary: str = "biceps") -> Exe
         ([UP], [DOWN, DOWN], Trend.FLAT),
         # …but 1 up vs 1 × 0.5 down is still a majority.
         ([UP], [DOWN], Trend.UP),
-        ([], [UP], Trend.UP),  # secondary-only weeks still get a status
+        ([], [UP], Trend.INSUFFICIENT),  # indirect-only weeks aren't judged
+        ([NEW], [UP], Trend.UP),  # trained directly (new), so indirect work counts
     ],
 )
 def test_weekly_roll_up(
@@ -146,3 +147,27 @@ def test_current_skips_weeks_that_cannot_be_judged() -> None:
     assert biceps.weeks[-1].trend is Trend.INSUFFICIENT
     assert biceps.current is not None
     assert biceps.current.trend is Trend.UP
+
+
+def test_stale_after_three_weeks_without_direct_training() -> None:
+    [biceps] = muscle_group_summaries([exercise(UP, "A")])
+    last = biceps.last_trained_directly
+    assert last is not None
+    assert not biceps.is_stale(last + timedelta(weeks=3))
+    assert biceps.is_stale(last + timedelta(weeks=3, days=1))
+
+
+def test_non_body_groups_are_left_off_the_map() -> None:
+    full_body = analyse_exercise(
+        template(primary="full_body", id_="F"), [workout(0, lift(20, 10), template_id="F")]
+    )
+    assert muscle_group_summaries([full_body]) == []
+
+
+def test_default_range_prefers_strength() -> None:
+    light_only = analyse_exercise(template(), [workout(0, lift(20, 15))])
+    both = analyse_exercise(template(), [workout(0, lift(20, 15)), workout(7, lift(40, 8))])
+    assert light_only.default_range is not None
+    assert light_only.default_range.rep_range is RepRange.LIGHT
+    assert both.default_range is not None
+    assert both.default_range.rep_range is RepRange.STRENGTH

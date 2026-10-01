@@ -24,9 +24,9 @@ def test_top_set_is_the_best_e1rm_not_the_heaviest() -> None:
 def test_heavy_and_light_sets_in_one_session_are_summarised_separately() -> None:
     summaries = summarise_sessions(template(), [workout(0, lift(60, 6), lift(30, 20))])
     by_range = {s.rep_range: s for s in summaries}
-    assert set(by_range) == {RepRange.STRENGTH, RepRange.HIGH_REP}
+    assert set(by_range) == {RepRange.STRENGTH, RepRange.LIGHT}
     assert by_range[RepRange.STRENGTH].top_set.weight_kg == 60
-    assert by_range[RepRange.HIGH_REP].top_set.weight_kg == 30
+    assert by_range[RepRange.LIGHT].top_set.weight_kg == 30
 
 
 def test_weighted_sets_without_weight_or_reps_are_ignored() -> None:
@@ -59,6 +59,16 @@ def test_assisted_scores_least_assistance_then_most_reps() -> None:
     )
     assert summary.score == 25
     assert summary.top_set.reps == 8
+    assert summary.working_weight_kg == 25  # least assistance is the working weight
+    assert summary.working_reps == (6, 8)
+
+
+def test_working_weight_is_heaviest_and_working_reps_cover_every_set_at_it() -> None:
+    [summary] = summarise_sessions(
+        template(), [workout(0, lift(40, 12), lift(50, 10), lift(50, 8), lift(50, 9))]
+    )
+    assert summary.working_weight_kg == 50
+    assert summary.working_reps == (10, 8, 9)
 
 
 def test_duration_scores_longest_hold() -> None:

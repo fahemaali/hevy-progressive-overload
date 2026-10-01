@@ -2,15 +2,17 @@ from collections.abc import Sequence
 
 import pytest
 
-from backend.domain.metrics import RepRange, tracking_mode
+from backend.domain.metrics import RepRange
 from backend.domain.models import ExerciseTemplate, Workout
-from backend.domain.sessions import summarise_sessions
-from backend.domain.verdicts import SessionResult, Trend, judge_sessions
+from backend.domain.progress import analyse_exercise
+from backend.domain.verdicts import SessionResult, Trend
 from tests.domain.helpers import hold, lift, template, weekly
 
 
 def results_for(t: ExerciseTemplate, workouts: list[Workout]) -> list[SessionResult]:
-    return judge_sessions(tracking_mode(t), summarise_sessions(t, workouts))
+    """Results for the exercise's default range (Strength, if trained in it)."""
+    progress = analyse_exercise(t, workouts).default_range
+    return list(progress.results) if progress else []
 
 
 def latest_for(t: ExerciseTemplate, workouts: list[Workout]) -> SessionResult:
@@ -42,7 +44,7 @@ def test_trend_thresholds(latest_weight: float, expected: Trend) -> None:
 def test_first_session_sets_the_baseline() -> None:
     [first] = results_for(template(), lifts([100]))
     assert first.trend is Trend.NEW
-    assert first.reason == "First Strength e1RM session: sets the baseline"
+    assert first.target is None
 
 
 def test_judged_from_the_second_session() -> None:
@@ -71,7 +73,6 @@ def test_new_best_is_flagged() -> None:
     result = latest_for(template(), lifts([100, 100, 100, 110]))
     assert result.is_best
     assert result.off_best_pct is None
-    assert result.reason == "Strength e1RM up 10.0% vs your recent level · new best"
 
 
 def test_shows_how_far_off_an_earlier_best() -> None:
@@ -80,26 +81,46 @@ def test_shows_how_far_off_an_earlier_best() -> None:
     assert result.trend is Trend.UP
     assert not result.is_best
     assert result.off_best_pct == 13.3
-    assert result.reason == "Strength e1RM up 4.0% vs your recent level · 13.3% off your best"
 
 
 def test_matching_best_is_not_a_new_best() -> None:
     result = latest_for(template(), lifts([100, 100]))
     assert not result.is_best
     assert result.off_best_pct == 0
-    assert result.reason == "Strength e1RM unchanged vs your recent level"
+
+
+# --- Targets -----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("reps", "vs_target", "hit", "ahead"),
+    [(9, 1, True, True), (8, 0, True, False), (7, -1, False, False)],
+)
+def test_sessions_are_checked_against_the_plans_target(
+    reps: int, vs_target: int, hit: bool, ahead: bool
+) -> None:
+    # After 50 × 7 the plan asks for 50 × 8.
+    result = latest_for(template(), weekly((lift(50, 7),), (lift(50, reps),)))
+    assert result.target is not None
+    assert (result.target.weight_kg, result.target.reps) == (50, 8)
+    assert (result.vs_target, result.hit_target, result.ahead_of_target) == (vs_target, hit, ahead)
+
+
+def test_target_score_is_in_the_same_units_as_the_score() -> None:
+    result = latest_for(template(), weekly((lift(60, 9),), (lift(60, 10),)))
+    assert result.target_score == pytest.approx(result.session.score)  # 60 × 10 both
 
 
 # --- Rep ranges and exercise types -------------------------------------------------
 
 
 def test_light_sessions_are_only_compared_with_light_sessions() -> None:
-    # Alternating heavy and light weeks. By e1RM alone, the latest light session
+    # Alternating heavy and light weeks. By e1RM alone, the light session
     # (25 × 20 = 41.7) would look like a big drop from the heavy ones (60 × 8 = 76).
     heavy, light = (lift(60, 8),), (lift(25, 20),)
-    result = latest_for(template(), weekly(heavy, light, heavy, light))
-    assert result.session.rep_range is RepRange.HIGH_REP
-    assert result.trend is Trend.FLAT
+    progress = analyse_exercise(template(), weekly(heavy, light, heavy, light))
+    light_range = next(r for r in progress.ranges if r.rep_range is RepRange.LIGHT)
+    assert light_range.results[-1].trend is Trend.FLAT
 
 
 def test_less_assistance_is_progress_and_a_best() -> None:
@@ -107,7 +128,7 @@ def test_less_assistance_is_progress_and_a_best() -> None:
     result = latest_for(template(type_="bodyweight_assisted"), sessions)
     assert result.trend is Trend.UP
     assert result.is_best
-    assert result.reason == "Assistance down 10.0% vs your recent level · new best"
+    assert result.change_pct == -10.0
 
 
 def test_more_assistance_is_decline() -> None:
@@ -125,9 +146,8 @@ def test_assisted_from_zero_assistance(latest: float, expected: Trend) -> None:
 
 def test_reps_only_and_duration() -> None:
     reps = weekly(*[(lift(None, r),) for r in (10, 10, 10, 12)])
-    assert latest_for(template(type_="reps_only"), reps).reason == (
-        "Best set up 20.0% vs your recent level · new best"
-    )
+    result = latest_for(template(type_="reps_only"), reps)
+    assert (result.trend, result.change_pct, result.is_best) == (Trend.UP, 20.0, True)
     holds = weekly(*[(hold(s),) for s in (60, 60, 60, 50)])
     assert latest_for(template(type_="duration"), holds).trend is Trend.DOWN
 

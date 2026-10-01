@@ -29,25 +29,23 @@ def tracking_mode(template: ExerciseTemplate) -> TrackingMode:
 
 
 class RepRange(StrEnum):
-    """Weighted sets are compared only with sets in the same range (see REQUIREMENTS.md)."""
+    """Each exercise is tracked as two progressions (see REQUIREMENTS.md)."""
 
     STRENGTH = "strength"
-    HIGH_REP = "high_rep"
+    LIGHT = "light"
 
 
 STRENGTH_MAX_REPS = 12
 
-REP_RANGE_LABELS = {RepRange.STRENGTH: "Strength", RepRange.HIGH_REP: "High-rep"}
-
-# (min reps, max reps or None for no upper limit)
-REP_RANGE_BOUNDS: dict[RepRange, tuple[int, int | None]] = {
-    RepRange.STRENGTH: (1, STRENGTH_MAX_REPS),
-    RepRange.HIGH_REP: (STRENGTH_MAX_REPS + 1, None),
+# The reps the plan aims for in each range: (bottom, top).
+PLAN_REPS: dict[RepRange, tuple[int, int]] = {
+    RepRange.STRENGTH: (8, 12),
+    RepRange.LIGHT: (15, 20),
 }
 
 
 def rep_range(reps: int) -> RepRange:
-    return RepRange.STRENGTH if reps <= STRENGTH_MAX_REPS else RepRange.HIGH_REP
+    return RepRange.STRENGTH if reps <= STRENGTH_MAX_REPS else RepRange.LIGHT
 
 
 def epley_e1rm(weight_kg: float, reps: int) -> float:

@@ -12,13 +12,17 @@ from backend.domain.models import ExerciseTemplate, LoggedSet, Workout
 class SessionSummary:
     workout_id: str
     date: date
-    # Set for weighted exercises only; a session with both heavy and light sets
-    # produces one summary per range.
+    # Set for weighted and assisted exercises; a session with both heavy and light
+    # sets produces one summary per range.
     rep_range: RepRange | None
-    # The number the verdict compares: e1RM, best reps, assistance kg or hold seconds.
+    # The number results are judged on: e1RM, best reps, assistance kg or hold seconds.
     score: float
-    top_set: LoggedSet
+    top_set: LoggedSet  # the set that produced the score
     best_e1rm: float | None
+    # The heaviest weight used (least assistance, for assisted work) and the reps of
+    # every set at that weight: what double progression is planned from.
+    working_weight_kg: float | None
+    working_reps: tuple[int, ...]
     total_reps: int
     volume_kg: float
     set_count: int
@@ -27,7 +31,7 @@ class SessionSummary:
 def summarise_sessions(
     template: ExerciseTemplate, workouts: Iterable[Workout]
 ) -> list[SessionSummary]:
-    """One summary per session (and per rep range for weighted exercises), oldest first."""
+    """One summary per session (and per rep range where it applies), oldest first."""
     mode = tracking_mode(template)
     summaries: list[SessionSummary] = []
     for workout in sorted(workouts, key=lambda w: (w.date, w.id)):
@@ -45,22 +49,26 @@ def summarise_sessions(
 
 def _summarise(mode: TrackingMode, workout: Workout, sets: list[LoggedSet]) -> list[SessionSummary]:
     if mode is TrackingMode.LOAD:
-        return _summarise_load(workout, sets)
+        usable = [s for s in sets if s.weight_kg and s.reps]
+        return [
+            _weighted_summary(workout, range_, range_sets, lower_is_better=False)
+            for range_, range_sets in _by_range(usable).items()
+        ]
+
+    if mode is TrackingMode.ASSISTED:
+        usable = [s for s in sets if s.reps and s.weight_kg is not None]
+        return [
+            _weighted_summary(workout, range_, range_sets, lower_is_better=True)
+            for range_, range_sets in _by_range(usable).items()
+        ]
 
     if mode is TrackingMode.REPS:
         usable = [s for s in sets if s.reps]
         if not usable:
             return []
         top = max(usable, key=lambda s: s.reps or 0)
-        return [_summary(workout, None, float(top.reps or 0), top, usable)]
-
-    if mode is TrackingMode.ASSISTED:
-        usable = [s for s in sets if s.reps and s.weight_kg is not None]
-        if not usable:
-            return []
-        # Best set: least assistance, then most reps.
-        top = min(usable, key=lambda s: (s.weight_kg or 0, -(s.reps or 0)))
-        return [_summary(workout, None, top.weight_kg or 0, top, usable)]
+        reps = tuple(s.reps or 0 for s in usable)
+        return [_summary(workout, None, float(top.reps or 0), top, usable, working_reps=reps)]
 
     if mode is TrackingMode.DURATION:
         usable = [s for s in sets if s.duration_seconds]
@@ -72,22 +80,37 @@ def _summarise(mode: TrackingMode, workout: Workout, sets: list[LoggedSet]) -> l
     return []  # TrackingMode.UNTRACKED
 
 
-def _summarise_load(workout: Workout, sets: list[LoggedSet]) -> list[SessionSummary]:
+def _by_range(sets: list[LoggedSet]) -> dict[RepRange, list[LoggedSet]]:
     by_range: dict[RepRange, list[LoggedSet]] = {}
     for s in sets:
-        if s.weight_kg and s.reps:
-            by_range.setdefault(rep_range(s.reps), []).append(s)
+        by_range.setdefault(rep_range(s.reps or 0), []).append(s)
+    return by_range
 
-    summaries = []
-    for range_, range_sets in by_range.items():
-        top = max(range_sets, key=_e1rm)
-        volume = sum((s.weight_kg or 0) * (s.reps or 0) for s in range_sets)
-        summaries.append(
-            _summary(
-                workout, range_, _e1rm(top), top, range_sets, best_e1rm=_e1rm(top), volume_kg=volume
-            )
-        )
-    return summaries
+
+def _weighted_summary(
+    workout: Workout, range_: RepRange, sets: list[LoggedSet], lower_is_better: bool
+) -> SessionSummary:
+    weights = [s.weight_kg or 0 for s in sets]
+    working_weight = min(weights) if lower_is_better else max(weights)
+    working_reps = tuple(s.reps or 0 for s in sets if (s.weight_kg or 0) == working_weight)
+
+    if lower_is_better:
+        # Best set: least assistance, then most reps.
+        top = min(sets, key=lambda s: (s.weight_kg or 0, -(s.reps or 0)))
+        return _summary(workout, range_, working_weight, top, sets, working_weight, working_reps)
+
+    top = max(sets, key=_e1rm)
+    return _summary(
+        workout,
+        range_,
+        _e1rm(top),
+        top,
+        sets,
+        working_weight,
+        working_reps,
+        best_e1rm=_e1rm(top),
+        volume_kg=sum((s.weight_kg or 0) * (s.reps or 0) for s in sets),
+    )
 
 
 def _e1rm(s: LoggedSet) -> float:
@@ -100,6 +123,8 @@ def _summary(
     score: float,
     top: LoggedSet,
     sets: list[LoggedSet],
+    working_weight_kg: float | None = None,
+    working_reps: tuple[int, ...] = (),
     best_e1rm: float | None = None,
     volume_kg: float = 0.0,
 ) -> SessionSummary:
@@ -110,6 +135,8 @@ def _summary(
         score=score,
         top_set=top,
         best_e1rm=best_e1rm,
+        working_weight_kg=working_weight_kg,
+        working_reps=working_reps,
         total_reps=sum(s.reps or 0 for s in sets),
         volume_kg=volume_kg,
         set_count=len(sets),
