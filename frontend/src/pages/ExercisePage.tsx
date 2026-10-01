@@ -41,7 +41,7 @@ function ExerciseView({ exercise }: { exercise: Exercise }) {
         </div>
         {exercise.ranges.length > 1 && (
           <div className={styles.toggle} role="tablist" aria-label="Rep range">
-            {exercise.ranges.map((r) => (
+            {[...exercise.ranges].sort(byRange).map((r) => (
               <button
                 key={r.rep_range}
                 type="button"
@@ -186,6 +186,12 @@ function targetValue(target: Target, mode: Mode): number {
   if (mode === 'reps') return target.reps ?? 0
   if (mode === 'duration') return target.duration_seconds ?? 0
   return target.weight_kg ?? 0
+}
+
+/** Hypertrophy always first, then Endurance, whichever was trained first. */
+function byRange(a: RangeProgress, b: RangeProgress): number {
+  const order = ['strength', 'light']
+  return order.indexOf(a.rep_range ?? '') - order.indexOf(b.rep_range ?? '')
 }
 
 /** What the chart's y-axis measures, per exercise type. */

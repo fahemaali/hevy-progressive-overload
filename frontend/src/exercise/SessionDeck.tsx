@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { Mode, Plan, Session } from '../api/types'
 import { formatSet, formatTarget, plural, shortDate } from '../format'
-import { planNote } from './planNote'
+import { goalSentence } from './goal'
 import styles from './SessionDeck.module.css'
 
 // With more cards than this, a "3 / 12" counter replaces the dots.
@@ -170,7 +170,7 @@ function ThisCard({ plan, mode }: { plan: Plan; mode: Mode }) {
       <p className={styles.big}>{formatTarget(plan.today, mode)}</p>
       <p className={styles.detail}>
         {plan.today.sets > 1 && <>{plural(plan.today.sets, 'set')} · </>}
-        {planNote(plan, mode)}
+        {goalSentence('this', plan, mode)}
       </p>
     </>
   )
@@ -181,7 +181,7 @@ function NextCard({ plan, mode }: { plan: Plan; mode: Mode }) {
     <>
       <p className={styles.kicker}>Next session</p>
       <p className={styles.big}>{formatTarget(plan.then, mode)}</p>
-      <p className={styles.detail}>If you hit this session's target</p>
+      <p className={styles.detail}>{goalSentence('next', plan, mode)}</p>
     </>
   )
 }

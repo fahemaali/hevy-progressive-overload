@@ -59,7 +59,7 @@ describe('exercise page', () => {
       'Next session, 4 of 4',
     ])
     expect(activeSlide()).toHaveTextContent('29.5 kg × 8')
-    expect(activeSlide()).toHaveTextContent('2 sets · 5 reps to go before adding weight')
+    expect(activeSlide()).toHaveTextContent('2 sets · 4 more reps to hit 12')
     expect(activeSlide()).toHaveTextContent('Ahead of plan')
   })
 
@@ -76,7 +76,7 @@ describe('exercise page', () => {
 
     await userEvent.click(screen.getByRole('tab', { name: 'Next session' }))
     expect(activeSlide()).toHaveTextContent('29.5 kg × 9')
-    expect(activeSlide()).toHaveTextContent("If you hit this session's target")
+    expect(activeSlide()).toHaveTextContent('3 more reps to hit 12')
   })
 
   it('shows the last 3 months of sessions, in the cards and the graph alike', async () => {
@@ -128,8 +128,14 @@ describe('exercise page', () => {
     await userEvent.click(endurance)
     expect(endurance).toHaveAttribute('aria-selected', 'true')
     expect(activeSlide()).toHaveTextContent('9 kg × 20')
-    expect(activeSlide()).toHaveTextContent('Hit 20 · repeat to confirm')
+    expect(activeSlide()).toHaveTextContent('Repeat 20 to unlock the next weight')
     expect(screen.queryByRole('region', { name: 'Tip!' })).toBeNull()
+  })
+
+  it('always lists Hypertrophy before Endurance', async () => {
+    setup({ ...rowExercise, ranges: [...rowExercise.ranges].reverse() })
+    const tabs = await screen.findAllByRole('tab', { name: /Hypertrophy|Endurance/ })
+    expect(tabs.map((t) => t.textContent)).toEqual(['Hypertrophy', 'Endurance'])
   })
 
   it('has no range toggle when there is only one range', async () => {

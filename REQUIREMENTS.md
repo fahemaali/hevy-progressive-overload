@@ -78,25 +78,43 @@ the two ranges are kept apart. Shown as the exercise's headline "Est. 1RM" numbe
 For each exercise and rep range, the next target comes from the latest sessions:
 
 1. **Building:** same weight, one more rep than the lowest set last time, up to the top of the
-   range. *"3 reps to go"*
+   range.
 2. **Confirm:** reached the top of the range on all working sets once → repeat it, so one good day
-   doesn't push the weight up too early. *"Hit 12 · repeat to confirm"*
+   doesn't push the weight up too early.
 3. **Add weight:** reached the top on all working sets **two sessions in a row** → add one
-   increment and drop to the bottom of the range. *"Confirmed · add weight"*
+   increment and drop to the bottom of the range.
 4. **Falling short:** if a session misses its target (lighter, or fewer reps), the plan holds
    that target rather than lowering itself. *"Back on track: 45 kg × 5"*. The plan only ever
    goes up or stays level, apart from a deliberate stall step-back.
 5. **Stalled:** 3 sessions in a row at the same weight, none better than the session before it
    (no higher score, no extra total reps) → step back about 10%, in whole increments (at least
    one), and build up again.
-   *"Stalled 3 sessions · step back"*
 
 "Working weight" is the heaviest weight used in the range that session (the least assistance,
 for assisted exercises); "all working sets" means every set at that weight.
 
-The app shows **Today** and **Then** (what comes next if today's target is hit). The plan always
+The app shows **This session** and **Next session** (what comes next if this session's target
+is hit).
+
+### Card sentences: goal-focused, worked out from each card's target
+Each card says where its target sits in the story: *build to the top of the range one rep at a
+time → hit the top → repeat it → unlock the next weight → start again at the bottom*.
+
+| Card's target (Hypertrophy, at 18 kg) | Sentence |
+| --- | --- |
+| 18 kg × 8 | "4 more reps to hit 12" |
+| 18 kg × 11 | "One more rep to hit 12" |
+| 18 kg × 12, first time | "Hit 12, then repeat it to unlock the next weight" |
+| 18 kg × 12, the repeat | "Repeat 12 to unlock the next weight" |
+| 23 kg × 8, new weight | "New weight unlocked! Build back up to 12" |
+| Fell short last time | "To get back on track: 3 more reps to hit 12" |
+| Stalled | "Stalled. Let's start fresh at 55 kg and rebuild to 12" |
+| Assisted | Same story, "… to unlock less assistance" / "Less assistance unlocked!" |
+| Endurance | Same story with 15–20: "One more rep to hit 20" |
+| Bodyweight | "Beat your best: 14 reps" |
+| Timed hold | "5 more seconds than last time" | The plan always
 recalculates from what was actually logged, so doing more than planned simply moves it on
-(*"Ahead of plan"*). A first session has no plan yet (*"First session · sets your baseline"*).
+(*"Ahead of plan"*). A first session has no target (*"First session: your starting point"*).
 
 Weight increments by template `equipment`: barbell 2.5 kg, dumbbell 2 kg, machine 5 kg, others
 2.5 kg.
