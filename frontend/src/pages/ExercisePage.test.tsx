@@ -33,7 +33,7 @@ describe('exercise page', () => {
     expect(within(progress).getByRole('figure')).toHaveAccessibleName(
       'Heaviest weight lifted (kg) by session',
     )
-    expect(within(progress).getByText('Heaviest weight lifted (kg)')).toBeInTheDocument()
+    expect(within(progress).queryByText('Heaviest weight lifted (kg)')).toBeNull() // no axis title
     expect(within(progress).getAllByText(/^\d+ kg$/).length).toBeGreaterThanOrEqual(3) // axis
     const main = screen.getByRole('main')
     const titles = within(main)
@@ -82,11 +82,12 @@ describe('exercise page', () => {
     expect(activeSlide()).toHaveTextContent('First session: your starting point')
   })
 
-  it('shows capacity evidence from other exercises', async () => {
+  it('gives a tip when other exercises for the muscle show more capacity', async () => {
     setup()
-    const capacity = await screen.findByRole('region', { name: 'Capacity' })
-    expect(capacity).toHaveTextContent('Try 34.5 kg')
-    expect(capacity).toHaveTextContent('Lat Pulldown +18%')
+    const tip = await screen.findByRole('region', { name: 'Tip!' })
+    expect(tip).toHaveTextContent(
+      'Try 34.5 kg. Your other upper back exercises are up 18% (Lat Pulldown).',
+    )
   })
 
   it('switches between Hypertrophy and Endurance', async () => {
@@ -100,7 +101,7 @@ describe('exercise page', () => {
     expect(endurance).toHaveAttribute('aria-selected', 'true')
     expect(activeSlide()).toHaveTextContent('9 kg × 20')
     expect(activeSlide()).toHaveTextContent('Hit 20 · repeat to confirm')
-    expect(screen.queryByRole('region', { name: 'Capacity' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Tip!' })).toBeNull()
   })
 
   it('has a table of every session, newest first', async () => {

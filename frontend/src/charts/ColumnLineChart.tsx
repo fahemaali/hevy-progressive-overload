@@ -8,6 +8,7 @@ export interface Column {
 export interface Line {
   values: (number | null)[] // one per column; null leaves a gap
   variant: 'actual' | 'target' | 'trend'
+  fromOrigin?: boolean // start from the corner where the axes meet
 }
 
 export interface Dot {
@@ -25,8 +26,7 @@ interface Props {
   height?: number
   invert?: boolean // lower is better: the scale flips so "up" always means progress
   zeroLine?: boolean // for changes: a baseline at 0, and a range balanced around it
-  // Value labels and gridlines on the left, with a title at the top of the axis.
-  yAxis?: { title: string; format: (value: number) => string }
+  yAxis?: { format: (value: number) => string } // value labels and gridlines on the left
   highlight?: number // a column whose dot is drawn larger
   callout?: string // a short label above the highlighted column's top dot
 }
@@ -64,11 +64,6 @@ export function ColumnLineChart({
 
   return (
     <figure className={styles.figure} aria-label={label}>
-      {yAxis && (
-        <figcaption className={styles.yTitle} aria-hidden="true">
-          {yAxis.title}
-        </figcaption>
-      )}
       <div className={styles.chart}>
         {yAxis && (
           <div className={styles.yAxis} style={{ height }} aria-hidden="true">
@@ -102,7 +97,10 @@ export function ColumnLineChart({
                 segments(line.values).map((seg, si) => (
                   <polyline
                     key={`${li}-${si}`}
-                    points={seg.map((i) => `${x(i)},${y(line.values[i]!)}`).join(' ')}
+                    points={[
+                      ...(line.fromOrigin && si === 0 ? ['0,100'] : []),
+                      ...seg.map((i) => `${x(i)},${y(line.values[i]!)}`),
+                    ].join(' ')}
                     className={styles[line.variant]}
                   />
                 )),
@@ -215,5 +213,6 @@ function segments(values: (number | null)[]): number[][] {
     } else run.push(i)
   })
   if (run.length) runs.push(run)
-  return runs.filter((r) => r.length > 1)
+  // A line needs two points; a lone first point can still be joined to the origin.
+  return runs.filter((r) => r.length > 1 || r[0] === 0)
 }

@@ -9,7 +9,7 @@ function axisLabels(values: number[]): number[] {
       columns={values.map((_, i) => ({ key: String(i) }))}
       lines={[{ values, variant: 'actual' }]}
       dots={[]}
-      yAxis={{ title: 'kg', format: (v) => String(v) }}
+      yAxis={{ format: (v) => String(v) }}
     />,
   )
   return [...container.querySelectorAll('[class*="tick"]')].map((t) => Number(t.textContent))

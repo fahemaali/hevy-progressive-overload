@@ -52,17 +52,17 @@
   color: var(--accent-text);
 }
 
-/* Capacity */
+/* Tip (capacity) */
 
-.capacity {
-  margin: 0 0 6px;
-  font-size: 1.125rem;
+.tip {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 
-.capacityWhy {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--text-muted);
+.tip strong {
+  color: var(--text);
 }
 
 /* Progress card */

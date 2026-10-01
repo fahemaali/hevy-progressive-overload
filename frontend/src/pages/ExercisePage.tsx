@@ -74,14 +74,11 @@ function RangeView({ exercise, range }: { exercise: Exercise; range: RangeProgre
       <SessionDeck last={last} plan={range.plan} mode={mode} />
 
       {range.capacity && (
-        <Card title="Capacity">
-          <p className={styles.capacity}>
-            Try <strong>{kg(range.capacity.weight_kg)} kg</strong>
-          </p>
-          <p className={styles.capacityWhy}>
-            Your other {label(exercise.primary_muscle).toLowerCase()} exercises are up{' '}
-            {pct(range.capacity.change_pct)} since you last did this:{' '}
-            {range.capacity.evidence.map((e) => `${e.title} ${pct(e.change_pct)}`).join(', ')}.
+        <Card title="Tip!">
+          <p className={styles.tip}>
+            Try <strong>{kg(range.capacity.weight_kg)} kg</strong>. Your other{' '}
+            {muscleName(exercise.primary_muscle)} exercises are up {kg(range.capacity.change_pct)}%{' '}
+            ({range.capacity.evidence.map((e) => e.title).join(', ')}).
           </p>
         </Card>
       )}
@@ -117,23 +114,11 @@ function ProgressCard({ exercise, range }: { exercise: Exercise; range: RangePro
     ...planned.map((p) => p.value),
   ]
 
-  const dots = [
-    // The plan's target for each session: hollow, like the planned ones ahead.
-    ...past.flatMap((s, i) =>
-      s.target ? [{ column: i, value: plan[i]!, color: 'var(--chart-target)', hollow: true }] : [],
-    ),
-    ...past.map((s, i) => ({
-      column: i,
-      value: actual[i]!,
-      color: s.trend === 'new' ? 'var(--chart-actual)' : TREND_INFO[s.trend].color,
-    })),
-    ...planned.map((p, i) => ({
-      column: past.length + i,
-      value: p.value,
-      color: 'var(--chart-target)',
-      hollow: true,
-    })),
-  ]
+  const dots = past.map((s, i) => ({
+    column: i,
+    value: actual[i]!,
+    color: s.trend === 'new' ? 'var(--chart-actual)' : TREND_INFO[s.trend].color,
+  }))
 
   return (
     <Card
@@ -161,12 +146,12 @@ function ProgressCard({ exercise, range }: { exercise: Exercise; range: RangePro
         label={`${axisName(mode)} by session`}
         columns={columns}
         lines={[
-          { values: plan, variant: 'target' },
+          { values: plan, variant: 'target', fromOrigin: true },
           { values: actual, variant: 'actual' },
         ]}
         dots={dots}
         invert={exercise.lower_is_better}
-        yAxis={{ title: axisName(mode), format: (v) => `${kg(v)}${axisUnit(mode)}` }}
+        yAxis={{ format: (v) => `${kg(v)}${axisUnit(mode)}` }}
         height={180}
       />
     </Card>
@@ -245,7 +230,20 @@ function axisUnit(mode: Mode): string {
   return mode === 'duration' ? 's' : mode === 'reps' ? '' : ' kg'
 }
 
-function label(group: string): string {
-  const text = group.replaceAll('_', ' ')
-  return text.charAt(0).toUpperCase() + text.slice(1)
+// "glute exercises", not "glutes exercises".
+const SINGULAR: Record<string, string> = {
+  abdominals: 'abdominal',
+  abductors: 'abductor',
+  adductors: 'adductor',
+  calves: 'calf',
+  forearms: 'forearm',
+  glutes: 'glute',
+  hamstrings: 'hamstring',
+  lats: 'lat',
+  shoulders: 'shoulder',
+  traps: 'trap',
+}
+
+function muscleName(group: string): string {
+  return SINGULAR[group] ?? group.replaceAll('_', ' ')
 }

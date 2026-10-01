@@ -2,14 +2,6 @@
   margin: 0;
 }
 
-/* The y-axis title sits at the top of the axis, above its values. */
-.yTitle {
-  margin: 0 0 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
 .chart {
   display: flex;
 }
@@ -71,8 +63,8 @@
 
 .target {
   stroke: var(--chart-target);
-  stroke-width: 2;
-  stroke-dasharray: 5 5;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
 }
 
 .trend {

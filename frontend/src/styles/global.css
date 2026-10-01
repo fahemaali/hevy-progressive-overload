@@ -40,9 +40,9 @@
   --map-figure: #e6dfd2;
   --map-outline: var(--surface);
 
-  /* Chart lines (validated for colour-blind separation on white). */
+  /* Chart lines: you in teal; the plan a faint grey dash in the background. */
   --chart-actual: #0d8f84;
-  --chart-target: #3f63a6;
+  --chart-target: #b8b0a2;
   --chart-grid: #efe8dc;
 }
 
