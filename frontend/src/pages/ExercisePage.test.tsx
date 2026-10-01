@@ -11,42 +11,74 @@ function setup(exercise: unknown = rowExercise) {
   return renderApp('/exercises/ROW')
 }
 
+function slides() {
+  return screen.getAllByRole('article', { hidden: true })
+}
+
+function activeSlide() {
+  return slides().find((s) => s.getAttribute('aria-hidden') === 'false')!
+}
+
 describe('exercise page', () => {
-  it('leads with the estimated 1-rep max, its trend, and your personal best', async () => {
+  it('shows the change under the title, like the muscle page', async () => {
     setup()
-    const summary = await screen.findByRole('region', { name: 'Summary' })
-    expect(within(summary).getByText('Estimated 1-rep max')).toBeInTheDocument()
-    expect(within(summary).getByText('36.4 kg')).toBeInTheDocument()
-    expect(within(summary).getByText(/\+21\.3%/)).toHaveTextContent('vs recent sessions')
-    expect(within(summary).getByText('Matches your personal best')).toBeInTheDocument()
+    const heading = await screen.findByRole('heading', { level: 1, name: 'Seated Cable Row' })
+    expect(heading.nextElementSibling).toHaveTextContent('+21.3% · 25 Sept')
   })
 
-  it('names the personal best when the latest session is below it', async () => {
+  it('opens on the progress graph, with est. 1RM in its corner and a kg axis', async () => {
+    setup()
+    const progress = await screen.findByRole('region', { name: 'Progress' })
+    expect(within(progress).getByText('Est. 1RM').parentElement).toHaveTextContent('36.4 kg')
+    expect(within(progress).getByRole('figure')).toHaveAccessibleName(
+      'Estimated 1-rep max (kg) by session',
+    )
+    expect(within(progress).getAllByText(/^\d+ kg$/).length).toBeGreaterThanOrEqual(3) // axis
+    const main = screen.getByRole('main')
+    const titles = within(main)
+      .getAllByRole('heading', { level: 2 })
+      .map((h) => h.textContent)
+    expect(titles[0]).toBe('Progress')
+  })
+
+  it('charts past sessions plus this session and the next', async () => {
+    setup()
+    const progress = await screen.findByRole('region', { name: 'Progress' })
+    const labels = within(progress).getAllByText(/^(15|25|This|Next)$/)
+    expect(labels.map((l) => l.textContent)).toEqual(['15', '25', 'This', 'Next'])
+  })
+
+  it('shows last, this and next session as a deck, starting on this session', async () => {
+    setup()
+    await screen.findByRole('region', { name: 'Sessions' })
+    expect(slides().map((s) => s.getAttribute('aria-label'))).toEqual([
+      'Last session, 1 of 3',
+      'This session, 2 of 3',
+      'Next session, 3 of 3',
+    ])
+    expect(activeSlide()).toHaveTextContent('29.5 kg × 8')
+    expect(activeSlide()).toHaveTextContent('2 sets · 5 reps to go before adding weight')
+    expect(activeSlide()).toHaveTextContent('Ahead of plan')
+  })
+
+  it('moves through the deck with the arrows and dots', async () => {
+    setup()
+    await userEvent.click(await screen.findByRole('button', { name: 'Previous session' }))
+    expect(activeSlide()).toHaveAccessibleName('Last session, 1 of 3')
+    expect(activeSlide()).toHaveTextContent('29.5 kg × 7, 7')
+    expect(activeSlide()).toHaveTextContent('Target was 22.5 kg × 11 · ✓ beaten')
+    expect(screen.getByRole('button', { name: 'Previous session' })).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Next session' }))
+    expect(activeSlide()).toHaveTextContent('29.5 kg × 9')
+    expect(activeSlide()).toHaveTextContent("If you hit this session's target")
+  })
+
+  it('says when the last session was the first one', async () => {
     const [strength, light] = rowExercise.ranges
-    const older = { ...strength.sessions[1], date: '2026-09-01', score: 40 }
-    setup({
-      ...rowExercise,
-      ranges: [{ ...strength, sessions: [older, ...strength.sessions] }, light],
-    })
-    const summary = await screen.findByRole('region', { name: 'Summary' })
-    expect(within(summary).getByText('Personal best: 40 kg on 1 Sept')).toBeInTheDocument()
-  })
-
-  it('puts the chart above the plan, as designed', async () => {
-    setup()
-    await screen.findByRole('region', { name: 'Progress' })
-    const titles = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
-    expect(titles.indexOf('Progress')).toBeLessThan(titles.indexOf('Next session'))
-  })
-
-  it('gives today and then targets with a one-line reason', async () => {
-    setup()
-    const next = await screen.findByRole('region', { name: 'Next session' })
-    expect(within(next).getByText('29.5 kg × 8')).toBeInTheDocument()
-    expect(within(next).getByText('2 sets')).toBeInTheDocument()
-    expect(within(next).getByText('29.5 kg × 9')).toBeInTheDocument()
-    expect(within(next).getByText('5 reps to go before adding weight')).toBeInTheDocument()
-    expect(within(next).getByText('Ahead of plan')).toBeInTheDocument()
+    setup({ ...rowExercise, ranges: [{ ...strength, sessions: [strength.sessions[0]] }, light] })
+    await userEvent.click(await screen.findByRole('button', { name: 'Previous session' }))
+    expect(activeSlide()).toHaveTextContent('First session: your starting point')
   })
 
   it('shows capacity evidence from other exercises', async () => {
@@ -65,36 +97,9 @@ describe('exercise page', () => {
     const endurance = screen.getByRole('tab', { name: 'Endurance' })
     await userEvent.click(endurance)
     expect(endurance).toHaveAttribute('aria-selected', 'true')
-    const next = screen.getByRole('region', { name: 'Next session' })
-    expect(within(next).getByText('9 kg × 20')).toBeInTheDocument()
-    expect(within(next).getByText('Hit 20 · repeat to confirm')).toBeInTheDocument()
+    expect(activeSlide()).toHaveTextContent('9 kg × 20')
+    expect(activeSlide()).toHaveTextContent('Hit 20 · repeat to confirm')
     expect(screen.queryByRole('region', { name: 'Capacity' })).toBeNull()
-  })
-
-  it('charts past sessions and the next two planned ones, read out in plain English', async () => {
-    setup()
-    const sessions = await screen.findByRole('radiogroup', { name: 'Sessions' })
-    const columns = within(sessions).getAllByRole('radio')
-    expect(columns.map((c) => c.getAttribute('aria-label'))).toEqual([
-      '15 Sept',
-      '25 Sept',
-      'Next session',
-      'Then session',
-    ])
-    const progress = screen.getByRole('region', { name: 'Progress' })
-    expect(within(progress).getByText(/You lifted/).parentElement).toHaveTextContent(
-      '25 Sept · You lifted 29.5 kg × 7, 7Target was 22.5 kg × 11 · ✓ beaten',
-    )
-
-    columns[1].focus()
-    await userEvent.keyboard('{ArrowLeft}')
-    expect(columns[0]).toHaveAttribute('aria-checked', 'true')
-    expect(within(progress).getByText(/First session: your starting point/)).toBeInTheDocument()
-
-    await userEvent.click(columns[2])
-    expect(within(progress).getByText(/Aim for/).parentElement).toHaveTextContent(
-      'Next session · Aim for 29.5 kg × 8Planned from your last session',
-    )
   })
 
   it('has a table of every session, newest first', async () => {
@@ -109,7 +114,7 @@ describe('exercise page', () => {
 
   it('has no range toggle when there is only one range', async () => {
     setup({ ...rowExercise, ranges: [rowExercise.ranges[0]] })
-    await screen.findByRole('region', { name: 'Summary' })
-    expect(screen.queryByRole('tablist')).toBeNull()
+    await screen.findByRole('region', { name: 'Progress' })
+    expect(screen.queryByRole('tab', { name: 'Hypertrophy' })).toBeNull()
   })
 })

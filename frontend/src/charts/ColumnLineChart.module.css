@@ -1,15 +1,30 @@
 .chart {
-  position: relative;
+  display: flex;
+  margin: 0;
 }
 
-/* Interactive charts leave room under the plot for the date labels. */
-.chart[data-interactive] {
-  padding-bottom: 40px;
+.yAxis {
+  position: relative;
+  flex: 0 0 40px;
+}
+
+.tick {
+  position: absolute;
+  right: 8px;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
 }
 
 .plot {
   position: relative;
-  pointer-events: none; /* taps go to the full-height columns underneath */
 }
 
 .svg {
@@ -28,6 +43,16 @@
   stroke-linejoin: round;
 }
 
+.grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
 .actual {
   stroke: var(--chart-actual);
   stroke-width: 2;
@@ -44,11 +69,6 @@
   stroke-width: 2;
 }
 
-.zero {
-  stroke: var(--chart-grid);
-  stroke-width: 1;
-}
-
 .dot {
   position: absolute;
   width: 10px;
@@ -57,7 +77,6 @@
   background: var(--dot);
   box-shadow: 0 0 0 2px var(--surface); /* a surface ring keeps dots legible on lines */
   transform: translate(-50%, -50%);
-  pointer-events: none;
 }
 
 .dot[data-hollow] {
@@ -65,7 +84,7 @@
   border: 2px dashed var(--dot);
 }
 
-.dot[data-selected] {
+.dot[data-highlight] {
   width: 14px;
   height: 14px;
 }
@@ -80,38 +99,15 @@
   font-weight: 700;
   white-space: nowrap;
   transform: translate(-50%, calc(-100% - 12px));
-  pointer-events: none;
 }
 
-.columns {
-  position: absolute;
-  inset: -8px 0 0;
+.labels {
   display: grid;
-}
-
-/* Each column is one big tap target, from the top of the chart to its date. */
-.column {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  min-width: 0;
-  padding: 0 0 4px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.column[data-selected] {
-  background: var(--accent-soft);
-}
-
-.column[data-selected] .label,
-.column[data-selected] .label strong {
-  color: var(--accent-ink);
+  margin-top: 8px;
 }
 
 .label {
+  min-width: 0;
   font-size: 0.6875rem;
   line-height: 1.15;
   color: var(--text-muted);

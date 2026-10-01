@@ -86,7 +86,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
       {hasLine && (
         <ColumnLineChart
           label="Change each week"
-          columns={weeks.map((w) => ({ key: w.week_start, ariaLabel: shortDate(w.week_start) }))}
+          columns={weeks.map((w) => ({ key: w.week_start }))}
           lines={[{ values: weeks.map((w) => w.change_pct), variant: 'trend' }]}
           dots={weeks.flatMap((w, i) =>
             w.change_pct === null
@@ -95,7 +95,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
           )}
           zeroLine
           height={88}
-          selected={selected}
+          highlight={selected}
           callout={week.change_pct !== null ? pct(week.change_pct) : undefined}
         />
       )}
@@ -153,7 +153,7 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
             </Link>
             <span className={styles.weekMeta}>
               {shortDate(e.date)}
-              {e.rep_range && ` · ${RANGE_NAMES[e.rep_range].toLowerCase()}`}
+              {e.rep_range && ` · ${RANGE_NAMES[e.rep_range]}`}
               {e.role === 'secondary' && ' · indirect'}
             </span>
           </li>

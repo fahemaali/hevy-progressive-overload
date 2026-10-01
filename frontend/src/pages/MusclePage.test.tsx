@@ -53,9 +53,9 @@ describe('muscle page', () => {
       .getAllByRole('listitem')
       .map((li) => li.textContent)
     expect(items).toEqual([
-      expect.stringMatching(/Seated Cable Row.*25 Sept · hypertrophy · indirect/),
-      expect.stringMatching(/Bicep Curl \(Cable\).*26 Sept · hypertrophy$/),
-      expect.stringMatching(/^New.*Bicep Curl \(Cable\).*26 Sept · endurance/),
+      expect.stringMatching(/Seated Cable Row.*25 Sept · Hypertrophy · indirect/),
+      expect.stringMatching(/Bicep Curl \(Cable\).*26 Sept · Hypertrophy$/),
+      expect.stringMatching(/^New.*Bicep Curl \(Cable\).*26 Sept · Endurance/),
     ])
   })
 
