@@ -2,8 +2,8 @@
  * Design tokens: every colour, size and radius the app uses is named here, so the
  * look can be changed in one place.
  *
- * One brand theme: a soft blue page background with slightly deeper blue cards,
- * navy text and a teal accent. Status colours differ in lightness as well as hue,
+ * One brand theme: aqua cards on a slightly lighter aqua page, navy text, a teal
+ * accent and mint highlights. Status colours differ in lightness as well as hue,
  * so they stay distinguishable with red-green colour blindness; they're always
  * paired with ▲ ● ▼ symbols or labels too.
  */
@@ -19,22 +19,23 @@
   --sidebar-width: 232px;
   --tabbar-height: 64px;
 
-  --bg: #eaf2fb; /* page background: the lighter blue */
-  --surface: #dde8f5; /* cards: a slightly deeper blue */
-  --surface-2: #cfdcee; /* chips, inputs, pressed states */
-  --border: #c3d3e8;
+  --bg: #d6eef4; /* page background: a touch lighter than the cards */
+  --surface: #c4e7ef; /* cards */
+  --surface-2: #b3dce7; /* chips, inputs, pressed states */
+  --border: #acd6e2;
   --text: #102236;
-  --text-muted: #55677d;
-  --accent: #0d8f84;
+  --text-muted: #475a6e;
+  --accent: #0d8f84; /* fills: logo, outlines */
+  --accent-ink: #086a62; /* teal text: darker, so it's readable on aqua (WCAG AA) */
   --accent-text: #ffffff;
-  --accent-soft: #c4e7e2;
+  --accent-soft: #def5e5; /* mint: the selected tab and highlights */
 
   --progressing: #16a34a;
   --not-progressing: #df8f00;
   --declining: #d33333;
 
   /* The figure, and muscles with nothing to report, share one colour (as in Hevy). */
-  --map-figure: #b7c6d9;
+  --map-figure: #97b6c3;
   --map-outline: var(--surface);
 }
 
