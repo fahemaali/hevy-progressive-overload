@@ -16,6 +16,21 @@ from backend.service import ProgressService
 # serves the frontend instead, and forwards /api calls here.
 FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 
+# Only this site's own scripts, styles and data. Inline style attributes are allowed
+# because the app sets colours and positions per element (e.g. chart dots).
+CONTENT_SECURITY_POLICY = "; ".join(
+    [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data:",
+        "connect-src 'self'",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+    ]
+)
+
 log = logging.getLogger(__name__)
 
 
@@ -39,6 +54,21 @@ def create_app(
         if path and (frontend_dist / path).is_file():
             return send_from_directory(frontend_dist, path)
         return send_from_directory(frontend_dist, "index.html")
+
+    @app.after_request
+    def security_headers(response: Response) -> Response:
+        """Standard protections on every response."""
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("Content-Security-Policy", CONTENT_SECURITY_POLICY)
+        # Built assets have content hashes in their names, so they can be cached forever;
+        # the page itself must always be checked, so new deploys show up straight away.
+        if request.path.startswith("/assets/"):
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        elif not request.path.startswith("/api/"):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
 
     @app.errorhandler(HTTPException)
     def http_error(err: HTTPException) -> Any:

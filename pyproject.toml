@@ -27,6 +27,7 @@ allowed-confusables = ["×", "–", "−", "●"]
 # Entry points load .env before importing the app, so imports can't all be at the top.
 "run.py" = ["E402"]
 "check_connection.py" = ["E402"]
+"backend/wsgi.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.12"

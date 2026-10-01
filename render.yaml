@@ -1,0 +1,14 @@
+# Render Blueprint: the whole hosting setup, as code.
+# On Render: New → Blueprint → pick this repo. You'll be asked for HEVY_API_KEY.
+services:
+  - type: web
+    name: next-set
+    runtime: docker
+    plan: free # sleeps after 15 min idle; "starter" stays awake
+    region: frankfurt
+    branch: main
+    autoDeploy: true # every merge to main redeploys
+    healthCheckPath: /api/health
+    envVars:
+      - key: HEVY_API_KEY
+        sync: false # a secret: entered in Render's dashboard, never stored in the repo

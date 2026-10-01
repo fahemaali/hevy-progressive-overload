@@ -1,98 +1,113 @@
 # Next Set
 
-A progressive overload coach for [Hevy](https://www.hevyapp.com/) users, built on my own Hevy
-workout data. It answers one question, muscle group by muscle group: **am I actually progressively
-overloading?** — and tells me what to do this week to keep it going.
+[![CI](https://github.com/fahemaali/hevy-progressive-overload/actions/workflows/ci.yml/badge.svg)](https://github.com/fahemaali/hevy-progressive-overload/actions/workflows/ci.yml)
 
-> Built with generative AI (Claude Code) as a showcase project.
+**A progressive overload coach for [Hevy](https://www.hevyapp.com/) users.** It reads my Hevy
+workouts and answers two questions: *is each muscle actually getting stronger?* and *what
+exactly should I lift next?*
+
+**Live:** _link coming with the first deploy_
+
+> Built end to end with Claude Code (AI pair programming) as a portfolio project: product
+> decisions, design reviews and every line of code, iterated in conversation.
 > Not affiliated with or endorsed by Hevy.
 
-## What it does (planned)
+![Body map with the glutes selected, showing each glute exercise's last, this and next session](docs/screenshots/body-map.png)
 
-- **Organised by muscle group** — e.g. open *Triceps* and see every exercise that trains them.
-- **Looks back** — for exercises I repeat, shows whether weight, reps and volume have been
-  going up over time.
-- **Looks ahead** — suggests this week's target for each exercise: either *add weight* at a
-  given rep count, or *keep/reduce weight and add reps* — both counted as overload.
-- **Estimated 1-rep max, front and centre** — tracked per exercise and rolled up per muscle
-  group, with green ▲ / red ▼ indicators so progress (or the lack of it) is obvious at a glance.
+## What it does
 
-See [REQUIREMENTS.md](REQUIREMENTS.md) for the detail.
+- **Body map:** every muscle coloured by whether it's progressing, holding or declining. Tap
+  one to see its exercises underneath, each with a swipeable *Last · This · Next* session deck.
+- **A plan for every exercise:** double progression. Build reps from 8 to 12 at one weight, hit 12
+  twice, then add weight and start again (15–20 for endurance work). Each card says where you
+  are in that story: *"One more rep to hit 12"*, *"Repeat 12 to unlock the next weight"*.
+- **Honest progress:** each session is compared with the same exercise in the same rep range,
+  never across exercises. Muscles are judged week by week; secondary muscles count half.
+- **Tips from other exercises:** if your other glute exercises have improved since you last
+  deadlifted, it suggests trying a little more (capped at +10%).
 
-## Setup
+| Exercise | Muscle | Phone |
+| --- | --- | --- |
+| ![Exercise page: weight lifted against the plan](docs/screenshots/exercise.png) | ![Muscle page: week by week](docs/screenshots/muscle.png) | ![Exercise page on a phone](docs/screenshots/phone.png) |
 
-```bash
-# 1. Create and activate a virtual environment
-python3 -m venv venv
-source venv/bin/activate
+The full rules (rep ranges, the plan, how sessions and muscles are judged) are in
+[REQUIREMENTS.md](REQUIREMENTS.md).
 
-# 2. Install dependencies
-pip install -r requirements.txt
+## How it works
 
-# 3. Add your Hevy API key (needs Hevy Pro)
-cp .env.example .env
-# then open .env and paste your key from https://hevy.com/settings?developer
-
-# 4. Check the connection, then copy your data locally
-python check_connection.py
-python -m backend.sync
-
-# 5. Build the frontend (needs Node 22+)
-cd frontend && npm install && npm run build && cd ..
-
-# 6. Run the app
-python run.py
+```mermaid
+flowchart LR
+    Hevy[(Hevy API)] -- "workouts, exercises<br/>(3 endpoints only)" --> Sync
+    subgraph Server [Flask server]
+        Sync[Sync<br/>full, then incremental] --> Store[(SQLite copy<br/>no notes or times)]
+        Store --> Domain[Progress rules<br/>pure functions]
+        Domain --> API[JSON API<br/>privacy allowlist]
+    end
+    API --> UI[React app<br/>body map · plans · charts]
 ```
 
-Then open http://127.0.0.1:5050.
+- **Sync:** copies my Hevy data into a local SQLite file: everything the first time, then only
+  workouts changed or deleted since. A visit refreshes it in the background once it's 15 minutes
+  old, one refresh at a time, so visitors never trigger calls to Hevy.
+- **Progress rules** (`backend/domain/`) are pure functions with no I/O: sessions, verdicts, the
+  plan, capacity and muscle roll-ups, each table-tested.
+- **API** (`backend/api/`): read-only JSON. Every response is built from typed shapes in
+  [responses.py](backend/api/responses.py), which is also the privacy allowlist.
+- **Frontend** (`frontend/`): React + TypeScript, TanStack Query, React Router. The body map and
+  charts are hand-drawn SVG; no chart library.
+
+## Design decisions
+
+- **Weight lifted, not estimated 1RM, on the graph.** It matches what was actually lifted; est.
+  1RM (Epley) stays as a headline number.
+- **Rep ranges are tracked separately** (Hypertrophy ≤12, Endurance 13+). Epley inflates high-rep
+  sets, so a light, high-rep day compared with a heavy one would show false progress.
+- **The plan never lowers itself after a bad day.** Falling short holds the target; the only
+  planned drop is a deliberate step back after three stalled sessions.
+- **Outliers are capped.** One exercise counts at most ±25% in a muscle's or a tip's average, so a
+  new exercise's early jump (e.g. +110%) can't dominate.
+- **Accessibility:** status colours differ in lightness for colour-blind users and always come
+  with ▲ ● ▼ or a label; text meets WCAG AA contrast; everything works by keyboard.
+
+## Privacy
+
+The app is public and shows my real training data, so it's careful about what leaves the server:
+
+- The Hevy client can only call workouts, exercise templates and routines. Profile and body
+  measurement endpoints are refused in code (tested).
+- Notes, descriptions and training times are dropped before anything is stored.
+- Responses carry calendar dates only. A test sweeps every endpoint for notes, times of day and ids.
+- The API key lives only in the server's environment, never in the repo or the browser.
+
+## Running it
+
+**Locally** (Python 3.12+, Node 22+, a Hevy Pro API key):
+
+```bash
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements-dev.txt
+cp .env.example .env              # then paste your key from https://hevy.com/settings?developer
+python check_connection.py        # confirms the key works
+cd frontend && npm install && npm run build && cd ..
+python run.py                     # http://127.0.0.1:5050
+```
+
+**Deployed:** a two-stage [Dockerfile](Dockerfile) (Node builds the frontend; the final image is
+Python only, runs gunicorn as an unprivileged user). [render.yaml](render.yaml) describes the
+Render service: redeploys on every merge to `main`, with the API key as a secret.
 
 ## Development
 
 ```bash
-pip install -r requirements-dev.txt
-
-pytest            # tests (run on synthetic data in tests/fixtures, no API key needed)
-ruff check .      # lint
-ruff format .     # format
-mypy              # type check
+pytest && ruff check . && ruff format --check . && mypy          # backend
+cd frontend && npm test && npm run lint && npm run typecheck     # frontend
 ```
 
-Frontend (React + TypeScript, in `frontend/`):
-
-```bash
-cd frontend
-npm run dev         # live-reloading dev server at http://localhost:5173 (run python run.py too)
-npm test            # tests (Vitest + Testing Library)
-npm run lint        # lint (oxlint)
-npm run typecheck   # type check
-npm run format      # format (Prettier)
-```
-
-CI runs all of these on every push and pull request.
-
-### How data flows
-
-1. `python -m backend.sync` (and the app itself, every 15 minutes while in use) copies your Hevy
-   data into a local SQLite file, `data/hevy.db`. The first sync copies everything; later ones
-   only fetch workouts changed or deleted since the last sync.
-2. Only what the app needs is stored: notes, descriptions and training times are dropped before
-   anything is saved. The file is git-ignored and safe to delete; the next sync rebuilds it.
-3. The app reads from that copy, so visitors never trigger calls to Hevy.
-
-### API
-
-Read-only JSON endpoints the frontend uses (shapes defined in
-[backend/api/responses.py](backend/api/responses.py), which is also the privacy allowlist):
-
-| Endpoint | Returns |
-| --- | --- |
-| `GET /api/body-map` | Every body muscle's state: progressing, not progressing, declining, no status, indirect only, never trained; plus a stale flag |
-| `GET /api/muscles/<group>` | Its recent weeks and every exercise that trains it, with latest and best sets |
-| `GET /api/exercises/<id>` | Per rep range: est. 1RM, actual vs target history, the plan (today, then), capacity |
-| `GET /api/search?q=` | Matching exercises and muscles; empty query = most recent exercises |
-| `GET /api/status` | Data freshness and refresh state |
+Tests run on synthetic fixtures, so no API key is needed. CI runs all of the above on every
+push and pull request, then builds and smoke-tests the Docker image. Work lands through pull
+requests, one phase at a time.
 
 ## Credits
 
-Body map outlines from [body-muscles](https://github.com/vulovix/body-muscles) (Apache 2.0);
-see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Body map outlines from [body-muscles](https://github.com/vulovix/body-muscles) (Apache 2.0); see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
