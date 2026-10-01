@@ -1,18 +1,74 @@
-.search {
-  margin: 4px 0 var(--gap);
+.intro {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: var(--gap);
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--accent-soft);
+}
+
+.introText {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+}
+
+.introActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.primaryButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.textLink {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9375rem;
 }
 
 .card {
-  padding: 20px 12px 16px;
+  padding: 18px 12px 18px;
   border-radius: var(--radius);
   background: var(--surface);
 }
 
+.cardHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 6px 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+/* On wide screens the sync status lives in the sidebar instead. */
+@media (min-width: 900px) {
+  .syncOnPhone {
+    display: none;
+  }
+}
+
 .legend {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px 12px;
-  margin: 20px 4px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  margin: 18px 4px 0;
   padding: 0;
   list-style: none;
   font-size: 0.75rem;
@@ -22,7 +78,7 @@
 .legend li {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .swatch {
@@ -33,54 +89,5 @@
 }
 
 .stripes {
-  background: repeating-linear-gradient(45deg, var(--progressing) 0 3px, var(--map-never) 3px 6px);
-}
-
-.list {
-  display: grid;
-  gap: 12px;
-  margin-top: var(--gap);
-}
-
-.group {
-  padding: 14px 14px 16px;
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.groupTitle {
-  margin: 0 0 10px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-
-.count {
-  margin-left: 4px;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  font-size: 0.875rem;
-}
-
-.chip:hover {
-  background: var(--accent-soft);
-}
-
-.staleTag {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  background: repeating-linear-gradient(45deg, var(--progressing) 0 3px, var(--map-figure) 3px 6px);
 }

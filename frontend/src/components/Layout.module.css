@@ -1,55 +1,137 @@
+/* Phones first: header on top, tab bar along the bottom. */
+
 .page {
   min-height: 100dvh;
+}
+
+.sidebar {
+  position: fixed;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+.sidebarLogo,
+.sidebarFooter {
+  display: none;
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: var(--tabbar-height);
+}
+
+.navLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.active {
+  color: var(--accent);
+}
+
+.content {
+  padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
 }
 
 .header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--gap);
   padding: calc(12px + env(safe-area-inset-top)) var(--gap) 12px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.status {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.status[data-warning] {
-  color: var(--not-progressing);
-}
-
-.about {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  color: var(--text-muted);
-  font-size: 1.1rem;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .main {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--gap) 32px;
+  padding: 4px var(--gap) 32px;
+}
+
+/* Wide screens: the same navigation becomes a sidebar on the left. */
+@media (min-width: 900px) {
+  .sidebar {
+    top: 0;
+    right: auto;
+    width: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 24px 16px;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .sidebarLogo {
+    display: block;
+    padding: 0 8px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: auto;
+  }
+
+  .navLink {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9375rem;
+  }
+
+  .navLink:hover {
+    background: var(--surface-2);
+  }
+
+  .active {
+    background: var(--accent-soft);
+  }
+
+  .sidebarFooter {
+    display: block;
+    margin-top: auto;
+    padding: 0 12px;
+  }
+
+  .content {
+    margin-left: var(--sidebar-width);
+    padding-bottom: 0;
+  }
+
+  .header {
+    justify-content: flex-end;
+    padding: 20px 32px 12px;
+  }
+
+  .headerLogo {
+    display: none;
+  }
+
+  .main {
+    padding: 4px 32px 48px;
+  }
 }

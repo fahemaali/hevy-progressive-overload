@@ -8,7 +8,7 @@ function fillsOf(container: HTMLElement, label: RegExp): string[] {
     label.test(g.getAttribute('aria-label') ?? ''),
   )
   return groups.flatMap((g) =>
-    [...g.querySelectorAll('path')].map((p) => p.getAttribute('fill') ?? ''),
+    [...g.querySelectorAll('path[fill]')].map((p) => p.getAttribute('fill') ?? ''),
   )
 }
 
@@ -23,15 +23,15 @@ describe('BodyMap', () => {
     expect(container.querySelector('#stale-progressing')).not.toBeNull()
   })
 
-  it.each(['no_status', 'indirect_only'] as const)(
-    'never stripes a stale muscle without a progress status (%s)',
+  it.each(['no_status', 'indirect_only', 'never_trained'] as const)(
+    'leaves muscles without a progress status in the figure colour (%s)',
     (state) => {
       const { container } = render(
         <BodyMap muscles={[muscle('calves', state, true)]} onSelect={vi.fn()} />,
       )
       const fills = fillsOf(container, /^Calves/)
       expect(fills.length).toBeGreaterThan(0)
-      expect(fills.every((f) => f.startsWith('var('))).toBe(true)
+      expect(new Set(fills)).toEqual(new Set(['var(--map-figure)']))
     },
   )
 
@@ -39,4 +39,14 @@ describe('BodyMap', () => {
     const { container } = render(<BodyMap muscles={[]} onSelect={vi.fn()} />)
     expect(container.querySelectorAll('#stale-progressing')).toHaveLength(1)
   })
+})
+
+it('gives every muscle a tap area larger than its shape', () => {
+  const { container } = render(
+    <BodyMap muscles={[muscle('adductors', 'progressing')]} onSelect={vi.fn()} />,
+  )
+  const group = container.querySelector('g[aria-label^="Adductors"]')!
+  const shapes = group.querySelectorAll('path[fill]').length
+  expect(shapes).toBeGreaterThan(0)
+  expect(group.querySelectorAll('path').length).toBe(shapes * 2) // each shape + its tap area
 })

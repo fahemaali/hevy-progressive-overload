@@ -1,0 +1,31 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mark {
+  flex-shrink: 0;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+}
+
+.wordmark {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.tagline {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

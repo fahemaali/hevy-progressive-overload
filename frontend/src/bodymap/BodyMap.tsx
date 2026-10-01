@@ -9,6 +9,28 @@ interface Props {
   onSelect: (group: string) => void
 }
 
+// Drawn in this order, so slim muscles come last: where their enlarged tap areas
+// overlap a bigger neighbour, the slim muscle wins.
+const DRAW_ORDER = [
+  'chest',
+  'abdominals',
+  'quadriceps',
+  'lats',
+  'upper_back',
+  'lower_back',
+  'glutes',
+  'hamstrings',
+  'shoulders',
+  'traps',
+  'biceps',
+  'triceps',
+  'forearms',
+  'calves',
+  'neck',
+  'abductors',
+  'adductors',
+]
+
 /** Front and back figures, each muscle group coloured by its state. */
 export function BodyMap({ muscles, onSelect }: Props) {
   const byGroup = new Map(muscles.map((m) => [m.group, m]))
@@ -32,20 +54,21 @@ export function BodyMap({ muscles, onSelect }: Props) {
               .map((r) => (
                 <path key={r.id} d={r.path} className={styles.figurePart} />
               ))}
-            {groupsIn(view).map((group) => {
+            {DRAW_ORDER.map((group) => {
               const muscle = byGroup.get(group)
-              if (!muscle) return null
+              const regions = REGIONS[view].filter((r) => r.group === group)
+              if (!muscle || regions.length === 0) return null
               const style = STATE_STYLES[muscle.state]
               // Stripes only apply to the three progress statuses.
               const striped = muscle.stale && STATUS_STATES.includes(muscle.state)
               const fill = striped ? `url(#stale-${muscle.state})` : style.color
-              const stale = muscle.stale ? ', last trained over 3 weeks ago' : ''
+              const label = `${muscle.label}: ${style.label}${striped ? ', not trained in 3+ weeks' : ''}`
               return (
                 <g
                   key={group}
                   role="button"
                   tabIndex={0}
-                  aria-label={`${muscle.label}: ${style.label}${stale}`}
+                  aria-label={label}
                   className={styles.muscle}
                   data-hovered={hovered === group || undefined}
                   onClick={() => onSelect(group)}
@@ -58,12 +81,14 @@ export function BodyMap({ muscles, onSelect }: Props) {
                   onPointerEnter={() => setHovered(group)}
                   onPointerLeave={() => setHovered(null)}
                 >
-                  <title>{`${muscle.label}: ${style.label}${stale}`}</title>
-                  {REGIONS[view]
-                    .filter((r) => r.group === group)
-                    .map((r) => (
-                      <path key={r.id} d={r.path} fill={fill} />
-                    ))}
+                  <title>{label}</title>
+                  {regions.map((r) => (
+                    <path key={r.id} d={r.path} fill={fill} className={styles.shape} />
+                  ))}
+                  {/* Invisible, wider outlines: a bigger area to tap than the shape itself. */}
+                  {regions.map((r) => (
+                    <path key={`${r.id}-hit`} d={r.path} className={styles.hitArea} />
+                  ))}
                 </g>
               )
             })}
@@ -73,10 +98,6 @@ export function BodyMap({ muscles, onSelect }: Props) {
       ))}
     </div>
   )
-}
-
-function groupsIn(view: View): string[] {
-  return [...new Set(REGIONS[view].flatMap((r) => (r.group ? [r.group] : [])))]
 }
 
 /** Diagonal stripes of each status colour, for muscles not trained recently. */
@@ -92,7 +113,7 @@ function StripePatterns() {
           patternUnits="userSpaceOnUse"
           patternTransform="rotate(45)"
         >
-          <rect width="1.6" height="1.6" fill="var(--map-never)" />
+          <rect width="1.6" height="1.6" fill="var(--map-figure)" />
           <rect width="0.8" height="1.6" fill={STATE_STYLES[state].color} />
         </pattern>
       ))}

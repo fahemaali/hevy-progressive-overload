@@ -1,21 +1,15 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useBodyMap } from '../api/client'
-import type { BodyMapMuscle, MuscleState } from '../api/types'
 import { BodyMap } from '../bodymap/BodyMap'
-import { STATE_STYLES } from '../bodymap/states'
-import { SearchBar } from '../components/SearchBar'
+import { STATE_STYLES, STATUS_STATES } from '../bodymap/states'
 import { ErrorMessage, Loading } from '../components/Feedback'
+import { LogoMark } from '../components/Logo'
+import { SyncStatus } from '../components/SyncStatus'
+import { readFlag, writeFlag } from '../storage'
 import styles from './HomePage.module.css'
 
-// The order states are listed in, and which appear in the legend.
-const LIST_ORDER: MuscleState[] = [
-  'progressing',
-  'not_progressing',
-  'declining',
-  'no_status',
-  'indirect_only',
-]
-const LEGEND: MuscleState[] = [...LIST_ORDER, 'never_trained']
+const INTRO_DISMISSED = 'intro-dismissed'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -23,29 +17,65 @@ export function HomePage() {
 
   return (
     <>
-      <div className={styles.search}>
-        <SearchBar />
-      </div>
-
-      {isPending && <Loading label="Loading your progress" />}
-      {error && <ErrorMessage error={error} />}
-      {data && (
-        <>
-          <section className={styles.card} aria-label="Body map">
+      <Intro />
+      <section className={styles.card} aria-labelledby="map-title">
+        <div className={styles.cardHeader}>
+          <h1 id="map-title" className={styles.title}>
+            Your muscles
+          </h1>
+          <span className={styles.syncOnPhone}>
+            <SyncStatus />
+          </span>
+        </div>
+        {isPending && <Loading label="Loading your progress" />}
+        {error && <ErrorMessage error={error} />}
+        {data && (
+          <>
             <BodyMap muscles={data.muscles} onSelect={(group) => navigate(`/muscles/${group}`)} />
             <Legend />
-          </section>
-          <MuscleList muscles={data.muscles} />
-        </>
-      )}
+          </>
+        )}
+      </section>
     </>
+  )
+}
+
+/** A one-line explanation for first-time visitors, until they dismiss it. */
+function Intro() {
+  const [dismissed, setDismissed] = useState(() => readFlag(INTRO_DISMISSED))
+  if (dismissed) return null
+  return (
+    <section className={styles.intro} aria-label="About this app">
+      <LogoMark size={40} />
+      <div>
+        <p className={styles.introText}>
+          <strong>Next Set</strong> turns Hevy workouts into a progressive overload plan: see which
+          muscles are getting stronger, then get a target for every exercise.
+        </p>
+        <div className={styles.introActions}>
+          <button
+            type="button"
+            className={styles.primaryButton}
+            onClick={() => {
+              writeFlag(INTRO_DISMISSED)
+              setDismissed(true)
+            }}
+          >
+            Got it
+          </button>
+          <Link to="/about" className={styles.textLink}>
+            How it works
+          </Link>
+        </div>
+      </div>
+    </section>
   )
 }
 
 function Legend() {
   return (
     <ul className={styles.legend} aria-label="Legend">
-      {LEGEND.map((state) => (
+      {STATUS_STATES.map((state) => (
         <li key={state}>
           <span className={styles.swatch} style={{ background: STATE_STYLES[state].color }} />
           {STATE_STYLES[state].label}
@@ -53,39 +83,8 @@ function Legend() {
       ))}
       <li>
         <span className={`${styles.swatch} ${styles.stripes}`} />
-        Not trained for 3+ weeks
+        Not trained in 3+ weeks
       </li>
     </ul>
-  )
-}
-
-/** The same information as the map, as a list: readable without colour, and tappable. */
-function MuscleList({ muscles }: { muscles: BodyMapMuscle[] }) {
-  return (
-    <section className={styles.list} aria-label="Muscles by status">
-      {LIST_ORDER.map((state) => {
-        const inState = muscles.filter((m) => m.state === state)
-        if (inState.length === 0) return null
-        const { symbol, label, color } = STATE_STYLES[state]
-        return (
-          <div key={state} className={styles.group}>
-            <h2 className={styles.groupTitle}>
-              <span style={{ color }} aria-hidden="true">
-                {symbol}
-              </span>{' '}
-              {label} <span className={styles.count}>{inState.length}</span>
-            </h2>
-            <div className={styles.chips}>
-              {inState.map((m) => (
-                <Link key={m.group} to={`/muscles/${m.group}`} className={styles.chip}>
-                  {m.label}
-                  {m.stale && <span className={styles.staleTag}>3 wk+</span>}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )
-      })}
-    </section>
   )
 }

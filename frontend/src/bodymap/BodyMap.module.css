@@ -36,16 +36,21 @@
 .muscle {
   cursor: pointer;
   outline: none;
-  transition: opacity 120ms ease;
 }
 
-.muscle[data-hovered] path,
-.muscle:focus-visible path {
+.svg .hitArea {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1.6;
+}
+
+.muscle[data-hovered] .shape,
+.muscle:focus-visible .shape {
   stroke: var(--accent);
   stroke-width: 0.5;
 }
 
-.muscle:active {
+.muscle:active .shape {
   opacity: 0.75;
 }
 
