@@ -1,4 +1,4 @@
-/** Small line icons, drawn here to avoid an icon library for four symbols. */
+/** Small line icons, drawn here to avoid an icon library for a handful of symbols. */
 
 interface IconProps {
   size?: number
@@ -35,13 +35,6 @@ export const SummaryIcon = (p: IconProps) => (
     <circle cx="4" cy="6" r="1" />
     <circle cx="4" cy="12" r="1" />
     <circle cx="4" cy="18" r="1" />
-  </Icon>
-)
-
-export const InfoIcon = (p: IconProps) => (
-  <Icon {...p}>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 11v5M12 7.5v.5" />
   </Icon>
 )
 

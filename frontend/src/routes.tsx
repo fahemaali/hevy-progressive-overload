@@ -13,7 +13,6 @@ export const routes: RouteObject[] = [
       { path: '/summary', element: <SummaryPage /> },
       { path: '/muscles/:group', element: <ComingSoon what="Muscle" /> },
       { path: '/exercises/:id', element: <ComingSoon what="Exercise" /> },
-      { path: '/about', element: <ComingSoon what="About" /> },
       { path: '*', element: <NotFound /> },
     ],
   },

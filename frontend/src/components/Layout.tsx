@@ -1,14 +1,13 @@
 import { Link, NavLink, Outlet } from 'react-router'
-import { BodyIcon, InfoIcon, SummaryIcon } from './icons'
+import { useReloadAfterRefresh } from '../api/useReloadAfterRefresh'
+import { BodyIcon, SummaryIcon } from './icons'
 import { Logo } from './Logo'
 import { SearchBar } from './SearchBar'
-import { SyncStatus } from './SyncStatus'
 import styles from './Layout.module.css'
 
 const NAV = [
   { to: '/', label: 'Body map', Icon: BodyIcon },
   { to: '/summary', label: 'Summary', Icon: SummaryIcon },
-  { to: '/about', label: 'About', Icon: InfoIcon },
 ]
 
 /**
@@ -16,6 +15,8 @@ const NAV = [
  * on phones the same links become a tab bar along the bottom.
  */
 export function Layout() {
+  useReloadAfterRefresh()
+
   return (
     <div className={styles.page}>
       <aside className={styles.sidebar}>
@@ -37,9 +38,6 @@ export function Layout() {
             </NavLink>
           ))}
         </nav>
-        <div className={styles.sidebarFooter}>
-          <SyncStatus />
-        </div>
       </aside>
 
       <div className={styles.content}>

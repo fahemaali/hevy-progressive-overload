@@ -1,10 +1,9 @@
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mockApi, renderApp } from '../test/render'
 import { bodyMap, recent, status } from '../test/fixtures'
 
-beforeEach(() => window.localStorage.clear())
 afterEach(() => vi.unstubAllGlobals())
 
 function setup(path = '/') {
@@ -47,11 +46,6 @@ describe('body map page', () => {
     ).toEqual(['Progressing', 'Not progressing', 'Declining', 'Not trained in 3+ weeks'])
   })
 
-  it('shows how fresh the data is', async () => {
-    setup()
-    expect((await screen.findAllByText('Updated 5 min ago')).length).toBeGreaterThan(0)
-  })
-
   it('explains when the data is not available', async () => {
     mockApi({ '/api/body-map': { error: "Your Hevy data isn't available yet." } }, 503)
     renderApp('/')
@@ -59,23 +53,15 @@ describe('body map page', () => {
   })
 })
 
-describe('intro', () => {
-  it('introduces the app until dismissed, and stays dismissed', async () => {
-    const { unmount } = setup()
-    const intro = screen.getByRole('region', { name: 'About this app' })
-    await userEvent.click(within(intro).getByRole('button', { name: 'Got it' }))
-    expect(screen.queryByRole('region', { name: 'About this app' })).toBeNull()
-
-    unmount()
-    setup()
-    expect(screen.queryByRole('region', { name: 'About this app' })).toBeNull()
-  })
-})
-
 describe('navigation', () => {
   it('links to every section and marks the current one', async () => {
     const { router } = setup()
     const nav = screen.getByRole('navigation', { name: 'Main' })
+    expect(
+      within(nav)
+        .getAllByRole('link')
+        .map((a) => a.textContent),
+    ).toEqual(['Body map', 'Summary'])
     expect(within(nav).getByRole('link', { name: 'Body map' })).toHaveAttribute(
       'aria-current',
       'page',
