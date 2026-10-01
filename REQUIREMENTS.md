@@ -43,4 +43,4 @@ For each exercise, compared with the last session, offer overload options such a
 - What time window counts as "recent" for the trend (last 4 sessions? last 4 weeks?)
 - How should secondary muscle groups count toward a muscle group's status?
 - Smallest weight increment per equipment type (e.g. 2.5 kg barbell, 1 kg dumbbell, machine stack steps)?
-- Only 17 workouts are logged so far — how much history is needed before showing a verdict?
+- How much workout history is needed before showing a verdict?
