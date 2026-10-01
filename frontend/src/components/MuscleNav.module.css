@@ -1,0 +1,33 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  color: var(--text);
+}
+
+.link:hover {
+  background: var(--surface-2);
+}
+
+.active {
+  background: var(--accent-soft);
+  font-weight: 600;
+  color: var(--accent-ink);
+}
+
+.symbol {
+  font-size: 0.75rem;
+}

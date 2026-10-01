@@ -4,6 +4,7 @@ import { Layout } from './components/Layout'
 import { ExercisePage } from './pages/ExercisePage'
 import { HomePage } from './pages/HomePage'
 import { MusclePage } from './pages/MusclePage'
+import { MusclesPage } from './pages/MusclesPage'
 import { NotFound } from './pages/Placeholders'
 
 export const routes: RouteObject[] = [
@@ -11,6 +12,7 @@ export const routes: RouteObject[] = [
     element: <Layout />,
     children: [
       { path: '/', element: <HomePage /> },
+      { path: '/muscles', element: <MusclesPage /> },
       { path: '/muscles/:group', element: <MusclePage /> },
       { path: '/exercises/:id', element: <ExercisePage /> },
       { path: '*', element: <NotFound /> },

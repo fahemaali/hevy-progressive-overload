@@ -97,14 +97,46 @@ export const bicepsMuscle: Muscle = {
     {
       week_start: '2026-09-07',
       trend: 'down',
-      exercises: [{ id: 'PULL', title: 'Lat Pulldown', role: 'secondary', trend: 'down' }],
+      exercises: [
+        {
+          id: 'PULL',
+          title: 'Lat Pulldown',
+          role: 'secondary',
+          trend: 'down',
+          date: '2026-09-09',
+          rep_range: 'strength',
+        },
+      ],
     },
     {
       week_start: '2026-09-21',
       trend: 'up',
       exercises: [
-        { id: 'CURL', title: 'Bicep Curl (Cable)', role: 'primary', trend: 'up' },
-        { id: 'ROW', title: 'Seated Cable Row', role: 'secondary', trend: 'up' },
+        // Oldest first, as the API sends them.
+        {
+          id: 'ROW',
+          title: 'Seated Cable Row',
+          role: 'secondary',
+          trend: 'up',
+          date: '2026-09-25',
+          rep_range: 'strength',
+        },
+        {
+          id: 'CURL',
+          title: 'Bicep Curl (Cable)',
+          role: 'primary',
+          trend: 'up',
+          date: '2026-09-26',
+          rep_range: 'strength',
+        },
+        {
+          id: 'CURL',
+          title: 'Bicep Curl (Cable)',
+          role: 'primary',
+          trend: 'new',
+          date: '2026-09-26',
+          rep_range: 'light',
+        },
       ],
     },
     { week_start: '2026-09-28', trend: 'insufficient', exercises: [] },

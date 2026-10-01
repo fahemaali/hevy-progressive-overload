@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useExercise } from '../api/client'
 import type { Exercise, Mode, RangeProgress, RepRange, Session } from '../api/types'
-import { BackLink } from '../components/BackLink'
 import { Card } from '../components/Card'
 import { ErrorMessage, Loading } from '../components/Feedback'
 import { TrendMark } from '../components/TrendMark'
@@ -19,7 +18,6 @@ export function ExercisePage() {
 
   return (
     <>
-      <BackLink fallback={data ? `/muscles/${data.primary_muscle}` : '/'} label="Back" />
       {isPending && <Loading label="Loading exercise" />}
       {error && <ErrorMessage error={error} />}
       {data && <ExerciseView key={data.id} exercise={data} />}

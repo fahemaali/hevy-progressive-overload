@@ -22,6 +22,7 @@
   --bg: #fcf8f1; /* page: warm ivory */
   --surface: #ffffff; /* cards */
   --surface-2: #f5efe5; /* chips, inputs, pressed states */
+  --neutral: #e3ddd2; /* light grey: 'not enough data' weeks, 'New' tags */
   --border: #ece4d6; /* hairline card borders */
   --shadow: 0 1px 2px rgb(60 45 20 / 0.04), 0 8px 24px rgb(60 45 20 / 0.06);
   --text: #1b1a17;

@@ -55,3 +55,18 @@ export function formatTarget(target: Target, mode: Mode): string {
 export function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? '' : 's'}`
 }
+
+/** The single best set: "30 kg × 12", "20.5 kg assist × 4", "16 reps", "70 s". */
+export function formatBestSet(set: WorkingSet, mode: Mode): string {
+  const reps = Math.max(0, ...set.reps)
+  switch (mode) {
+    case 'load':
+      return `${kg(set.weight_kg ?? 0)} kg × ${reps}`
+    case 'assisted':
+      return `${kg(set.weight_kg ?? 0)} kg assist × ${reps}`
+    case 'reps':
+      return `${reps} reps`
+    default:
+      return `${set.duration_seconds ?? 0} s`
+  }
+}

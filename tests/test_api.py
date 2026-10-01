@@ -74,6 +74,9 @@ def test_muscle(client: FlaskClient) -> None:
     chest = get(client, "/api/muscles/chest")
     assert (chest["label"], chest["state"]) == ("Chest", "progressing")
     assert chest["weeks"][-1]["trend"] == "up"
+    week_dates = [e["date"] for e in chest["weeks"][-1]["exercises"]]
+    assert week_dates == sorted(week_dates)  # each exercise carries its session date
+    assert week_dates[0] == "2026-07-20"
     assert [e["title"] for e in chest["exercises"]][:3] == [
         "Bench Press (Barbell)",
         "Chest Press (Machine)",

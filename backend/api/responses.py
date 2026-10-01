@@ -153,6 +153,8 @@ class WeekExerciseJSON(TypedDict):
     title: str
     role: Role
     trend: Trend
+    date: str  # a week can hold several sessions of the same exercise
+    rep_range: str | None
 
 
 class WeekJSON(TypedDict):
@@ -193,8 +195,10 @@ def week_json(week: MuscleWeek) -> WeekJSON:
                 "title": c.exercise.template.title,
                 "role": c.role,
                 "trend": c.result.trend,
+                "date": c.result.session.date.isoformat(),
+                "rep_range": c.result.session.rep_range,
             }
-            for c in week.contributions
+            for c in sorted(week.contributions, key=lambda c: c.result.session.date)
         ],
     }
 

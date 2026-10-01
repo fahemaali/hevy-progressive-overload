@@ -41,3 +41,18 @@ export const CloseIcon = (p: IconProps) => (
     <path d="M6 6l12 12M18 6L6 18" />
   </Icon>
 )
+
+export const ListIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M8 6h12M8 12h12M8 18h12" />
+    <circle cx="4" cy="6" r="1" />
+    <circle cx="4" cy="12" r="1" />
+    <circle cx="4" cy="18" r="1" />
+  </Icon>
+)
+
+export const BackIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M15 5l-7 7 7 7" />
+  </Icon>
+)

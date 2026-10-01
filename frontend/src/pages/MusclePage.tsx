@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useMuscle } from '../api/client'
-import type { Muscle, MuscleWeek, StrengthEntry } from '../api/types'
+import type { Muscle, MuscleWeek, StrengthEntry, Trend } from '../api/types'
 import { STATE_STYLES, STATUS_STATES } from '../bodymap/states'
-import { BackLink } from '../components/BackLink'
 import { Card } from '../components/Card'
 import { ErrorMessage, Loading } from '../components/Feedback'
 import { TrendMark } from '../components/TrendMark'
+import { formatBestSet, kg, shortDate } from '../format'
 import { TREND_INFO } from '../trends'
-import { formatSet, shortDate } from '../format'
 import styles from './MusclePage.module.css'
 
 export function MusclePage() {
@@ -17,10 +16,9 @@ export function MusclePage() {
 
   return (
     <>
-      <BackLink fallback="/" label="Body map" />
       {isPending && <Loading label="Loading muscle" />}
       {error && <ErrorMessage error={error} />}
-      {data && <MuscleView muscle={data} />}
+      {data && <MuscleView key={data.group} muscle={data} />}
     </>
   )
 }
@@ -28,23 +26,24 @@ export function MusclePage() {
 function MuscleView({ muscle }: { muscle: Muscle }) {
   const direct = muscle.exercises.filter((e) => e.role === 'primary')
   const indirect = muscle.exercises.filter((e) => e.role === 'secondary')
+  const style = STATE_STYLES[muscle.state]
   const hasStatus = STATUS_STATES.includes(muscle.state)
+  const name = muscle.label.toLowerCase()
 
   return (
     <>
       <header className={styles.header}>
-        <h1 className={styles.title}>{muscle.label}</h1>
-        <span className={styles.status}>
+        <h1 className={styles.title}>
           {hasStatus && (
-            <span
-              className={styles.dot}
-              style={{ background: STATE_STYLES[muscle.state].color }}
-              aria-hidden="true"
-            />
+            <span className={styles.symbol} style={{ color: style.color }} aria-hidden="true">
+              {style.symbol}
+            </span>
           )}
-          {STATE_STYLES[muscle.state].label}
-          {muscle.stale && <span className={styles.stale}> · not trained in 3+ weeks</span>}
-        </span>
+          {muscle.label}
+          <span className="visually-hidden">: {style.label}</span>
+        </h1>
+        {!hasStatus && <p className={styles.subtitle}>{style.label}</p>}
+        {muscle.stale && <p className={styles.subtitle}>Not trained in 3+ weeks</p>}
       </header>
 
       {muscle.weeks.length > 0 && <WeekByWeek weeks={muscle.weeks} />}
@@ -55,17 +54,21 @@ function MuscleView({ muscle }: { muscle: Muscle }) {
         </Card>
       ) : (
         <>
-          {direct.length > 0 && <ExerciseList title="Exercises" entries={direct} />}
-          {indirect.length > 0 && <ExerciseList title="Also works it" entries={indirect} />}
+          {direct.length > 0 && (
+            <ExerciseList title={`${exerciseAdjective(muscle)} exercises`} entries={direct} />
+          )}
+          {indirect.length > 0 && <ExerciseList title={`Also works ${name}`} entries={indirect} />}
         </>
       )}
     </>
   )
 }
 
-/** A strip of recent weeks, coloured by status; pick one to see its exercises. */
+const JUDGED: Trend[] = ['up', 'flat', 'down']
+
+/** A strip of recent weeks, coloured by status; pick one to see its sessions. */
 function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
-  const lastJudged = weeks.findLastIndex((w) => w.trend !== 'insufficient')
+  const lastJudged = weeks.findLastIndex((w) => JUDGED.includes(w.trend))
   const [selected, setSelected] = useState(lastJudged >= 0 ? lastJudged : weeks.length - 1)
   const week = weeks[selected]
 
@@ -74,7 +77,8 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
       <div className={styles.strip} role="radiogroup" aria-label="Week">
         {weeks.map((w, i) => {
           const info = TREND_INFO[w.trend]
-          const judged = w.trend === 'up' || w.trend === 'flat' || w.trend === 'down'
+          const judged = JUDGED.includes(w.trend)
+          const [day, month] = shortDate(w.week_start).split(' ')
           return (
             <button
               key={w.week_start}
@@ -84,17 +88,21 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
               aria-label={`Week of ${shortDate(w.week_start)}: ${info.label}`}
               className={styles.week}
               data-selected={i === selected || undefined}
-              style={judged ? { background: info.color, color: '#fff' } : undefined}
               onClick={() => setSelected(i)}
             >
-              <span aria-hidden="true">{judged ? info.symbol : ''}</span>
+              <span
+                className={styles.square}
+                style={judged ? { background: info.color, color: '#fff' } : undefined}
+                aria-hidden="true"
+              >
+                {judged ? info.symbol : '–'}
+              </span>
+              <span className={styles.weekDate} aria-hidden="true">
+                <strong>{day}</strong> {month}
+              </span>
             </button>
           )
         })}
-      </div>
-      <div className={styles.stripDates} aria-hidden="true">
-        <span>{shortDate(weeks[0].week_start)}</span>
-        {weeks.length > 1 && <span>{shortDate(weeks[weeks.length - 1].week_start)}</span>}
       </div>
 
       <div className={styles.weekDetail} aria-live="polite">
@@ -103,10 +111,20 @@ function WeekByWeek({ weeks }: { weeks: MuscleWeek[] }) {
         </h3>
         <ul className={styles.weekList}>
           {week.exercises.map((e, i) => (
-            <li key={`${e.id}-${i}`}>
-              <TrendMark trend={e.trend} />
-              <Link to={`/exercises/${e.id}`}>{e.title}</Link>
-              {e.role === 'secondary' && <span className={styles.tag}>indirect</span>}
+            <li key={`${e.id}-${e.date}-${i}`}>
+              {e.trend === 'new' ? (
+                <span className={styles.newTag}>New</span>
+              ) : (
+                <TrendMark trend={e.trend} />
+              )}
+              <Link to={`/exercises/${e.id}`} className={styles.weekExercise}>
+                {e.title}
+              </Link>
+              <span className={styles.weekMeta}>
+                {shortDate(e.date)}
+                {e.rep_range && ` · ${e.rep_range}`}
+                {e.role === 'secondary' && ' · indirect'}
+              </span>
             </li>
           ))}
         </ul>
@@ -125,16 +143,24 @@ function ExerciseList({ title, entries }: { title: string; entries: StrengthEntr
               <span className={styles.rowMain}>
                 <span className={styles.rowTitle}>{e.title}</span>
                 <span className={styles.rowSub}>
-                  {`${formatSet(e.latest, e.mode)} · ${shortDate(e.last_trained)}`}
+                  {e.mode === 'duration' ? 'Longest hold' : 'Best set'}:{' '}
+                  <strong>{formatBestSet(e.best, e.mode)}</strong>
                 </span>
               </span>
               <span className={styles.rowSide}>
                 {e.est_1rm_kg !== null && (
                   <span className={styles.oneRm}>
-                    {e.est_1rm_kg} <small>kg 1RM</small>
+                    <small>Est. 1RM</small>
+                    {kg(e.est_1rm_kg)} kg
                   </span>
                 )}
-                {e.trend && <TrendMark trend={e.trend} />}
+                <span className={styles.rowTrend}>
+                  {e.trend === 'new' ? (
+                    <span className={styles.newTag}>New</span>
+                  ) : (
+                    e.trend && <TrendMark trend={e.trend} />
+                  )}
+                </span>
                 <span aria-hidden="true" className={styles.chevron}>
                   ›
                 </span>
@@ -145,4 +171,22 @@ function ExerciseList({ title, entries }: { title: string; entries: StrengthEntr
       </ul>
     </Card>
   )
+}
+
+// "Abdominal exercises", not "Abdominals exercises".
+const SINGULAR: Record<string, string> = {
+  abdominals: 'Abdominal',
+  abductors: 'Abductor',
+  adductors: 'Adductor',
+  calves: 'Calf',
+  forearms: 'Forearm',
+  glutes: 'Glute',
+  hamstrings: 'Hamstring',
+  lats: 'Lat',
+  shoulders: 'Shoulder',
+  traps: 'Trap',
+}
+
+function exerciseAdjective(muscle: Muscle): string {
+  return SINGULAR[muscle.group] ?? muscle.label
 }

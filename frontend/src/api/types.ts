@@ -60,7 +60,14 @@ export interface WorkingSet {
 export interface MuscleWeek {
   week_start: string
   trend: Trend
-  exercises: { id: string; title: string; role: Role; trend: Trend }[]
+  exercises: {
+    id: string
+    title: string
+    role: Role
+    trend: Trend
+    date: string
+    rep_range: RepRange | null
+  }[]
 }
 
 export interface StrengthEntry {
