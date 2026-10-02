@@ -11,16 +11,21 @@ exactly should I lift next?*
 > Built end to end with Claude Code (AI pair programming) as a portfolio project: product
 > decisions, design reviews and every line of code, iterated in conversation.
 > Not affiliated with or endorsed by Hevy.
+>
+> Made by [Fahema Ali](https://github.com/fahemaali).
 
 ![Body map with the glutes selected, showing each glute exercise's last, this and next session](docs/screenshots/body-map.png)
 
 ## What it does
 
-- **Body map:** every muscle coloured by whether it's progressing, holding or declining. Tap
-  one to see its exercises underneath, each with a swipeable *Last · This · Next* session deck.
+- **Body map:** every muscle coloured by whether it's progressing, not progressing or declining,
+  and striped if it hasn't been trained in 3+ weeks. Tap one to see its exercises underneath,
+  each with a swipeable *Last · This · Next* session deck.
 - **A plan for every exercise:** double progression. Build reps from 8 to 12 at one weight, hit 12
   twice, then add weight and start again (15–20 for endurance work). Each card says where you
   are in that story: *"One more rep to hit 12"*, *"Repeat 12 to unlock the next weight"*.
+- **A progress chart:** what you lifted against the plan, as a strength score, with the plan
+  drawn all the way to the next weight.
 - **Honest progress:** each session is compared with the same exercise in the same rep range,
   never across exercises. Muscles are judged week by week; secondary muscles count half.
 - **Tips from other exercises:** if your other glute exercises have improved since you last
@@ -65,8 +70,9 @@ flowchart LR
   the next weight; on a phone the chart scrolls sideways with the axis pinned.
 - **Rep ranges are tracked separately** (Hypertrophy ≤12, Endurance 13+). Epley inflates high-rep
   sets, so a light, high-rep day compared with a heavy one would show false progress.
-- **The plan never lowers itself after a bad day.** Falling short holds the target; the only
-  planned drop is a deliberate step back after three stalled sessions.
+- **The plan never lowers itself after a bad day.** Falling short holds the target. The only
+  planned drop is a deliberate step back of about 10%, after three sessions at one weight
+  without improving, or three misses in a row of the same target.
 - **Outliers are capped.** One exercise counts at most ±25% in a muscle's or a tip's average, so a
   new exercise's early jump (e.g. +110%) can't dominate.
 - **Accessibility:** status colours differ in lightness for colour-blind users and always come

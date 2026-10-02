@@ -13,19 +13,17 @@ wanted, and what's been agreed so far.
 - ~~The plan holding an old peak~~: three misses in a row of the same target now count as a
   stall (V-Grip Seated Row: 34 kg held → steps back to 29 kg × 8).
 - ~~Rep range always shown~~ on the exercise page: one range as a plain pill, both as a toggle.
+- ~~About page~~: the README's intro, an illustrated five-step *How to use it* guide
+  (screenshots of the real app), *Design decisions*, plus who made it
+  (GitHub profile and source code links), and *Last data refresh* in the top right. In the
+  sidebar and the phone tab bar. The README's privacy section stays out of it, by choice.
 - ~~Rep labels on the chart~~: the chart plots a **strength score** (weight and reps combined),
   labels each point with what was lifted (*29×8*), shows the full climb to the next weight, and
   scrolls sideways on phones.
 
 ## Features
 
-### 1. About page (parked)
-- How the app works, in plain English, and the privacy note.
-- The **last updated** time (removed from the header earlier).
-- The intro text (*"Next Set turns Hevy workouts into a progressive overload plan…"*),
-  reworded.
-
-### 2. Summary page redesign (parked)
+### 1. Summary page redesign (parked)
 - The four legend items become **filter tabs**: Progressing · Not progressing · Declining ·
   Not trained in 3+ weeks. Pick one to list just those muscles, biggest change first.
 - Each muscle shows its **% change** (already calculated for the muscle page).

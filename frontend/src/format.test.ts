@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatSet, formatTarget, kg, pct, shortDate } from './format'
+import { formatSet, formatTarget, kg, pct, shortDate, timeAgo } from './format'
 
 describe('format', () => {
   it.each([
@@ -33,5 +33,21 @@ describe('format', () => {
         'load',
       ),
     ).toBe('29.5 kg × 8')
+  })
+})
+
+describe('timeAgo', () => {
+  it('rounds down to the largest whole unit', () => {
+    expect([0, 1, 5, 59, 60, 179, 1439, 1440, 4000].map(timeAgo)).toEqual([
+      'just now',
+      '1 minute ago',
+      '5 minutes ago',
+      '59 minutes ago',
+      '1 hour ago',
+      '2 hours ago',
+      '23 hours ago',
+      '1 day ago',
+      '2 days ago',
+    ])
   })
 })
