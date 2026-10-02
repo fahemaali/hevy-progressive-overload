@@ -102,16 +102,21 @@ describe('muscle page', () => {
 })
 
 describe('navigation', () => {
-  it('lists trained muscles A–Z with their status, marking the current one', async () => {
+  it('lists trained muscles A–Z with their status under a Muscles section', async () => {
     setup()
-    const nav = (await screen.findByRole('heading', { name: 'Muscles' })).parentElement!
-    const links = await within(nav).findAllByRole('link')
-    expect(links.map((a) => a.textContent)).toEqual(
-      ['Biceps▲', 'Calves–', 'Chest▲', 'Forearms–', 'Hamstrings▼', 'Quadriceps●'].filter(
-        (t) => !t.startsWith('Forearms'),
-      ),
-    ) // indirect-only muscles aren't listed
-    expect(within(nav).getByRole('link', { name: /Biceps/ })).toHaveAttribute(
+    const sidebar = screen.getByRole('navigation', { name: 'Sidebar' })
+    const muscles = within(sidebar).getByRole('button', { name: /Muscles/ })
+    expect(muscles).toHaveAttribute('aria-expanded', 'true') // open: we're on a muscle page
+    const list = document.getElementById(muscles.getAttribute('aria-controls')!)!
+    const links = await within(list).findAllByRole('link')
+    expect(links.map((a) => a.textContent)).toEqual([
+      'Biceps▲',
+      'Calves–',
+      'Chest▲',
+      'Hamstrings▼',
+      'Quadriceps●',
+    ]) // indirect-only muscles (forearms) aren't listed
+    expect(within(list).getByRole('link', { name: /Biceps/ })).toHaveAttribute(
       'aria-current',
       'page',
     )

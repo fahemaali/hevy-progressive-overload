@@ -3,43 +3,23 @@
 What's left to do on Next Set, in rough priority order. Each item says what's wrong or
 wanted, and what's been agreed so far.
 
-## Bugs (phone)
+## Done
 
-### 1. Muscle header overlaps on long names
-**Where:** Body map → tap a muscle → the panel's top row (e.g. **Abdominals +18.3%**, *Week by
-week ›*).
-**Problem:** on a phone, a long single-word name like *Abdominals* runs into the percentage and
-the *Week by week* link. Two-word names (*Upper back*) wrap instead, which is less bad but
-still untidy.
-**Fix idea:** put *Week by week ›* on its own line under the name, or shrink the name on
-narrow screens so it never collides.
-
-### 2. Exercise rows look busy
-**Where:** the exercise rows under the body map, on a phone.
-**Problem:** too much in each row's header, and it's inconsistent. Some show *Hypertrophy*
-and *New*, some only *New*, some a percentage; long names wrap; sizes vary.
-**Fix idea:** one consistent layout. The exercise name on its own line, then a single small
-line of facts in a fixed order (e.g. *Hypertrophy · ▲ +6%*, or *Hypertrophy · New*), or move
-the range into the cards. To agree on before building.
+- ~~Muscle header overlap on long names~~: *Week by week* drops to its own line on phones.
+- ~~Busy exercise rows~~: the name on its own line, then one quiet line of facts in a fixed
+  order (*Hypertrophy · ▲ +6%*).
+- ~~Sidebar navigation rework~~: Body map, Muscles and Exercises as matching items; Muscles and
+  Exercises collapse and expand, with indented items (exercises grouped by muscle).
 
 ## Features
 
-### 3. Sidebar navigation rework (web)
-- Body map, **Muscles** and **Exercises** should all look and behave the same, as top-level items.
-- Muscles and Exercises become **collapsible sections** (an "accordion"): click to expand or
-  collapse, with a chevron showing which.
-- Their contents are **nested items**, indented underneath: each muscle with its status
-  symbol, each exercise.
-- To decide: 58 exercises is a long list, so group it by muscle or add a filter box.
-- The phone's bottom tab bar stays as it is.
-
-### 4. About page (parked)
+### 1. About page (parked)
 - How the app works, in plain English, and the privacy note.
 - The **last updated** time (removed from the header earlier).
 - The intro text (*"Next Set turns Hevy workouts into a progressive overload plan…"*),
   reworded.
 
-### 5. Summary page redesign (parked)
+### 2. Summary page redesign (parked)
 - The four legend items become **filter tabs**: Progressing · Not progressing · Declining ·
   Not trained in 3+ weeks. Pick one to list just those muscles, biggest change first.
 - Each muscle shows its **% change** (already calculated for the muscle page).
@@ -48,7 +28,7 @@ the range into the cards. To agree on before building.
 
 ## Plan logic
 
-### 6. The plan can hold an old peak forever
+### 3. The plan can hold an old peak forever
 **Example:** V-Grip Seated Row. The plan still asks for 34 kg (from 31 Aug) after three
 lighter sessions.
 **Why:** the plan never lowers itself after a short session (agreed), and the stall rule only
@@ -56,7 +36,7 @@ triggers for three sessions at the *same* weight.
 **Fix idea:** treat **three missed targets in a row** as a stall too: *"Stalled. Let's start
 fresh at … kg and rebuild to 12"*.
 
-### 7. Open questions from review
+### 4. Open questions from review
 - **Rep labels on the chart:** the graph shows weight, so adding reps at the same weight
   looks flat (e.g. Bicep Curl: 9.1 kg × 8 → 9.1 kg × 10). Small "×10" labels on each point
   would show the progress. Not decided.

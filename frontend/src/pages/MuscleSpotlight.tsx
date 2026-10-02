@@ -70,19 +70,18 @@ function ExerciseRow({ exercise, index }: { exercise: ExerciseSummary; index: nu
             ›
           </span>
         </Link>
-        <span className={styles.rowMeta}>
-          {exercise.rep_range && (
-            <span className={styles.range}>{RANGE_NAMES[exercise.rep_range]}</span>
-          )}
+        {/* One quiet line of facts, always in the same order: range · trend. */}
+        <p className={styles.facts}>
+          {exercise.rep_range && <span>{RANGE_NAMES[exercise.rep_range]}</span>}
           {exercise.trend === 'new' ? (
-            <span className={styles.newTag}>New</span>
+            <span>New</span>
           ) : (
             <span className={styles.trend}>
               <TrendMark trend={exercise.trend} />
               {exercise.change_pct !== null && pct(exercise.change_pct)}
             </span>
           )}
-        </span>
+        </p>
       </div>
       <SessionDeck
         sessions={[exercise.last]}

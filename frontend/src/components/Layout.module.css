@@ -1,35 +1,31 @@
-/* Phones first: header on top, tab bar along the bottom. */
+/* Phones first: header on top, tab bar along the bottom, no sidebar. */
 
 .page {
   min-height: 100dvh;
 }
 
 .sidebar {
+  display: none;
+}
+
+.tabbar {
   position: fixed;
   z-index: 30;
   left: 0;
   right: 0;
   bottom: 0;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid var(--border);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.sidebarLogo,
-.sidebarMuscles {
-  display: none;
-}
-
-.nav {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  height: var(--tabbar-height);
+  height: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-.navLink {
+.tab {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,18 +83,20 @@
   padding: 4px var(--gap) 32px;
 }
 
-/* Wide screens: a sidebar with the body map and every muscle you train. */
+/* Wide screens: the sidebar replaces the tab bar. */
 @media (min-width: 900px) {
   .sidebar {
+    position: fixed;
+    z-index: 30;
     top: 0;
-    right: auto;
-    width: var(--sidebar-width);
+    bottom: 0;
+    left: 0;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    width: var(--sidebar-width);
     padding: 24px 16px;
     overflow-y: auto;
-    border-top: none;
     border-right: 1px solid var(--border);
     background: var(--surface);
     box-shadow: var(--shadow);
@@ -109,48 +107,8 @@
     padding: 0 8px;
   }
 
-  .nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    height: auto;
-  }
-
-  .navLink {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 0.9375rem;
-    color: var(--text);
-  }
-
-  .phoneOnly {
+  .tabbar {
     display: none;
-  }
-
-  .navLink:hover {
-    background: var(--surface-2);
-  }
-
-  .active {
-    background: var(--accent-soft);
-    color: var(--accent-ink);
-  }
-
-  .sidebarMuscles {
-    display: block;
-  }
-
-  .sidebarHeading {
-    margin: 0 0 6px;
-    padding: 0 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
   }
 
   .content {
