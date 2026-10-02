@@ -26,6 +26,18 @@ def target_score(mode: TrackingMode, target: Target) -> float:
     return float(target.duration_seconds or 0)
 
 
+def did_score(mode: TrackingMode, session: SessionSummary) -> float:
+    """What a session did (its working weight, for the reps every working set reached),
+    scored like a target, so it sits on the same scale as the plan. For lifts this is
+    the strength score the chart plots: the same weight for more reps scores higher."""
+    did = Target(
+        weight_kg=session.working_weight_kg,
+        reps=min(session.working_reps, default=0),
+        duration_seconds=session.top_set.duration_seconds,
+    )
+    return target_score(mode, did)
+
+
 def compare_to_target(mode: TrackingMode, session: SessionSummary, target: Target) -> int:
     """1 if the session beat the target, 0 if it matched it, -1 if it fell short.
 

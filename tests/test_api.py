@@ -114,12 +114,22 @@ def test_exercise(client: FlaskClient) -> None:
     assert len(strength["sessions"]) == 8
     first, last = strength["sessions"][0], strength["sessions"][-1]
     assert first["target"] is None  # a first session sets the baseline
-    assert last["target"] == {"weight_kg": 55, "reps": 10, "duration_seconds": None, "sets": 3}
+    assert last["target"] == {
+        "weight_kg": 55,
+        "reps": 10,
+        "duration_seconds": None,
+        "sets": 3,
+        "score": 73.33,  # the strength score: 55 × (1 + 10/30)
+    }
+    assert last["did_score"] == 64.75  # 52.5 × 7, on the same scale
     assert last["vs_target"] == -1
     # 52.5 × 7 missed the 55 × 10 target, so the plan holds it rather than dropping.
     assert strength["plan"]["step"] == "catch_up"
     assert strength["plan"]["rep_target"] == [8, 12]
     assert strength["plan"]["today"]["weight_kg"] == 55
+    # The climb: 55 × 10, 11, 12, 12 again, then the next weight.
+    climb = [(t["weight_kg"], t["reps"]) for t in strength["plan"]["climb"]]
+    assert climb == [(55, 10), (55, 11), (55, 12), (55, 12), (57.5, 8)]
 
 
 def test_exercise_with_both_rep_ranges(client: FlaskClient) -> None:

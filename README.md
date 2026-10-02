@@ -28,7 +28,7 @@ exactly should I lift next?*
 
 | Exercise | Muscle | Phone |
 | --- | --- | --- |
-| ![Exercise page: weight lifted against the plan](docs/screenshots/exercise.png) | ![Muscle page: week by week](docs/screenshots/muscle.png) | ![Exercise page on a phone](docs/screenshots/phone.png) |
+| ![Exercise page: strength score against the plan](docs/screenshots/exercise.png) | ![Muscle page: week by week](docs/screenshots/muscle.png) | ![Exercise page on a phone](docs/screenshots/phone.png) |
 
 The full rules (rep ranges, the plan, how sessions and muscles are judged) are in
 [REQUIREMENTS.md](REQUIREMENTS.md).
@@ -58,8 +58,11 @@ flowchart LR
 
 ## Design decisions
 
-- **Weight lifted, not estimated 1RM, on the graph.** It matches what was actually lifted; est.
-  1RM (Epley) stays as a headline number.
+- **A strength score on the graph, labelled with what was lifted.** Plotting weight alone made
+  rep-building look flat (29 kg × 8 → × 12 is real progress). Weight and reps are combined
+  (Epley) into a unitless score, and each point says what was lifted (*29×8*), so the line
+  climbs with every extra rep and the numbers stay concrete. The plan is drawn all the way to
+  the next weight; on a phone the chart scrolls sideways with the axis pinned.
 - **Rep ranges are tracked separately** (Hypertrophy ≤12, Endurance 13+). Epley inflates high-rep
   sets, so a light, high-rep day compared with a heavy one would show false progress.
 - **The plan never lowers itself after a bad day.** Falling short holds the target; the only

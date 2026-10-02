@@ -98,7 +98,9 @@ For each exercise and rep range, the next target comes from the latest sessions:
 for assisted exercises); "all working sets" means every set at that weight.
 
 The app shows **This session** and **Next session** (what comes next if this session's target
-is hit).
+is hit). The chart also shows the **full climb**: each target after that, as if every one is hit,
+up to and including the first session at the next weight (e.g. 29×8, 29×9 … 29×12, 29×12 again,
+then 34×8). At most 10 sessions ahead; reps-only and timed exercises look one step ahead only.
 
 ### Card sentences: goal-focused, worked out from each card's target
 Each card says where its target sits in the story: *build to the top of the range one rep at a
@@ -196,9 +198,21 @@ exercises are still found through search.
 
 - Strength / Light toggle (Strength by default; Light if there are no strength sessions).
 - Headline: Est. 1RM, trend (▲ +6%) and best.
-- Chart with two lines in the same units: **actual** (solid) and **target** (dashed). Solid at
+- Chart with two lines in the same units: **actual** (solid) and **plan** (dashed). Solid at
   or above dashed means following the plan; solid rising means getting stronger. Points are
-  coloured by result; tapping one shows the actual and target sets. No e1RM numbers on the chart.
+  coloured by result.
+- For weighted lifts the y-axis is a unitless **strength score**: the working weight and the
+  reps every working set reached, combined with Epley (`weight × (1 + reps / 30)`). Plan targets
+  are scored the same way, so one more rep at the same weight still climbs. It has no "kg",
+  because it isn't a weight; each point is labelled with what was (or will be) lifted, e.g.
+  *29×8*. Other exercise types plot reps, seconds or assistance kg.
+- The plan runs past *This* and *Next* to the next weight. Columns are at least 48 px wide; when
+  they don't fit (phones, long histories), the plot scrolls sideways with the y-axis fixed,
+  opening with *This session* in view.
+- The chart shows the last 12 weeks. With nothing older, the plan line starts from the corner
+  (the plan starts from nothing); with older sessions off the chart, it comes in from the left
+  at the level the plan was at before the first column. Planned points' labels are smaller and
+  greyer than what was actually lifted.
 - Today / Then targets with one short line explaining the plan step.
 - Capacity hint, when there's evidence.
 

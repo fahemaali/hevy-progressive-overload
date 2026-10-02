@@ -26,6 +26,8 @@ from backend.domain.targets import Target, target_score
 from backend.domain.verdicts import SessionResult, Trend
 
 STALL_SESSIONS = 3
+# The climb never looks further ahead than this many sessions.
+MAX_CLIMB = 10
 STEP_BACK_FRACTION = 0.10
 DURATION_STEP_SECONDS = 5
 
@@ -44,6 +46,9 @@ class Plan:
     step: PlanStep
     today: Target
     then: Target  # the target after today's, if today's is hit
+    # Today's target, then each one after it if every one is hit, up to and including the
+    # first session at the next weight (or just today and then, with no weight to add).
+    climb: tuple[Target, ...]
     reps_to_go: int | None  # reps still to add before the weight goes up (building only)
     ahead_of_plan: bool  # the latest session beat what the plan asked for
 
@@ -54,7 +59,7 @@ def plan_next(template: ExerciseTemplate, results: list[SessionResult]) -> Plan 
         return None
     mode = tracking_mode(template)
     step, today = next_target(template, mode, results)
-    _, then = next_target(template, mode, [*results, _as_if_hit(mode, today, results[-1])])
+    climb = _climb(template, mode, results, today)
 
     last = results[-1].session
     reps_to_go = None
@@ -65,10 +70,27 @@ def plan_next(template: ExerciseTemplate, results: list[SessionResult]) -> Plan 
         rep_range=last.rep_range,
         step=step,
         today=today,
-        then=then,
+        then=climb[1],
+        climb=climb,
         reps_to_go=reps_to_go,
         ahead_of_plan=results[-1].ahead_of_target,
     )
+
+
+def _climb(
+    template: ExerciseTemplate, mode: TrackingMode, results: list[SessionResult], today: Target
+) -> tuple[Target, ...]:
+    """Today's target and the ones after it, as if each is hit, until the weight goes up."""
+    climb = [today]
+    pretend = [*results, _as_if_hit(mode, today, results[-1])]
+    while len(climb) < MAX_CLIMB:
+        step, target = next_target(template, mode, pretend)
+        climb.append(target)
+        # Reps or seconds have no weight to add: one step ahead is enough.
+        if step is PlanStep.ADD_WEIGHT or mode in (TrackingMode.REPS, TrackingMode.DURATION):
+            break
+        pretend.append(_as_if_hit(mode, target, pretend[-1]))
+    return tuple(climb)
 
 
 def next_target(
