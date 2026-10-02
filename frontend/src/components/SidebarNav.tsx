@@ -4,7 +4,7 @@ import { useExercises } from '../api/client'
 import type { ExerciseSummary } from '../api/types'
 import { muscleLabel } from '../muscles'
 import { TREND_INFO } from '../trends'
-import { BodyIcon, ChevronIcon, DumbbellIcon, ListIcon } from './icons'
+import { BodyIcon, ChevronIcon, DumbbellIcon, InfoIcon, ListIcon } from './icons'
 import { MuscleNav } from './MuscleNav'
 import styles from './SidebarNav.module.css'
 
@@ -15,7 +15,7 @@ const DEFAULT_OPEN: Record<SectionName, boolean> = { muscles: true, exercises: f
 
 /**
  * The wide-screen navigation: Body map, then Muscles and Exercises as collapsible
- * sections with their items indented underneath. A section holding the current page
+ * sections with their items indented underneath, then About. A section holding the current page
  * opens automatically; otherwise your open/closed choices are remembered.
  */
 export function SidebarNav() {
@@ -62,6 +62,14 @@ export function SidebarNav() {
       >
         <ExerciseNav />
       </Section>
+
+      <NavLink
+        to="/about"
+        className={({ isActive }) => (isActive ? `${styles.item} ${styles.active}` : styles.item)}
+      >
+        <InfoIcon />
+        <span>About</span>
+      </NavLink>
     </nav>
   )
 }
