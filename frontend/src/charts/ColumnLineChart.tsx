@@ -9,7 +9,9 @@ export interface Column {
 export interface Line {
   values: (number | null)[] // one per column; null leaves a gap
   variant: 'actual' | 'target' | 'trend'
-  fromOrigin?: boolean // start from the corner where the axes meet
+  // Where the line comes in from, left of the first column: the corner where the axes
+  // meet, or a value (e.g. history from before the first column).
+  from?: 'origin' | number
   bridgeGaps?: boolean // join across columns with no value, as a dashed stretch
 }
 
@@ -71,13 +73,18 @@ export function ColumnLineChart({
   const scroller = useRef<HTMLDivElement>(null)
   const n = columns.length
   const x = (i: number) => ((i + 0.5) / n) * 100
-  const values = [...lines.flatMap((l) => l.values), ...dots.map((d) => d.value)]
+  const values = [
+    ...lines.flatMap((l) => [...l.values, typeof l.from === 'number' ? l.from : null]),
+    ...dots.map((d) => d.value),
+  ]
   const { y, ticks } = scale(values, { invert, zeroLine, withTicks: Boolean(yAxis) })
   const top = dots
     .filter((d) => d.column === highlight)
     .reduce<Dot | null>((best, d) => (!best || y(d.value) < y(best.value) ? d : best), null)
   const hasLabels = columns.some((c) => c.label)
   const hasDotLabels = dots.some((d) => d.label)
+  // Just wide enough for the longest number on the axis.
+  const axisChars = yAxis ? Math.max(...ticks.map((t) => yAxis.format(t).length)) : 0
 
   useLayoutEffect(() => {
     const el = scroller.current
@@ -96,7 +103,11 @@ export function ColumnLineChart({
           </span>
         )}
         {yAxis && (
-          <div className={styles.yAxis} style={{ height }} aria-hidden="true">
+          <div
+            className={styles.yAxis}
+            style={{ height, width: `calc(${axisChars}ch + 8px)` }}
+            aria-hidden="true"
+          >
             {ticks.map((t) => (
               <span key={t} className={styles.tick} style={{ top: `${y(t)}%` }}>
                 {yAxis.format(t)}
@@ -137,7 +148,7 @@ export function ColumnLineChart({
                     <polyline
                       key={`${li}-${si}`}
                       points={[
-                        ...(line.fromOrigin && si === 0 ? ['0,100'] : []),
+                        ...(si === 0 ? entry(line, y) : []),
                         ...seg.map((i) => `${x(i)},${y(line.values[i]!)}`),
                       ].join(' ')}
                       className={styles[line.variant]}
@@ -268,6 +279,13 @@ function niceStep(rough: number): number {
   const scaled = rough / power
   const nice = scaled <= 1 ? 1 : scaled <= 2 ? 2 : scaled <= 5 ? 5 : 10
   return nice * power
+}
+
+/** The point a line enters from, left of the first column (none, if it starts there). */
+function entry(line: Line, y: (v: number) => number): string[] {
+  if (line.from === 'origin') return ['0,100']
+  if (typeof line.from === 'number') return [`0,${y(line.from)}`]
+  return []
 }
 
 /** Runs of consecutive columns that have values (a line needs two points). */

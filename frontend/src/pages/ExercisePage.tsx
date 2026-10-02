@@ -112,8 +112,8 @@ function recentSessions(sessions: Session[]): Session[] {
 
 /**
  * What you actually lifted each session (solid) against what the plan asked for
- * (dashed), continuing into this session and the next. For a first session the plan
- * is simply what you did, so the plan line runs unbroken from the start.
+ * (dashed), continuing through the climb to the next weight. For a first session the
+ * plan is simply what you did, so the plan line runs unbroken from the start.
  */
 function ProgressCard({
   exercise,
@@ -127,6 +127,9 @@ function ProgressCard({
   const mode = exercise.mode
   const past = sessions
   const ahead = range.plan.climb
+  // Older sessions than the chart shows: the plan line comes in at the level it was at
+  // then. Otherwise it starts from the corner, as the plan starts from nothing.
+  const before = range.sessions[range.sessions.length - past.length - 1]
 
   const columns = [
     ...past.map((s, i) => {
@@ -139,10 +142,10 @@ function ProgressCard({
     })),
   ]
   const actual = [...past.map((s) => liftedValue(s, mode)), ...ahead.map(() => null)]
-  const plan = [
-    ...past.map((s) => (s.target ? targetValue(s.target, mode) : liftedValue(s, mode))),
-    ...ahead.map((t) => targetValue(t, mode)),
-  ]
+  const planned = (s: Session) => (s.target ? targetValue(s.target, mode) : liftedValue(s, mode))
+  const plan = [...past.map(planned), ...ahead.map((t) => targetValue(t, mode))]
+
+  const planFrom = before ? planned(before) : ('origin' as const)
 
   const dots = [
     ...past.map((s, i) => ({
@@ -186,7 +189,7 @@ function ProgressCard({
         label={`${axisName(mode)} by session`}
         columns={columns}
         lines={[
-          { values: plan, variant: 'target', fromOrigin: true },
+          { values: plan, variant: 'target', from: planFrom },
           { values: actual, variant: 'actual' },
         ]}
         dots={dots}

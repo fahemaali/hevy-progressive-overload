@@ -8,7 +8,9 @@
 
 .yAxis {
   position: relative;
-  flex: 0 0 40px;
+  flex: 0 0 auto; /* width set from the longest tick label */
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Reads bottom to top, centred on the plot. */
@@ -17,8 +19,10 @@
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   text-align: center;
-  font-size: 0.6875rem;
+  font-size: 0.5625rem;
   font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -29,8 +33,7 @@
 
 .tick {
   position: absolute;
-  right: 8px;
-  font-size: 0.6875rem;
+  right: 6px;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   transform: translateY(-50%);
@@ -136,16 +139,22 @@
 
 .dotLabel {
   position: absolute;
+  padding: 0 2px;
+  border-radius: 3px;
+  background: var(--surface); /* lines pass behind the text, not through it */
   font-size: 0.6875rem;
   font-weight: 600;
+  line-height: 1.2;
   color: var(--text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  transform: translate(-50%, calc(-100% - 8px));
+  transform: translate(-50%, calc(-100% - 7px));
   pointer-events: none;
 }
 
+/* Planned: quieter and smaller than what was actually lifted. */
 .dotLabel[data-hollow] {
+  font-size: 0.5625rem;
   font-weight: 500;
   color: var(--text-muted);
 }

@@ -44,3 +44,32 @@ describe('ColumnLineChart gaps', () => {
     expect(container.querySelectorAll('line[class*="bridge"]')).toHaveLength(1) // 2 → 4, dashed
   })
 })
+
+describe('ColumnLineChart line entry', () => {
+  const firstPoint = (from?: 'origin' | number) => {
+    const { container } = render(
+      <ColumnLineChart
+        label="test"
+        columns={[0, 1].map((i) => ({ key: String(i) }))}
+        lines={[{ values: [10, 20], variant: 'target', from }]}
+        dots={[]}
+      />,
+    )
+    return container.querySelector('polyline')!.getAttribute('points')!.split(' ')[0]
+  }
+
+  it('starts at the first column by default', () => {
+    expect(firstPoint()).toMatch(/^25,/)
+  })
+
+  it('can come in from the corner where the axes meet', () => {
+    expect(firstPoint('origin')).toBe('0,100')
+  })
+
+  it('can come in at an earlier level, from history off the left of the chart', () => {
+    const [x, y] = firstPoint(20).split(',').map(Number)
+    expect(x).toBe(0)
+    // Level with the second point (also 20), not the corner.
+    expect(y).toBeLessThan(50)
+  })
+})

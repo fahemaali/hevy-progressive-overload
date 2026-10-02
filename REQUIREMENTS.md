@@ -209,6 +209,10 @@ exercises are still found through search.
 - The plan runs past *This* and *Next* to the next weight. Columns are at least 48 px wide; when
   they don't fit (phones, long histories), the plot scrolls sideways with the y-axis fixed,
   opening with *This session* in view.
+- The chart shows the last 12 weeks. With nothing older, the plan line starts from the corner
+  (the plan starts from nothing); with older sessions off the chart, it comes in from the left
+  at the level the plan was at before the first column. Planned points' labels are smaller and
+  greyer than what was actually lifted.
 - Today / Then targets with one short line explaining the plan step.
 - Capacity hint, when there's evidence.
 
