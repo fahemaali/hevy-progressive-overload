@@ -73,3 +73,22 @@ describe('ColumnLineChart line entry', () => {
     expect(y).toBeLessThan(50)
   })
 })
+
+describe('ColumnLineChart scrolling', () => {
+  const chart = (minColumnWidth?: number) =>
+    render(
+      <ColumnLineChart
+        label="test"
+        columns={[0, 1].map((i) => ({ key: String(i) }))}
+        lines={[{ values: [1, 2], variant: 'trend' }]}
+        dots={[]}
+        minColumnWidth={minColumnWidth}
+      />,
+    ).container.querySelector('[class*="chart"]')!
+
+  // A scroller would clip a callout above the plot (the muscle page's "+18.3%").
+  it('only scrolls when given a minimum column width', () => {
+    expect(chart()).not.toHaveAttribute('data-scroll')
+    expect(chart(48)).toHaveAttribute('data-scroll')
+  })
+})
