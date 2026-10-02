@@ -116,7 +116,8 @@
 
 .weekList li {
   display: grid;
-  grid-template-columns: 40px 1fr auto;
+  /* minmax(0, …): a long name wraps instead of pushing the row wider than the card. */
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
 }
@@ -129,6 +130,23 @@
   font-size: 0.8125rem;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+/* Phones: no room for both on one line, so the date and range go under the name. */
+@media (max-width: 600px) {
+  .weekList li {
+    grid-template-columns: 40px minmax(0, 1fr);
+    row-gap: 2px;
+  }
+
+  .weekList li > :first-child {
+    grid-row: span 2;
+  }
+
+  .weekMeta {
+    grid-column: 2;
+    white-space: normal;
+  }
 }
 
 .newTag {
