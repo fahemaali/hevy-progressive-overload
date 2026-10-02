@@ -34,6 +34,10 @@ wanted, and what's been agreed so far.
 
 - **Tip card when there's no evidence:** it only appears when other exercises give evidence.
   Should it always show, with *"not enough evidence yet"*? Not decided.
+- **Dot colour vs chart line:** a session's dot colour judges its *best* set against the recent
+  level, but the chart plots the working weight's *lowest* reps. They can disagree: Leg
+  Extension's 25 Sept dot is green (▲ +4.5%, best set 22.5 kg × 11) while the line goes down
+  to it (22.5 kg × 10). Option: judge sessions by the same score the chart plots. Not decided.
 
 ## Later
 
