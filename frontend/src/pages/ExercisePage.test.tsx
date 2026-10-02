@@ -138,9 +138,11 @@ describe('exercise page', () => {
     expect(tabs.map((t) => t.textContent)).toEqual(['Hypertrophy', 'Endurance'])
   })
 
-  it('has no range toggle when there is only one range', async () => {
-    setup({ ...rowExercise, ranges: [rowExercise.ranges[0]] })
+  it("shows the only range trained in the toggle's place, but not as a toggle", async () => {
+    setup({ ...rowExercise, ranges: [rowExercise.ranges[1]], default_range: 'light' })
     await screen.findByRole('region', { name: 'Progress' })
-    expect(screen.queryByRole('tab', { name: 'Hypertrophy' })).toBeNull()
+    const header = screen.getByRole('heading', { level: 1 }).closest('header')!
+    expect(within(header).queryByRole('tab')).toBeNull()
+    expect(within(header).getByText('Endurance')).toHaveAttribute('title', '13+ reps')
   })
 })
