@@ -5,7 +5,7 @@ from itertools import pairwise
 import pytest
 
 from backend.domain.models import ExerciseTemplate, LoggedSet
-from backend.domain.plan import Plan, PlanStep
+from backend.domain.plan import MAX_CLIMB, Plan, PlanStep
 from backend.domain.progress import analyse_exercise
 from backend.domain.targets import Target
 from tests.domain.helpers import hold, lift, template, weekly
@@ -80,6 +80,38 @@ def test_light_range_works_between_15_and_20() -> None:
 def test_increment_follows_equipment() -> None:
     plan = plan_after(sets(20, 12), sets(20, 12), t=template(equipment="dumbbell"))
     assert plan.today == target(22, 8, n_sets=1)
+
+
+# --- The climb to the next weight ------------------------------------------------------
+
+
+def test_climb_runs_through_confirming_to_the_next_weight() -> None:
+    plan = plan_after(sets(50, 10, 9, 8))
+    assert [(t.weight_kg, t.reps) for t in plan.climb] == [
+        (50, 9),
+        (50, 10),
+        (50, 11),
+        (50, 12),
+        (50, 12),  # the repeat that unlocks the next weight
+        (52.5, 8),
+    ]
+    assert plan.climb[:2] == (plan.today, plan.then)
+
+
+def test_climb_from_a_new_weight_runs_to_the_one_after() -> None:
+    plan = plan_after(sets(50, 12, 12, 12), sets(50, 12, 12, 12))
+    assert plan.climb[0] == target(52.5, 8)
+    assert plan.climb[-1] == target(55, 8)
+
+
+def test_climb_without_a_weight_to_add_is_two_steps() -> None:
+    reps = plan_after(sets(None, 12, 10), t=template(type_="reps_only"))
+    assert reps.climb == (Target(reps=13, sets=2), Target(reps=14, sets=2))
+
+
+def test_climb_is_capped_when_reps_can_only_go_up() -> None:
+    plan = plan_after(sets(0, 12), sets(0, 12), t=template(type_="bodyweight_assisted"))
+    assert len(plan.climb) == MAX_CLIMB
 
 
 # --- Stalled ---------------------------------------------------------------------------

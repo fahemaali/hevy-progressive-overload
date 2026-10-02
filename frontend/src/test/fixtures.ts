@@ -188,11 +188,14 @@ export const bicepsMuscle: Muscle = {
   ],
 }
 
+const epley = (weight: number, reps: number) => Math.round(weight * (1 + reps / 30) * 100) / 100
+
 const target = (weight_kg: number, reps: number, sets = 2) => ({
   weight_kg,
   reps,
   duration_seconds: null,
   sets,
+  score: epley(weight_kg, reps),
 })
 
 export const rowExercise: Exercise = {
@@ -216,6 +219,7 @@ export const rowExercise: Exercise = {
           date: '2026-09-15',
           did: set(22.5, 10, 10),
           score: 30,
+          did_score: epley(22.5, 10),
           target: null,
           vs_target: null,
           trend: 'new',
@@ -225,6 +229,7 @@ export const rowExercise: Exercise = {
           date: '2026-09-25',
           did: set(29.5, 7, 7),
           score: 36.4,
+          did_score: epley(29.5, 7),
           target: target(22.5, 11),
           vs_target: 1,
           trend: 'up',
@@ -236,6 +241,7 @@ export const rowExercise: Exercise = {
         rep_target: [8, 12],
         today: target(29.5, 8),
         then: target(29.5, 9),
+        climb: [8, 9, 10, 11, 12, 12].map((r) => target(29.5, r)).concat(target(31.5, 8)),
         reps_to_go: 5,
         ahead_of_plan: true,
       },
@@ -257,6 +263,7 @@ export const rowExercise: Exercise = {
           date: '2026-09-13',
           did: set(9, 24, 24),
           score: 16.2,
+          did_score: epley(9, 24),
           target: null,
           vs_target: null,
           trend: 'new',
@@ -268,6 +275,7 @@ export const rowExercise: Exercise = {
         rep_target: [15, 20],
         today: target(9, 20),
         then: target(14, 15),
+        climb: [target(9, 20), target(14, 15)],
         reps_to_go: null,
         ahead_of_plan: false,
       },

@@ -100,12 +100,14 @@ export interface Target {
   reps: number | null
   duration_seconds: number | null
   sets: number
+  score: number // same scale as Session.did_score (for lifts, a strength score)
 }
 
 export interface Session {
   date: string
   did: WorkingSet
   score: number
+  did_score: number // the working set scored like a target
   target: Target | null
   vs_target: -1 | 0 | 1 | null
   trend: Trend
@@ -117,6 +119,7 @@ export interface Plan {
   rep_target: [number, number] | null
   today: Target
   then: Target
+  climb: Target[] // today, then on up to the first session at the next weight
   reps_to_go: number | null
   ahead_of_plan: boolean
 }

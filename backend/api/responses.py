@@ -20,7 +20,7 @@ from backend.domain.progress import (
     StrengthEntry,
 )
 from backend.domain.sessions import SessionSummary
-from backend.domain.targets import Target
+from backend.domain.targets import Target, did_score, target_score
 from backend.domain.verdicts import SessionResult, Trend
 
 # Every Hevy muscle group that has a place on the body map.
@@ -76,14 +76,16 @@ class TargetJSON(TypedDict):
     reps: int | None
     duration_seconds: int | None
     sets: int
+    score: float  # on the same scale as SessionJSON.did_score (for lifts, Epley e1RM)
 
 
-def target_json(target: Target) -> TargetJSON:
+def target_json(target: Target, mode: TrackingMode) -> TargetJSON:
     return {
         "weight_kg": target.weight_kg,
         "reps": target.reps,
         "duration_seconds": target.duration_seconds,
         "sets": target.sets,
+        "score": round(target_score(mode, target), 2),
     }
 
 
@@ -270,6 +272,7 @@ class SessionJSON(TypedDict):
     date: str
     did: SetJSON
     score: float  # e1RM / reps / assistance kg / seconds
+    did_score: float  # the working set scored like a target (the chart's strength score)
     target: TargetJSON | None
     vs_target: int | None  # -1 missed, 0 hit, 1 beat
     trend: Trend
@@ -281,6 +284,7 @@ class PlanJSON(TypedDict):
     rep_target: list[int] | None  # [bottom, top] the plan aims for, e.g. [8, 12]
     today: TargetJSON
     then: TargetJSON
+    climb: list[TargetJSON]  # today, then on up to the first session at the next weight
     reps_to_go: int | None
     ahead_of_plan: bool
 
@@ -320,31 +324,33 @@ class ExerciseJSON(TypedDict):
     ranges: list[RangeJSON]
 
 
-def session_json(result: SessionResult) -> SessionJSON:
+def session_json(result: SessionResult, mode: TrackingMode) -> SessionJSON:
     return {
         "date": result.session.date.isoformat(),
         "did": working_set_json(result.session),
         "score": round(result.session.score, 2),
-        "target": target_json(result.target) if result.target else None,
+        "did_score": round(did_score(mode, result.session), 2),
+        "target": target_json(result.target, mode) if result.target else None,
         "vs_target": result.vs_target,
         "trend": result.trend,
         "is_best": result.is_best,
     }
 
 
-def plan_json(plan: Plan) -> PlanJSON:
+def plan_json(plan: Plan, mode: TrackingMode) -> PlanJSON:
     bounds = PLAN_REPS.get(plan.rep_range) if plan.rep_range else None
     return {
         "step": plan.step,
         "rep_target": list(bounds) if bounds else None,
-        "today": target_json(plan.today),
-        "then": target_json(plan.then),
+        "today": target_json(plan.today, mode),
+        "then": target_json(plan.then, mode),
+        "climb": [target_json(t, mode) for t in plan.climb],
         "reps_to_go": plan.reps_to_go,
         "ahead_of_plan": plan.ahead_of_plan,
     }
 
 
-def range_json(rp: RangeProgress, titles: dict[str, str]) -> RangeJSON:
+def range_json(rp: RangeProgress, mode: TrackingMode, titles: dict[str, str]) -> RangeJSON:
     latest = rp.results[-1]
     capacity: CapacityJSON | None = None
     if rp.capacity:
@@ -363,8 +369,8 @@ def range_json(rp: RangeProgress, titles: dict[str, str]) -> RangeJSON:
         "change_pct": latest.change_pct,
         "is_best": latest.is_best,
         "off_best_pct": latest.off_best_pct,
-        "sessions": [session_json(r) for r in rp.results],
-        "plan": plan_json(rp.plan),
+        "sessions": [session_json(r, mode) for r in rp.results],
+        "plan": plan_json(rp.plan, mode),
         "capacity": capacity,
     }
 
@@ -380,7 +386,7 @@ def exercise_json(progress: ExerciseProgress, titles: dict[str, str]) -> Exercis
         "primary_muscle": template.primary_muscle_group,
         "secondary_muscles": list(template.secondary_muscle_groups),
         "default_range": default.rep_range if default else None,
-        "ranges": [range_json(rp, titles) for rp in progress.ranges],
+        "ranges": [range_json(rp, progress.mode, titles) for rp in progress.ranges],
     }
 
 
@@ -416,8 +422,8 @@ def exercise_summary_json(progress: ExerciseProgress) -> ExerciseSummaryJSON | N
         "rep_range": rp.rep_range,
         "trend": latest.trend,
         "change_pct": latest.change_pct,
-        "last": session_json(latest),
-        "plan": plan_json(rp.plan),
+        "last": session_json(latest, progress.mode),
+        "plan": plan_json(rp.plan, progress.mode),
     }
 
 

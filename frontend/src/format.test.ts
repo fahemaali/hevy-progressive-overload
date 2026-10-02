@@ -28,7 +28,10 @@ describe('format', () => {
     )
     expect(formatSet({ weight_kg: null, reps: [], duration_seconds: 60 }, 'duration')).toBe('60 s')
     expect(
-      formatTarget({ weight_kg: 29.5, reps: 8, duration_seconds: null, sets: 2 }, 'load'),
+      formatTarget(
+        { weight_kg: 29.5, reps: 8, duration_seconds: null, sets: 2, score: 37.37 },
+        'load',
+      ),
     ).toBe('29.5 kg × 8')
   })
 })

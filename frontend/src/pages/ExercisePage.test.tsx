@@ -26,15 +26,17 @@ describe('exercise page', () => {
     expect(heading.nextElementSibling).toHaveTextContent(/^.*\+21\.3%$/) // no date beside it
   })
 
-  it('opens on a graph of the weight lifted, with est. 1RM in its corner', async () => {
+  it('opens on a graph of the strength score, with est. 1RM in its corner', async () => {
     setup()
     const progress = await screen.findByRole('region', { name: 'Progress' })
     expect(within(progress).getByText('Est. 1RM').parentElement).toHaveTextContent('36.4 kg')
     expect(within(progress).getByRole('figure')).toHaveAccessibleName(
-      'Heaviest weight lifted (kg) by session',
+      'Strength score (weight and reps combined) by session',
     )
-    expect(within(progress).queryByText('Heaviest weight lifted (kg)')).toBeNull() // no axis title
-    expect(within(progress).getAllByText(/^\d+ kg$/).length).toBeGreaterThanOrEqual(3) // axis
+    expect(within(progress).getByText('Strength score')).toBeInTheDocument() // in the legend
+    // A score, not a weight: the axis has no unit.
+    expect(within(progress).queryAllByText(/^\d+ kg$/)).toEqual([])
+    expect(within(progress).getAllByText(/^\d+$/).length).toBeGreaterThanOrEqual(3)
     const main = screen.getByRole('main')
     const titles = within(main)
       .getAllByRole('heading', { level: 2 })
@@ -42,11 +44,26 @@ describe('exercise page', () => {
     expect(titles[0]).toBe('Progress')
   })
 
-  it('charts past sessions plus this session and the next', async () => {
+  it('charts past sessions, then the plan all the way to the next weight', async () => {
     setup()
     const progress = await screen.findByRole('region', { name: 'Progress' })
-    const labels = within(progress).getAllByText(/^(15|25|This|Next)$/)
-    expect(labels.map((l) => l.textContent)).toEqual(['15', '25', 'This', 'Next'])
+    const labels = within(progress).getAllByText(/^(15|25|This|Next|3rd|\d+th)$/, {
+      selector: 'strong', // the column labels, not the axis
+    })
+    expect(labels.map((l) => l.textContent)).toEqual([
+      ...['15', '25', 'This', 'Next', '3rd'],
+      ...['4th', '5th', '6th', '7th'],
+    ])
+  })
+
+  it('labels each point with what was, or will be, lifted', async () => {
+    setup()
+    const progress = await screen.findByRole('region', { name: 'Progress' })
+    const lifted = within(progress).getAllByText(/^[\d.]+×\d+$/)
+    expect(lifted.map((l) => l.textContent)).toEqual([
+      ...['22.5×10', '29.5×7'], // done
+      ...['29.5×8', '29.5×9', '29.5×10', '29.5×11', '29.5×12', '29.5×12', '31.5×8'], // planned
+    ])
   })
 
   it('shows every recent session as a card, then this and next, opening on this one', async () => {

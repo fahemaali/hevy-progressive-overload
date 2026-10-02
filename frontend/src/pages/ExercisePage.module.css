@@ -109,6 +109,12 @@
   gap: 6px;
 }
 
+.legendNote {
+  margin-left: auto;
+  color: var(--text-muted);
+  cursor: help;
+}
+
 .keyActual,
 .keyTarget {
   width: 20px;

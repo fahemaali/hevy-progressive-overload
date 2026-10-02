@@ -13,6 +13,9 @@ wanted, and what's been agreed so far.
 - ~~The plan holding an old peak~~: three misses in a row of the same target now count as a
   stall (V-Grip Seated Row: 34 kg held → steps back to 29 kg × 8).
 - ~~Rep range always shown~~ on the exercise page: one range as a plain pill, both as a toggle.
+- ~~Rep labels on the chart~~: the chart plots a **strength score** (weight and reps combined),
+  labels each point with what was lifted (*29×8*), shows the full climb to the next weight, and
+  scrolls sideways on phones.
 
 ## Features
 
@@ -31,9 +34,6 @@ wanted, and what's been agreed so far.
 
 ## Open questions
 
-- **Rep labels on the chart:** the graph shows weight, so adding reps at the same weight
-  looks flat (e.g. Bicep Curl: 9.1 kg × 8 → 9.1 kg × 10). Small "×10" labels on each point
-  would show the progress. Not decided.
 - **Tip card when there's no evidence:** it only appears when other exercises give evidence.
   Should it always show, with *"not enough evidence yet"*? Not decided.
 

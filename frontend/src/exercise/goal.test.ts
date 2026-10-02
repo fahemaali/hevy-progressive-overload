@@ -3,7 +3,7 @@ import type { Mode, Plan, PlanStep, Target } from '../api/types'
 import { goalSentence } from './goal'
 
 const t = (weight_kg: number | null, reps: number | null, duration_seconds: number | null = null) =>
-  ({ weight_kg, reps, duration_seconds, sets: 3 }) as Target
+  ({ weight_kg, reps, duration_seconds, sets: 3, score: 0 }) as Target
 
 function plan(step: PlanStep, today: Target, then: Target, top = 12): Plan {
   return {
@@ -11,6 +11,7 @@ function plan(step: PlanStep, today: Target, then: Target, top = 12): Plan {
     rep_target: [top === 12 ? 8 : 15, top],
     today,
     then,
+    climb: [today, then],
     reps_to_go: null,
     ahead_of_plan: false,
   }
