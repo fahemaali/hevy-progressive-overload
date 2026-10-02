@@ -1,5 +1,7 @@
+import { useStatus } from '../api/client'
 import { Card } from '../components/Card'
 import { APP_NAME } from '../config'
+import { timeAgo } from '../format'
 import styles from './AboutPage.module.css'
 
 const AUTHOR = { name: 'Fahema Ali', github: 'https://github.com/fahemaali' }
@@ -9,7 +11,10 @@ const REPO = 'https://github.com/fahemaali/hevy-progressive-overload'
 export function AboutPage() {
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>About</h1>
+      <div className={styles.top}>
+        <h1 className={styles.title}>About</h1>
+        <LastRefresh />
+      </div>
 
       <Card label={`About ${APP_NAME}`}>
         <p className={styles.lead}>
@@ -106,6 +111,24 @@ export function AboutPage() {
         </p>
       </Card>
     </div>
+  )
+}
+
+/**
+ * When the app last copied data from Hevy. Only "how long ago", never a time of day,
+ * which the API doesn't share.
+ */
+function LastRefresh() {
+  const { data } = useStatus()
+  if (!data?.has_data) return null
+  const ago = data.synced_minutes_ago === null ? 'unknown' : timeAgo(data.synced_minutes_ago)
+  return (
+    <p className={styles.refresh}>
+      Last data refresh: <strong>{data.refreshing ? 'refreshing now…' : ago}</strong>
+      {data.refresh_failed && !data.refreshing && (
+        <span className={styles.failed}> · the latest refresh failed</span>
+      )}
+    </p>
   )
 }
 

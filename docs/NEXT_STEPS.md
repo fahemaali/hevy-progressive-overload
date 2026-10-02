@@ -14,18 +14,15 @@ wanted, and what's been agreed so far.
   stall (V-Grip Seated Row: 34 kg held → steps back to 29 kg × 8).
 - ~~Rep range always shown~~ on the exercise page: one range as a plain pill, both as a toggle.
 - ~~About page~~: the README's intro, *What it does* and *Design decisions*, plus who made it
-  (GitHub profile and source code links). In the sidebar and the phone tab bar.
+  (GitHub profile and source code links), and *Last data refresh* in the top right. In the
+  sidebar and the phone tab bar. The README's privacy section stays out of it, by choice.
 - ~~Rep labels on the chart~~: the chart plots a **strength score** (weight and reps combined),
   labels each point with what was lifted (*29×8*), shows the full climb to the next weight, and
   scrolls sideways on phones.
 
 ## Features
 
-### 1. About page: possible extras
-- The About page is live (intro, what it does, design decisions, made by). Not included yet,
-  by choice: the **privacy note** and the **last updated** time.
-
-### 2. Summary page redesign (parked)
+### 1. Summary page redesign (parked)
 - The four legend items become **filter tabs**: Progressing · Not progressing · Declining ·
   Not trained in 3+ weeks. Pick one to list just those muscles, biggest change first.
 - Each muscle shows its **% change** (already calculated for the muscle page).

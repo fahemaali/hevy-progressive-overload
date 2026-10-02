@@ -21,6 +21,13 @@ describe('about page', () => {
     )
   })
 
+  it('says when the data was last refreshed from Hevy', async () => {
+    setup()
+    expect(await screen.findByText(/Last data refresh:/)).toHaveTextContent(
+      'Last data refresh: 5 minutes ago',
+    )
+  })
+
   it('credits the author, with links that open in a new tab', async () => {
     setup()
     const made = await screen.findByRole('region', { name: 'Made by' })
