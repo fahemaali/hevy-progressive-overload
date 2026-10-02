@@ -196,9 +196,10 @@ def test_assisted_more_assistance_holds_the_target() -> None:
 
 @pytest.mark.parametrize(
     "weights",
+    # Never three misses in a row here: that's a stall, a deliberate drop tested above.
     [
-        [45, 35, 35, 40, 50],
-        [60, 55, 50, 45, 40],
+        [45, 35, 40, 50],
+        [60, 55, 65, 50, 70],
         [20, 25, 15, 30, 10, 35],
     ],
 )
@@ -212,3 +213,38 @@ def test_targets_never_go_down_except_a_stall_step_back(weights: list[float]) ->
             earlier.weight_kg or 0,
             earlier.reps or 0,
         )
+
+
+# --- Stuck chasing one target -------------------------------------------------------
+
+
+MACHINE = template(equipment="machine")  # 5 kg steps
+
+
+def test_three_misses_of_the_same_target_step_back_from_it() -> None:
+    # Like the V-grip row: 34 kg x 5 sets a 34 x 6 target, then three lighter sessions.
+    plan = plan_after(sets(34, 5), sets(13.5, 12), sets(22.5, 10, 10), sets(29.5, 7, 7), t=MACHINE)
+    assert plan.step is PlanStep.STALLED
+    assert plan.today.weight_kg == 29  # about 10% under 34, in one 5 kg step
+    assert plan.today.reps == 8  # back to the bottom of the range
+    assert plan.then == target(29, 9, n_sets=2)
+
+
+def test_two_misses_still_hold_the_target() -> None:
+    plan = plan_after(sets(34, 5), sets(22.5, 10), sets(29.5, 7), t=MACHINE)
+    assert plan.step is PlanStep.CATCH_UP
+    assert plan.today.weight_kg == 34
+
+
+def test_a_step_back_resets_the_count_so_it_cannot_spiral() -> None:
+    # After stepping back to 29 kg x 8, one more miss isn't a new stall.
+    plan = plan_after(
+        sets(34, 5),
+        sets(13.5, 12),
+        sets(22.5, 10, 10),
+        sets(29.5, 7, 7),
+        sets(25, 8),
+        t=MACHINE,
+    )
+    assert plan.step is PlanStep.CATCH_UP
+    assert plan.today.weight_kg == 29

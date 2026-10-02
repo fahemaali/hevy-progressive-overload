@@ -4,8 +4,8 @@ The plan: double progression with 2-for-2 confirmation (see REQUIREMENTS.md).
 Same weight, one more rep each session, up to the top of the rep range. Reach the
 top on all working sets twice in a row, then add weight and drop to the bottom
 of the range. Fall short of a target: the plan holds it rather than lowering itself.
-Three sessions at one weight without beating the session before: step back about
-10% and rebuild (the one planned drop).
+Stalled (three sessions at one weight without beating the session before, or three
+misses of the same target): step back about 10% and rebuild (the one planned drop).
 """
 
 from dataclasses import dataclass, replace
@@ -80,11 +80,36 @@ def next_target(
     out from the last session is easier than the one that session was set, the plan
     holds that target instead. The only planned drop is a deliberate stall step-back.
     """
+    if mode in (TrackingMode.LOAD, TrackingMode.ASSISTED) and _missing_same_target(results):
+        # Chasing one target and missing it, session after session (e.g. after a run of
+        # lighter days): step back from that target and rebuild, instead of holding it.
+        held = results[-1].target
+        last = results[-1].session
+        assert held is not None and held.weight_kg is not None and last.rep_range is not None
+        bottom, top = PLAN_REPS[last.rep_range]
+        lighter = _step_back_weight(mode, template, held.weight_kg)
+        # Restart the climb the same way as the other stall rule.
+        reps = min(max(min(last.working_reps), bottom), top)
+        return PlanStep.STALLED, Target(lighter, reps, sets=len(last.working_reps))
+
     step, target = _from_last_session(template, mode, results)
     previous = results[-1].target
     if previous is not None and step is not PlanStep.STALLED and _easier(mode, target, previous):
         return PlanStep.CATCH_UP, replace(previous, sets=target.sets)
     return step, target
+
+
+def _missing_same_target(results: list[SessionResult]) -> bool:
+    """The last few sessions all missed the same target."""
+    recent = results[-STALL_SESSIONS:]
+    # Same weight and reps; the number of sets can differ from day to day.
+    targets = {(r.target.weight_kg, r.target.reps) if r.target else None for r in recent}
+    return (
+        len(recent) == STALL_SESSIONS
+        and len(targets) == 1
+        and None not in targets
+        and all(r.vs_target == -1 for r in recent)
+    )
 
 
 def _easier(mode: TrackingMode, a: Target, b: Target) -> bool:

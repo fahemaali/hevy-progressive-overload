@@ -10,6 +10,9 @@ wanted, and what's been agreed so far.
   order (*Hypertrophy · ▲ +6%*).
 - ~~Sidebar navigation rework~~: Body map, Muscles and Exercises as matching items; Muscles and
   Exercises collapse and expand, with indented items (exercises grouped by muscle).
+- ~~The plan holding an old peak~~: three misses in a row of the same target now count as a
+  stall (V-Grip Seated Row: 34 kg held → steps back to 29 kg × 8).
+- ~~Rep range always shown~~ on the exercise page: one range as a plain pill, both as a toggle.
 
 ## Features
 
@@ -26,17 +29,8 @@ wanted, and what's been agreed so far.
 - New card styles. Reference sites: [Collect UI](https://collectui.com),
   [Dribbble](https://dribbble.com), [Mobbin](https://mobbin.com).
 
-## Plan logic
+## Open questions
 
-### 3. The plan can hold an old peak forever
-**Example:** V-Grip Seated Row. The plan still asks for 34 kg (from 31 Aug) after three
-lighter sessions.
-**Why:** the plan never lowers itself after a short session (agreed), and the stall rule only
-triggers for three sessions at the *same* weight.
-**Fix idea:** treat **three missed targets in a row** as a stall too: *"Stalled. Let's start
-fresh at … kg and rebuild to 12"*.
-
-### 4. Open questions from review
 - **Rep labels on the chart:** the graph shows weight, so adding reps at the same weight
   looks flat (e.g. Bicep Curl: 9.1 kg × 8 → 9.1 kg × 10). Small "×10" labels on each point
   would show the progress. Not decided.
