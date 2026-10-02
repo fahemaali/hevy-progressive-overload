@@ -39,7 +39,7 @@ function ExerciseView({ exercise }: { exercise: Exercise }) {
             </p>
           )}
         </div>
-        {exercise.ranges.length > 1 && (
+        {exercise.ranges.length > 1 ? (
           <div className={styles.toggle} role="tablist" aria-label="Rep range">
             {[...exercise.ranges].sort(byRange).map((r) => (
               <button
@@ -55,6 +55,20 @@ function ExerciseView({ exercise }: { exercise: Exercise }) {
               </button>
             ))}
           </div>
+        ) : (
+          // Only one range trained: show which, in the toggle's place and style, but not
+          // as a control (a disabled option would look broken).
+          range.rep_range && (
+            <span className={styles.toggle}>
+              <span
+                className={styles.toggleOption}
+                data-selected
+                title={RANGE_REPS[range.rep_range]}
+              >
+                {RANGE_NAMES[range.rep_range]}
+              </span>
+            </span>
+          )
         )}
       </header>
 

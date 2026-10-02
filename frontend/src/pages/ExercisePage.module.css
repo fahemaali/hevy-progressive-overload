@@ -47,7 +47,12 @@
   cursor: pointer;
 }
 
-.toggleOption[aria-selected='true'] {
+.toggleOption[data-selected] {
+  cursor: default;
+}
+
+.toggleOption[aria-selected='true'],
+.toggleOption[data-selected] {
   background: var(--accent-ink); /* the deeper teal: white text on it passes WCAG AA */
   color: var(--accent-text);
 }

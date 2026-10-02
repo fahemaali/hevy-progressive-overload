@@ -86,9 +86,13 @@ For each exercise and rep range, the next target comes from the latest sessions:
 4. **Falling short:** if a session misses its target (lighter, or fewer reps), the plan holds
    that target rather than lowering itself. *"Back on track: 45 kg × 5"*. The plan only ever
    goes up or stays level, apart from a deliberate stall step-back.
-5. **Stalled:** 3 sessions in a row at the same weight, none better than the session before it
-   (no higher score, no extra total reps) → step back about 10%, in whole increments (at least
-   one), and build up again.
+5. **Stalled**, either way:
+   - 3 sessions in a row at the same weight, none better than the session before it (no
+     higher score, no extra total reps), or
+   - 3 misses in a row of the **same** target (e.g. a held target after a run of lighter days),
+
+   → step back about 10% from that weight, in whole increments (at least one), and build up
+   again from the bottom of the range. A step back sets a new target, so it can't spiral.
 
 "Working weight" is the heaviest weight used in the range that session (the least assistance,
 for assisted exercises); "all working sets" means every set at that weight.

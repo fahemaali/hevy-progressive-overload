@@ -2,21 +2,20 @@ import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useNavigate } fr
 import { useReloadAfterRefresh } from '../api/useReloadAfterRefresh'
 import { BackIcon, BodyIcon, DumbbellIcon, ListIcon } from './icons'
 import { Logo } from './Logo'
-import { MuscleNav } from './MuscleNav'
 import { SearchBar } from './SearchBar'
+import { SidebarNav } from './SidebarNav'
 import styles from './Layout.module.css'
 
 const TABS = [
-  { to: '/', label: 'Body map', Icon: BodyIcon, phoneOnly: false },
-  // On wide screens the sidebar lists the muscles directly instead.
-  { to: '/muscles', label: 'Muscles', Icon: ListIcon, phoneOnly: true },
-  { to: '/exercises', label: 'Exercises', Icon: DumbbellIcon, phoneOnly: false },
+  { to: '/', label: 'Body map', Icon: BodyIcon },
+  { to: '/muscles', label: 'Muscles', Icon: ListIcon },
+  { to: '/exercises', label: 'Exercises', Icon: DumbbellIcon },
 ]
 
 /**
- * The frame around every page. On wide screens: a sidebar with the body map and
- * every muscle you train. On phones: a tab bar along the bottom, and a back button
- * in the header on inner pages.
+ * The frame around every page. Wide screens: a sidebar with collapsible Muscles and
+ * Exercises sections. Phones: a tab bar along the bottom, and a back button in the
+ * header on inner pages.
  */
 export function Layout() {
   useReloadAfterRefresh()
@@ -29,28 +28,22 @@ export function Layout() {
         <Link to="/" className={styles.sidebarLogo} aria-label="Next Set home">
           <Logo tagline />
         </Link>
-        <nav aria-label="Main" className={styles.nav}>
-          {TABS.map(({ to, label, Icon, phoneOnly }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end
-              className={({ isActive }) =>
-                [styles.navLink, isActive && styles.active, phoneOnly && styles.phoneOnly]
-                  .filter(Boolean)
-                  .join(' ')
-              }
-            >
-              <Icon />
-              <span>{label}</span>
-            </NavLink>
-          ))}
-        </nav>
-        <div className={styles.sidebarMuscles}>
-          <h2 className={styles.sidebarHeading}>Muscles</h2>
-          <MuscleNav />
-        </div>
+        <SidebarNav />
       </aside>
+
+      <nav aria-label="Main" className={styles.tabbar}>
+        {TABS.map(({ to, label, Icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end
+            className={({ isActive }) => (isActive ? `${styles.tab} ${styles.active}` : styles.tab)}
+          >
+            <Icon />
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
       <div className={styles.content}>
         <header className={styles.header}>
