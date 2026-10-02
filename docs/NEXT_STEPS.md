@@ -13,7 +13,8 @@ wanted, and what's been agreed so far.
 - ~~The plan holding an old peak~~: three misses in a row of the same target now count as a
   stall (V-Grip Seated Row: 34 kg held → steps back to 29 kg × 8).
 - ~~Rep range always shown~~ on the exercise page: one range as a plain pill, both as a toggle.
-- ~~About page~~: the README's intro, *What it does* and *Design decisions*, plus who made it
+- ~~About page~~: the README's intro, an illustrated five-step *How to use it* guide
+  (screenshots of the real app), *Design decisions*, plus who made it
   (GitHub profile and source code links), and *Last data refresh* in the top right. In the
   sidebar and the phone tab bar. The README's privacy section stays out of it, by choice.
 - ~~Rep labels on the chart~~: the chart plots a **strength score** (weight and reps combined),

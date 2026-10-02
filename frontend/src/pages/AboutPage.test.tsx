@@ -15,7 +15,14 @@ describe('about page', () => {
     setup()
     expect(await screen.findByRole('heading', { level: 1, name: 'About' })).toBeInTheDocument()
     expect(screen.getByText('A progressive overload coach for Hevy users.')).toBeInTheDocument()
-    expect(screen.getByRole('region', { name: 'What it does' })).toBeInTheDocument()
+    // A short illustrated guide, one picture per step.
+    const steps = screen.getAllByRole('region').filter((r) => r.querySelector('img'))
+    expect(steps).toHaveLength(5)
+    expect(
+      within(
+        screen.getByRole('region', { name: 'Follow your progress against the plan' }),
+      ).getByRole('img'),
+    ).toHaveAccessibleName(/progress chart/)
     expect(screen.getByRole('region', { name: 'Design decisions' })).toHaveTextContent(
       'three misses in a row of the same target',
     )
