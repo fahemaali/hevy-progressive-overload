@@ -96,7 +96,11 @@ export function ColumnLineChart({
 
   return (
     <figure className={styles.figure} aria-label={label}>
-      <div className={styles.chart} data-dot-labels={hasDotLabels || undefined}>
+      <div
+        className={styles.chart}
+        data-scroll={minColumnWidth ? true : undefined}
+        data-dot-labels={hasDotLabels || undefined}
+      >
         {yAxis?.title && (
           <span className={styles.yTitle} style={{ height }} title={yAxis.hint} aria-hidden="true">
             {yAxis.title}
