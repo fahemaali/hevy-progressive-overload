@@ -29,7 +29,9 @@ interface Props {
   height?: number
   invert?: boolean // lower is better: the scale flips so "up" always means progress
   zeroLine?: boolean // for changes: a baseline at 0, and a range balanced around it
-  yAxis?: { format: (value: number) => string } // value labels and gridlines on the left
+  // Value labels and gridlines on the left, with an optional title running up beside them
+  // (`hint` shows on hover).
+  yAxis?: { format: (value: number) => string; title?: string; hint?: string }
   highlight?: number // a column whose dot is drawn larger
   callout?: string // a short label above the highlighted column's top dot
   // Columns never get narrower than this (px): with more columns than fit, the plot
@@ -88,6 +90,11 @@ export function ColumnLineChart({
   return (
     <figure className={styles.figure} aria-label={label}>
       <div className={styles.chart} data-dot-labels={hasDotLabels || undefined}>
+        {yAxis?.title && (
+          <span className={styles.yTitle} style={{ height }} title={yAxis.hint} aria-hidden="true">
+            {yAxis.title}
+          </span>
+        )}
         {yAxis && (
           <div className={styles.yAxis} style={{ height }} aria-hidden="true">
             {ticks.map((t) => (

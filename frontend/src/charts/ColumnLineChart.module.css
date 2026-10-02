@@ -11,6 +11,22 @@
   flex: 0 0 40px;
 }
 
+/* Reads bottom to top, centred on the plot. */
+.yTitle {
+  flex: 0 0 auto;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.yTitle[title] {
+  cursor: help;
+}
+
 .tick {
   position: absolute;
   right: 8px;
@@ -34,6 +50,7 @@
   padding-top: 20px;
 }
 
+.chart[data-dot-labels] .yTitle,
 .chart[data-dot-labels] .yAxis {
   margin-top: 20px;
 }

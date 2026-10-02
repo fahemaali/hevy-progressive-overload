@@ -206,7 +206,7 @@ exercises are still found through search.
   are scored the same way, so one more rep at the same weight still climbs. It has no "kg",
   because it isn't a weight; each point is labelled with what was (or will be) lifted, e.g.
   *29×8*. Other exercise types plot reps, seconds or assistance kg.
-- The plan runs past *This* and *Next* to the next weight. Columns are at least 52 px wide; when
+- The plan runs past *This* and *Next* to the next weight. Columns are at least 48 px wide; when
   they don't fit (phones, long histories), the plot scrolls sideways with the y-axis fixed,
   opening with *This session* in view.
 - Today / Then targets with one short line explaining the plan step.

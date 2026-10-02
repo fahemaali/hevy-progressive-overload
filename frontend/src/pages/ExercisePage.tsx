@@ -181,11 +181,6 @@ function ProgressCard({
           <span className={styles.keyTarget} aria-hidden="true" />
           Plan
         </li>
-        {mode === 'load' && (
-          <li className={styles.legendNote} title={SCORE_EXPLAINED}>
-            Strength score
-          </li>
-        )}
       </ul>
       <ColumnLineChart
         label={`${axisName(mode)} by session`}
@@ -196,7 +191,10 @@ function ProgressCard({
         ]}
         dots={dots}
         invert={exercise.lower_is_better}
-        yAxis={{ format: (v) => `${mode === 'load' ? Math.round(v) : kg(v)}${axisUnit(mode)}` }}
+        yAxis={{
+          format: (v) => `${mode === 'load' ? Math.round(v) : kg(v)}${axisUnit(mode)}`,
+          ...(mode === 'load' && { title: 'Strength score', hint: SCORE_EXPLAINED }),
+        }}
         height={180}
         minColumnWidth={COLUMN_WIDTH}
         startAt={past.length}
@@ -206,7 +204,7 @@ function ProgressCard({
 }
 
 // Wide enough for a label like '31.5×12' over each point.
-const COLUMN_WIDTH = 52
+const COLUMN_WIDTH = 48
 // The plan's columns, from this session on.
 const AHEAD_NAMES = ['This', 'Next', '3rd']
 

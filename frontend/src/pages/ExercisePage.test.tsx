@@ -33,7 +33,7 @@ describe('exercise page', () => {
     expect(within(progress).getByRole('figure')).toHaveAccessibleName(
       'Strength score (weight and reps combined) by session',
     )
-    expect(within(progress).getByText('Strength score')).toBeInTheDocument() // in the legend
+    expect(within(progress).getByText('Strength score')).toHaveAttribute('title') // the y-axis title
     // A score, not a weight: the axis has no unit.
     expect(within(progress).queryAllByText(/^\d+ kg$/)).toEqual([])
     expect(within(progress).getAllByText(/^\d+$/).length).toBeGreaterThanOrEqual(3)
