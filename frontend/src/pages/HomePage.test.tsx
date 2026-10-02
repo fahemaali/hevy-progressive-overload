@@ -62,7 +62,7 @@ describe('body map page', () => {
     const { router } = setup('/?muscle=chest')
     const spotlight = await screen.findByRole('region', { name: 'Chest exercises' })
     vi.mocked(window.scrollTo).mockClear()
-    await userEvent.click(within(spotlight).getByRole('link', { name: /Week by week/ }))
+    await userEvent.click(within(spotlight).getByRole('link', { name: /View week by week/ }))
     expect(router.state.location.pathname).toBe('/muscles/chest')
     await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith(0, 0))
   })

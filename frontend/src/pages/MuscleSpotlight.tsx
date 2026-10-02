@@ -41,7 +41,7 @@ export function MuscleSpotlight({ group }: { group: string }) {
           )}
         </span>
         <span className={styles.more}>
-          Week by week <span aria-hidden="true">›</span>
+          View week by week <span aria-hidden="true">›</span>
         </span>
       </Link>
 
