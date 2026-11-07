@@ -39,3 +39,9 @@ def test_notes_descriptions_and_times_are_dropped(workouts: list[dict[str, Any]]
     parsed = repr([parse_workout(w) for w in workouts])
     assert "PRIVATE" not in parsed  # the fixtures hide private text in notes/descriptions
     assert "18:00" not in parsed  # every fixture workout starts at 18:00
+
+
+def test_keeps_how_long_a_workout_lasted(workouts: list[dict[str, Any]]) -> None:
+    raw = next(w for w in workouts if w["id"] == "W-PUSH-1")
+    assert parse_workout(raw).duration_minutes == 60  # 18:00 to 19:00
+    assert parse_workout({**raw, "end_time": None}).duration_minutes is None

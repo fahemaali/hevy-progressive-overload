@@ -116,7 +116,7 @@ def next_target(
 
     step, target = _from_last_session(template, mode, results)
     previous = results[-1].target
-    if previous is not None and step is not PlanStep.STALLED and _easier(mode, target, previous):
+    if previous is not None and step is not PlanStep.STALLED and is_easier(mode, target, previous):
         return PlanStep.CATCH_UP, replace(previous, sets=target.sets)
     return step, target
 
@@ -134,7 +134,7 @@ def _missing_same_target(results: list[SessionResult]) -> bool:
     )
 
 
-def _easier(mode: TrackingMode, a: Target, b: Target) -> bool:
+def is_easier(mode: TrackingMode, a: Target, b: Target) -> bool:
     """Is target `a` easier than target `b`? (Lighter, or the same weight for fewer reps.)"""
     if mode is TrackingMode.REPS:
         return (a.reps or 0) < (b.reps or 0)

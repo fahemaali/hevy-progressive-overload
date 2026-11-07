@@ -33,7 +33,9 @@ Text is kept to a minimum: symbols, numbers and colour first, at most one short 
 - The app only calls the endpoints above. Hevy also exposes `/user/info` and
   `/body_measurements`; the client refuses to call them (enforced in code and tested).
 - Free-text workout descriptions and exercise notes are dropped when data is read in.
-- Dates are shown as calendar dates only, never times of day.
+- Dates are shown as calendar dates only, never times of day. Each workout's length (end minus
+  start) is kept to judge how much fits in a session; it's never sent to the browser.
+- Routine names and their exercises are shown on the Next session page.
 - The API key stays on the server. Visitors can't make the app call Hevy; refreshes are
   scheduled server-side.
 
@@ -215,6 +217,56 @@ exercises are still found through search.
   greyer than what was actually lifted.
 - Today / Then targets with one short line explaining the plan step.
 - Capacity hint, when there's evidence.
+
+### Muscle corrections
+Hevy's muscle labels are corrected where technique moves the work elsewhere, across the whole
+app (body map, muscle pages, next session):
+
+| Exercise | Hevy says | Counted as |
+| --- | --- | --- |
+| Leg Press (feet high, toes out) | Quadriceps | **Glutes** (quads and hamstrings secondary) |
+| Wall Ball | Full body | **Quadriceps** (glutes secondary) |
+
+### Next session
+Training alternates between two halves that together cover the whole body (from the original
+Day 1 a and Day 2 b routines):
+
+| A days | B days |
+| --- | --- |
+| Hamstrings, glutes, chest, lats, biceps, lower back, core | Quads, glutes, upper back, shoulders, triceps, core |
+| – | Optional extras: abductors, adductors, calves |
+
+- **Which half:** the other one from your last workout. A workout counts as the half most of its
+  exercises' main muscles belong to (muscles in both halves don't vote), so swapping exercises
+  or renaming routines doesn't matter. An even mix goes by a lone "a" or "b" in the routine's
+  name (*Day 3 a*).
+- **Paired with your last session:** together, the two cover the whole body. Muscles the last
+  session already trained directly are skipped (say you did hamstrings on a B day: the next A
+  day leaves them out), and muscles of the last session's half that it missed are added (a B
+  day without shoulders: the next A day includes them). Glutes and core are in both halves, so
+  they're always in. If the last session was more than 7 days ago, it's a fresh start with the
+  whole half. Catching up never runs past the 90-minute limit; what doesn't fit waits.
+- **Order:** declining muscles first, then not progressing, while you're fresh; then the rest in
+  the order above.
+- **Exercises:** for each muscle, the **favourite** (★) is the exercise done in the most of that
+  half's workouts, then in the most workouts at all, then most recently. Up to 3
+  **alternatives** sit a swipe away, with a faint *or* between them: the runner-up, then the
+  ones you've gone longest without, so variety comes back round.
+- **Targets:** the plan's *This session* target, in the rep range you last did the exercise in
+  (a session with sets in both counts as the one with more sets). Sets are shown from 2 up.
+- **After 3+ weeks away** from an exercise: match last time (its working weight, lowest reps and
+  number of sets), unless the plan already asks for less.
+- **Extras** are added to B days when not trained directly for 10+ days and the session still
+  fits: **90 minutes** at most, at the typical minutes per exercise from your workout lengths
+  (ignoring any over 2 hours or more than 1.5× the usual, which were left running).
+- **Mobility · pick one** (optional): prehab exercises (Hevy's "other") done on that half's
+  days, as one swipe card like a muscle's, so it reads as a choice of one rather than a list.
+- **Low energy day:** one set fewer on each exercise (never below one), same targets, so every
+  set you do still counts as progress; extras and mobility are left out.
+- **Based on *Day 1 a*:** if a saved routine is at most 2 swaps from the session (cardio and
+  mobility aside), the page names it, with what to add and remove, so it can be duplicated in
+  Hevy. Nothing is shown otherwise. It follows the options chosen on the page.
+- Cardio is never suggested.
 
 ### Units
 Stored and shown in kg. lb is a later extra.

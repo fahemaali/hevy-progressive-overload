@@ -28,6 +28,9 @@ exactly should I lift next?*
   drawn all the way to the next weight.
 - **Honest progress:** each session is compared with the same exercise in the same rep range,
   never across exercises. Muscles are judged week by week; secondary muscles count half.
+- **Next session:** the other half of an A/B split from the one you did last, filling any gaps
+  it left so the pair covers the whole body, built muscle by muscle: your favourite exercise with its target, alternatives a swipe away, a *Low energy day*
+  switch, and which saved routine to duplicate in Hevy if the session is close to one.
 - **Tips from other exercises:** if your other glute exercises have improved since you last
   deadlifted, it suggests trying a little more (capped at +10%).
 
@@ -84,7 +87,8 @@ The app is public and shows my real training data, so it's careful about what le
 
 - The Hevy client can only call workouts, exercise templates and routines. Profile and body
   measurement endpoints are refused in code (tested).
-- Notes, descriptions and training times are dropped before anything is stored.
+- Notes, descriptions and training times are dropped before anything is stored. Only each
+  workout's length is kept, to judge how much fits in a session; it never leaves the server.
 - Responses carry calendar dates only. A test sweeps every endpoint for notes, times of day and ids.
 - The API key lives only in the server's environment, never in the repo or the browser.
 

@@ -17,11 +17,19 @@ wanted, and what's been agreed so far.
   (screenshots of the real app), *Design decisions*, plus who made it
   (GitHub profile and source code links), and *Last data refresh* in the top right. In the
   sidebar and the phone tab bar. The README's privacy section stays out of it, by choice.
+- ~~Next session tab~~: the other half of the A/B split, muscle by muscle, with favourites,
+  swipeable alternatives, a Low energy day switch and a *Based on Day 1 a* note. Leg Press now
+  counts as glutes and Wall Ball as quads, across the app.
 - ~~Rep labels on the chart~~: the chart plots a **strength score** (weight and reps combined),
   labels each point with what was lifted (*29×8*), shows the full climb to the next weight, and
   scrolls sideways on phones.
 
 ## Features
+
+### Next session: later steps
+- Show up to **3 sessions ahead**, not just the next one.
+- **Send to Hevy** (below) would let the session open in Hevy with targets filled in. Paused for
+  now: the note naming which routine to duplicate covers it.
 
 ### 1. Summary page redesign (parked)
 - The four legend items become **filter tabs**: Progressing · Not progressing · Declining ·
@@ -34,6 +42,10 @@ wanted, and what's been agreed so far.
 
 - **Tip card when there's no evidence:** it only appears when other exercises give evidence.
   Should it always show, with *"not enough evidence yet"*? Not decided.
+- **Dot colour vs chart line:** a session's dot colour judges its *best* set against the recent
+  level, but the chart plots the working weight's *lowest* reps. They can disagree: Leg
+  Extension's 25 Sept dot is green (▲ +4.5%, best set 22.5 kg × 11) while the line goes down
+  to it (22.5 kg × 10). Option: judge sessions by the same score the chart plots. Not decided.
 
 ## Later
 

@@ -5,6 +5,7 @@ from datetime import date
 from flask import Blueprint, abort, current_app, request
 
 from backend.api import responses
+from backend.domain.next_session import plan_next_session
 from backend.service import ProgressService, Snapshot
 
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -75,6 +76,15 @@ def exercise(template_id: str) -> responses.ExerciseJSON:
         abort(404, "No tracked history for this exercise.")
     titles = {t.id: t.title for t in snap.templates.values()}
     return responses.exercise_json(progress, titles)
+
+
+@api.get("/next-session")
+def next_session() -> responses.NextSessionJSON:
+    """The next session to do: muscles, exercise options with targets, and mobility."""
+    snap = snapshot()
+    today = service().today()
+    session = plan_next_session(snap.progress, snap.muscles, snap.workouts, snap.routines, today)
+    return responses.next_session_json(session, snap.routines, snap.templates, today)
 
 
 @api.get("/search")

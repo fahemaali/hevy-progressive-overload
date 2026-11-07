@@ -177,6 +177,44 @@ def test_skipped_weeks_appear_as_empty_weeks(
     assert len(weeks) == 8  # every calendar week from first to last
 
 
+# --- Next session ----------------------------------------------------------------------
+
+
+def test_next_session_trains_the_other_half(
+    workouts: list[JSON], exercise_templates: list[JSON], routines: list[JSON], tmp_path: Path
+) -> None:
+    # Make the fixture's pull days B days (upper back), so the push days are A days.
+    templates = [
+        {**t, "primary_muscle_group": "upper_back"} if "Pull" in t["title"] else t
+        for t in exercise_templates
+    ]
+    client = make_client(FakeHevy(workouts, templates, routines), tmp_path)
+    data = get(client, "/api/next-session")
+
+    assert data["as_of"] == "2026-07-22"
+    chest, abs_ = data["muscles"]  # the last workout was a pull (B) day
+    assert chest["group"] == "chest" and chest["label"] == "Chest"
+    assert chest["state"] == "progressing"
+    assert chest["days_since_trained"] == 2
+    assert not chest["extra"]
+
+    favourite, *alternatives = chest["options"]
+    assert favourite["favourite"] and not any(a["favourite"] for a in alternatives)
+    assert {favourite["title"], *(a["title"] for a in alternatives)} == {
+        "Bench Press (Barbell)",
+        "Chest Press (Machine)",
+        "Push Up",
+    }
+    assert set(favourite["target"]) == {"weight_kg", "reps", "duration_seconds", "sets", "score"}
+    assert abs_["options"][0]["title"] == "Plank"
+    assert data["mobility"] == []
+
+    push = next(r for r in data["routines"] if r["title"] == "Push")
+    assert {"id": "T-BENCH", "title": "Bench Press (Barbell)"} in push["exercises"]
+    pull = next(r for r in data["routines"] if r["title"] == "Pull")
+    assert "T-TREADMILL" not in {e["id"] for e in pull["exercises"]}  # cardio isn't suggested
+
+
 # --- Search ----------------------------------------------------------------------------
 
 
@@ -246,6 +284,7 @@ def test_unexpected_errors_never_leak_details(
 def every_response(client: FlaskClient) -> list[str]:
     """The text of every response the API can give for the fixture data."""
     urls = ["/api/body-map", "/api/exercises", "/api/search", "/api/search?q=a", "/api/status"]
+    urls += ["/api/next-session"]
     urls += [f"/api/muscles/{g}" for g in BODY_MUSCLES]
     template_ids = {e["id"] for e in get(client, "/api/search?q=")["exercises"]}
     urls += [f"/api/exercises/{i}" for i in template_ids]
@@ -260,6 +299,7 @@ def test_responses_never_contain_private_data(client: FlaskClient) -> None:
         assert "W-PUSH" not in text and "W-PULL" not in text  # workout ids
         keys = set(re.findall(r'"(\w+)":', text))
         assert not keys & {"notes", "description", "start_time", "end_time", "routine_id"}
+        assert "duration_minutes" not in keys  # only used on the server
 
 
 def test_every_response_is_valid_json(client: FlaskClient) -> None:

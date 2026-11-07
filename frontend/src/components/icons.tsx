@@ -63,6 +63,13 @@ export const DumbbellIcon = (p: IconProps) => (
   </Icon>
 )
 
+export const NextIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="5" y="4" width="14" height="17" rx="2.5" />
+    <path d="M9 4.5V3h6v1.5M9 11h6M9 15h4" />
+  </Icon>
+)
+
 export const ChevronIcon = (p: IconProps) => (
   <Icon {...p}>
     <path d="M9 6l6 6-6 6" />

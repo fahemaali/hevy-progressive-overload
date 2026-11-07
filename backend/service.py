@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
-from backend.domain.models import ExerciseTemplate
+from backend.domain.corrections import correct_muscles
+from backend.domain.models import ExerciseTemplate, Routine, Workout
 from backend.domain.progress import (
     ExerciseProgress,
     MuscleGroupSummary,
@@ -31,6 +32,8 @@ class Snapshot:
     templates: dict[str, ExerciseTemplate]
     progress: dict[str, ExerciseProgress]  # only exercises that have been performed
     muscles: dict[str, MuscleGroupSummary]
+    workouts: tuple[Workout, ...]
+    routines: tuple[Routine, ...]
 
 
 class ProgressService:
@@ -64,7 +67,10 @@ class ProgressService:
         return self.refresher.status()
 
     def _build(self, synced_at: datetime) -> Snapshot:
-        templates = {t.id: t for t in self.store.templates()}
-        progress = analyse_all(templates.values(), self.store.workouts())
+        templates = {t.id: t for t in correct_muscles(self.store.templates())}
+        workouts = tuple(self.store.workouts())
+        progress = analyse_all(templates.values(), workouts)
         muscles = {m.group: m for m in muscle_group_summaries(progress.values())}
-        return Snapshot(synced_at, templates, progress, muscles)
+        return Snapshot(
+            synced_at, templates, progress, muscles, workouts, tuple(self.store.routines())
+        )
