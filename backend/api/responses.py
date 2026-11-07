@@ -10,6 +10,8 @@ from datetime import date, timedelta
 from typing import Literal, TypedDict
 
 from backend.domain.metrics import PLAN_REPS, TrackingMode
+from backend.domain.models import ExerciseTemplate, Routine
+from backend.domain.next_session import MOBILITY_GROUP, NextSession, Option
 from backend.domain.plan import Plan
 from backend.domain.progress import (
     ExerciseProgress,
@@ -424,6 +426,93 @@ def exercise_summary_json(progress: ExerciseProgress) -> ExerciseSummaryJSON | N
         "change_pct": latest.change_pct,
         "last": session_json(latest, progress.mode),
         "plan": plan_json(rp.plan, progress.mode),
+    }
+
+
+# --- Next session ----------------------------------------------------------------------
+
+# Routine exercises left out when matching a session to a routine: the session never
+# suggests cardio, and mobility is shown separately.
+NOT_MATCHED_GROUPS = frozenset({"cardio", MOBILITY_GROUP})
+
+
+class OptionJSON(TypedDict):
+    id: str
+    title: str
+    mode: TrackingMode
+    favourite: bool
+    target: TargetJSON
+
+
+class SessionMuscleJSON(TypedDict):
+    group: str
+    label: str
+    state: MuscleState
+    days_since_trained: int | None  # since last trained directly
+    extra: bool  # optional: left out on a low energy day
+    options: list[OptionJSON]  # the main option first, then up to 3 alternatives
+
+
+class RoutineExerciseJSON(TypedDict):
+    id: str
+    title: str
+
+
+class RoutineJSON(TypedDict):
+    title: str
+    exercises: list[RoutineExerciseJSON]  # except cardio and mobility
+
+
+class NextSessionJSON(TypedDict):
+    as_of: str
+    muscles: list[SessionMuscleJSON]  # in the order to train them
+    mobility: list[OptionJSON]
+    routines: list[RoutineJSON]  # so the page can say which one the session is close to
+
+
+def option_json(option: Option) -> OptionJSON:
+    p = option.exercise
+    return {
+        "id": p.template.id,
+        "title": p.template.title,
+        "mode": p.mode,
+        "favourite": option.favourite,
+        "target": target_json(option.target, p.mode),
+    }
+
+
+def next_session_json(
+    session: NextSession,
+    routines: tuple[Routine, ...],
+    templates: dict[str, ExerciseTemplate],
+    today: date,
+) -> NextSessionJSON:
+    def routine_json(routine: Routine) -> RoutineJSON:
+        exercises: list[RoutineExerciseJSON] = [
+            {"id": t.id, "title": t.title}
+            for i in routine.template_ids
+            if (t := templates.get(i)) and t.primary_muscle_group not in NOT_MATCHED_GROUPS
+        ]
+        return {"title": routine.title, "exercises": exercises}
+
+    muscles: list[SessionMuscleJSON] = []
+    for slot in session.muscles:
+        last = slot.summary.last_trained_directly if slot.summary else None
+        muscles.append(
+            {
+                "group": slot.group,
+                "label": muscle_label(slot.group),
+                "state": muscle_state(slot.summary),
+                "days_since_trained": (today - last).days if last else None,
+                "extra": slot.extra,
+                "options": [option_json(o) for o in slot.options],
+            }
+        )
+    return {
+        "as_of": today.isoformat(),
+        "muscles": muscles,
+        "mobility": [option_json(o) for o in session.mobility],
+        "routines": [routine_json(r) for r in sorted(routines, key=lambda r: r.title)],
     }
 
 

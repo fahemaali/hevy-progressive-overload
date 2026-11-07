@@ -17,11 +17,19 @@ wanted, and what's been agreed so far.
   (screenshots of the real app), *Design decisions*, plus who made it
   (GitHub profile and source code links), and *Last data refresh* in the top right. In the
   sidebar and the phone tab bar. The README's privacy section stays out of it, by choice.
+- ~~Next session tab~~: the other half of the A/B split, muscle by muscle, with favourites,
+  swipeable alternatives, a Low energy day switch and a *Based on Day 1 a* note. Leg Press now
+  counts as glutes and Wall Ball as quads, across the app.
 - ~~Rep labels on the chart~~: the chart plots a **strength score** (weight and reps combined),
   labels each point with what was lifted (*29×8*), shows the full climb to the next weight, and
   scrolls sideways on phones.
 
 ## Features
+
+### Next session: later steps
+- Show up to **3 sessions ahead**, not just the next one.
+- **Send to Hevy** (below) would let the session open in Hevy with targets filled in. Paused for
+  now: the note naming which routine to duplicate covers it.
 
 ### 1. Summary page redesign (parked)
 - The four legend items become **filter tabs**: Progressing · Not progressing · Declining ·

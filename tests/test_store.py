@@ -1,3 +1,5 @@
+import sqlite3
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -100,3 +102,20 @@ def test_private_data_never_reaches_the_disk(
     on_disk = b"".join(p.read_bytes() for p in tmp_path.iterdir())  # including the WAL file
     assert b"PRIVATE" not in on_disk  # the fixtures hide private text in notes/descriptions
     assert b"18:00" not in on_disk  # every fixture workout starts at 18:00
+
+
+def test_an_older_store_gains_workout_lengths_and_syncs_again(tmp_path: Path) -> None:
+    path = tmp_path / "old.db"
+    with sqlite3.connect(path) as conn:  # the schema before workout lengths were kept
+        conn.executescript(
+            "CREATE TABLE workouts (id TEXT PRIMARY KEY, date TEXT NOT NULL, routine_id TEXT,"
+            " exercises TEXT NOT NULL);"
+            "CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);"
+            "INSERT INTO meta VALUES ('synced_at', '2026-07-01T12:00:00+00:00');"
+        )
+    conn.close()
+
+    store = Store(path)
+    assert store.synced_at() is None  # so the next sync fetches everything, with lengths
+    store.save(T0, all_workouts=[replace(make_workout("A"), duration_minutes=55)])
+    assert store.workouts()[0].duration_minutes == 55

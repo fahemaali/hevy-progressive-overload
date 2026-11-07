@@ -5,6 +5,8 @@ import type {
   ExerciseSummary,
   Muscle,
   MuscleState,
+  NextSession,
+  SessionOption,
   SearchResults,
   Status,
 } from '../api/types'
@@ -319,3 +321,65 @@ export const exerciseSummaries: ExerciseSummary[] = [
     plan: rowExercise.ranges[0].plan,
   },
 ]
+
+const option = (
+  id: string,
+  title: string,
+  weight_kg: number | null,
+  reps: number,
+  sets: number,
+  favourite = false,
+): SessionOption => ({
+  id,
+  title,
+  mode: weight_kg === null ? 'reps' : 'load',
+  favourite,
+  target: { weight_kg, reps, duration_seconds: null, sets, score: 0 },
+})
+
+/** An A day: hamstrings first (declining), an optional extra, and mobility. */
+export const nextSession: NextSession = {
+  as_of: '2026-11-08',
+  muscles: [
+    {
+      group: 'hamstrings',
+      label: 'Hamstrings',
+      state: 'declining',
+      days_since_trained: 43,
+      extra: false,
+      options: [
+        option('CURL', 'Seated Leg Curl (Machine)', 13.5, 15, 2, true),
+        option('NORDIC', 'Nordic Hamstrings Curls', null, 6, 3),
+        option('GM', 'Good Morning (Barbell)', 15, 10, 1),
+      ],
+    },
+    {
+      group: 'chest',
+      label: 'Chest',
+      state: 'progressing',
+      days_since_trained: 1,
+      extra: false,
+      options: [option('PRESS', 'Chest Press (Machine)', 15.5, 14, 3, true)],
+    },
+    {
+      group: 'abductors',
+      label: 'Abductors',
+      state: 'progressing',
+      days_since_trained: 12,
+      extra: true,
+      options: [option('ABDUCT', 'Hip Abduction (Machine)', 18.5, 18, 1, true)],
+    },
+  ],
+  mobility: [option('TKE', 'Banded Terminal knee extensions', null, 30, 4)],
+  routines: [
+    {
+      title: 'Day 1 a',
+      exercises: [
+        { id: 'CURL', title: 'Seated Leg Curl (Machine)' },
+        { id: 'PRESS', title: 'Chest Press (Machine)' },
+        { id: 'ROT', title: 'Torso Rotation' },
+      ],
+    },
+    { title: 'Day 2 b', exercises: [{ id: 'ROW', title: 'Seated Cable Row' }] },
+  ],
+}

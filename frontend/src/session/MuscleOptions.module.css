@@ -1,0 +1,142 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 16px 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 0 18px;
+}
+
+.muscle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ago {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The options in a row, one at a time. Each is a little narrower than the card, so the
+   "or" after it peeks in at the right edge before you swipe. */
+.track {
+  position: relative; /* slide positions are measured from the track */
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 calc(100% - 36px);
+  min-width: 0;
+  padding: 0 4px 0 18px;
+  scroll-snap-align: start;
+}
+
+.track[data-single] .slide {
+  flex-basis: 100%;
+  padding-right: 18px;
+}
+
+.or {
+  display: grid;
+  flex: 0 0 36px;
+  place-items: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  opacity: 0.55;
+}
+
+.end {
+  flex: 0 0 36px;
+}
+
+.name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.star {
+  margin-left: 6px;
+  color: var(--accent);
+}
+
+.target {
+  margin: 2px 0 0;
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sets {
+  margin-left: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  color: var(--text-muted);
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
+/* Small to look at, but each dot has a 24px tap area. */
+.dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.dot::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--neutral);
+  transition: width 200ms ease;
+}
+
+.dot[aria-selected='true']::before {
+  width: 20px;
+  background: var(--accent-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::before {
+    transition: none;
+  }
+}

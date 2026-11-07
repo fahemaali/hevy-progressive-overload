@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS workouts (
     id         TEXT PRIMARY KEY,
     date       TEXT NOT NULL,
     routine_id TEXT,
-    exercises  TEXT NOT NULL  -- JSON
+    exercises  TEXT NOT NULL,  -- JSON
+    duration_minutes INTEGER
 );
 CREATE TABLE IF NOT EXISTS exercise_templates (
     id                      TEXT PRIMARY KEY,
@@ -53,6 +54,7 @@ class Store:
         with self._connect() as conn:
             conn.execute("PRAGMA journal_mode=WAL")  # readers don't block the background sync
             conn.executescript(SCHEMA)
+            _migrate(conn)
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
@@ -119,13 +121,15 @@ class Store:
     @staticmethod
     def _upsert_workouts(conn: sqlite3.Connection, workouts: Iterable[Workout]) -> None:
         conn.executemany(
-            "INSERT OR REPLACE INTO workouts VALUES (?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO workouts (id, date, routine_id, exercises, duration_minutes)"
+            " VALUES (?, ?, ?, ?, ?)",
             [
                 (
                     w.id,
                     w.date.isoformat(),
                     w.routine_id,
                     json.dumps([asdict(e) for e in w.exercises]),
+                    w.duration_minutes,
                 )
                 for w in workouts
             ],
@@ -140,13 +144,16 @@ class Store:
 
     def workouts(self) -> list[Workout]:
         with self._connect() as conn:
-            rows = conn.execute("SELECT id, date, routine_id, exercises FROM workouts").fetchall()
+            rows = conn.execute(
+                "SELECT id, date, routine_id, exercises, duration_minutes FROM workouts"
+            ).fetchall()
         return [
             Workout(
                 id=row[0],
                 date=date.fromisoformat(row[1]),
                 routine_id=row[2],
                 exercises=tuple(_exercise(e) for e in json.loads(row[3])),
+                duration_minutes=row[4],
             )
             for row in rows
         ]
@@ -170,6 +177,16 @@ class Store:
         with self._connect() as conn:
             rows = conn.execute("SELECT id, title, template_ids FROM routines").fetchall()
         return [Routine(row[0], row[1], tuple(json.loads(row[2]))) for row in rows]
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Brings a store made by an older version of the app up to date."""
+    columns = {row[1] for row in conn.execute("PRAGMA table_info(workouts)")}
+    if "duration_minutes" not in columns:
+        conn.execute("ALTER TABLE workouts ADD COLUMN duration_minutes INTEGER")
+        # Workouts saved before this column existed have no length: forgetting the last
+        # sync makes the next one fetch everything again.
+        conn.execute("DELETE FROM meta WHERE key = ?", (SYNCED_AT_KEY,))
 
 
 def _exercise(data: dict[str, Any]) -> PerformedExercise:

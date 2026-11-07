@@ -1,0 +1,54 @@
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 4px 0 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* One button that switches a low energy day on (teal) and off again. */
+.energy {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.energy[aria-pressed='true'] {
+  border-color: var(--accent-ink);
+  background: var(--accent-ink);
+  color: var(--accent-text);
+}
+
+.empty {
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Which saved routine to duplicate in Hevy, and what to change in the copy. */
+.base {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.base strong {
+  color: var(--text);
+  font-weight: 600;
+}

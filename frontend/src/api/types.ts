@@ -165,3 +165,34 @@ export interface ExerciseSummary {
   last: Session
   plan: Plan
 }
+
+/** One exercise you could do for a muscle, with the plan's target for it. */
+export interface SessionOption {
+  id: string
+  title: string
+  mode: Mode
+  favourite: boolean
+  target: Target
+}
+
+export interface SessionMuscle {
+  group: string
+  label: string
+  state: MuscleState
+  days_since_trained: number | null
+  extra: boolean // optional: left out on a low energy day
+  options: SessionOption[] // the main option first, then up to 3 alternatives
+}
+
+export interface SessionRoutine {
+  title: string
+  exercises: { id: string; title: string }[] // except cardio and mobility
+}
+
+/** The next session: muscles in the order to train them, then optional mobility. */
+export interface NextSession {
+  as_of: string
+  muscles: SessionMuscle[]
+  mobility: SessionOption[]
+  routines: SessionRoutine[]
+}

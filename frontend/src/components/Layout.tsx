@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation, useNavigate } from 'react-router'
 import { useReloadAfterRefresh } from '../api/useReloadAfterRefresh'
-import { BackIcon, BodyIcon, DumbbellIcon, InfoIcon, ListIcon } from './icons'
+import { BackIcon, BodyIcon, DumbbellIcon, InfoIcon, ListIcon, NextIcon } from './icons'
 import { Logo } from './Logo'
 import { SearchBar } from './SearchBar'
 import { SidebarNav } from './SidebarNav'
@@ -10,6 +10,7 @@ const TABS = [
   { to: '/', label: 'Body map', Icon: BodyIcon },
   { to: '/muscles', label: 'Muscles', Icon: ListIcon },
   { to: '/exercises', label: 'Exercises', Icon: DumbbellIcon },
+  { to: '/next', label: 'Next session', Icon: NextIcon },
   { to: '/about', label: 'About', Icon: InfoIcon },
 ]
 

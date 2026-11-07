@@ -34,11 +34,13 @@ def parse_set(raw: JSON) -> LoggedSet:
 
 
 def parse_workout(raw: JSON) -> Workout:
+    start = datetime.fromisoformat(raw["start_time"])
     return Workout(
         id=raw["id"],
         # Calendar date only. Hevy timestamps are UTC, so a session logged
         # just after midnight UTC lands on the next day.
-        date=datetime.fromisoformat(raw["start_time"]).date(),
+        date=start.date(),
+        duration_minutes=_duration_minutes(start, raw.get("end_time")),
         routine_id=raw.get("routine_id"),
         exercises=tuple(
             PerformedExercise(
@@ -48,6 +50,14 @@ def parse_workout(raw: JSON) -> Workout:
             for ex in raw["exercises"]
         ),
     )
+
+
+def _duration_minutes(start: datetime, end_time: str | None) -> int | None:
+    """How long the workout lasted, in whole minutes; None if Hevy didn't say."""
+    if not end_time:
+        return None
+    seconds = (datetime.fromisoformat(end_time) - start).total_seconds()
+    return round(seconds / 60) if seconds > 0 else None
 
 
 def parse_routine(raw: JSON) -> Routine:
